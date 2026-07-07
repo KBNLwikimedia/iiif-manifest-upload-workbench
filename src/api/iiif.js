@@ -312,7 +312,7 @@ export function parseManifest(json, { sourceUrl = null } = {}) {
 
   const downscaledCount = canvases.filter((c) => c.downscaled).length;
   if (downscaledCount) {
-    report.info('downscaled-canvases', `${downscaledCount} of ${canvases.length} canvases exceed the image server's delivery cap and will arrive downscaled (design decision Q9: accepted).`);
+    report.info('downscaled-canvases', `${downscaledCount} of ${canvases.length} canvases exceed the image server's delivery cap and will arrive downscaled.`);
   }
 
   return {

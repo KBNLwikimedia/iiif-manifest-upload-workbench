@@ -69,6 +69,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   const [createCat, setCreateCat] = React.useState(true);
   const [catExists, setCatExists] = React.useState(null); // null = checking/unknown
   const [catSuggestions, setCatSuggestions] = React.useState(null); // null = loading
+  // Combobox dropdown state (Commons-searchbox-style typeahead).
+  const [catOpen, setCatOpen] = React.useState(false);
+  const [catIdx, setCatIdx] = React.useState(-1);
 
   // Live category check + suggestions, debounced on every edit of the field.
   React.useEffect(() => {
@@ -342,7 +345,46 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                     <input id="iiif-title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
 
                     <label className="iiif-label" htmlFor="iiif-cat">Commons category for this manuscript</label>
-                    <input id="iiif-cat" type="text" value={category} onChange={(e) => setCategory(e.target.value)} />
+                    <div className="iiif-combobox">
+                      <input
+                        id="iiif-cat"
+                        type="text"
+                        value={category}
+                        role="combobox"
+                        aria-expanded={catOpen && !!catSuggestions?.length}
+                        aria-autocomplete="list"
+                        autoComplete="off"
+                        onChange={(e) => { setCategory(e.target.value); setCatOpen(true); setCatIdx(-1); }}
+                        onFocus={() => setCatOpen(true)}
+                        onBlur={() => setTimeout(() => setCatOpen(false), 150)}
+                        onKeyDown={(e) => {
+                          const list = catSuggestions || [];
+                          if (!list.length) return;
+                          if (e.key === 'ArrowDown') { e.preventDefault(); setCatOpen(true); setCatIdx((i) => (i + 1) % list.length); }
+                          else if (e.key === 'ArrowUp') { e.preventDefault(); setCatIdx((i) => (i <= 0 ? list.length - 1 : i - 1)); }
+                          else if (e.key === 'Enter' && catOpen && catIdx >= 0) { e.preventDefault(); setCategory(list[catIdx]); setCatOpen(false); setCatIdx(-1); }
+                          else if (e.key === 'Escape') { setCatOpen(false); setCatIdx(-1); }
+                        }}
+                      />
+                      {catOpen && catSuggestions && catSuggestions.length > 0 && (
+                        <ul className="iiif-combobox__list" role="listbox">
+                          {catSuggestions.map((s, i) => (
+                            <li
+                              key={s}
+                              role="option"
+                              aria-selected={i === catIdx}
+                              className={`iiif-combobox__item${i === catIdx ? ' iiif-combobox__item--active' : ''}`}
+                              // mousedown, not click: fires before the input's
+                              // blur closes the dropdown.
+                              onMouseDown={(e) => { e.preventDefault(); setCategory(s); setCatOpen(false); setCatIdx(-1); }}
+                              onMouseEnter={() => setCatIdx(i)}
+                            >
+                              {s}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
                     <p className="iiif-hint">
                       {catExists === null && category.trim() && 'Checking Commons…'}
                       {catExists === true && (
@@ -358,16 +400,6 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                         </>
                       )}
                     </p>
-                    {catSuggestions && catSuggestions.length > 0 && (
-                      <p className="iiif-hint iiif-cat-suggest">
-                        Existing categories like this:{' '}
-                        {catSuggestions.map((s) => (
-                          <button key={s} className="btn btn--quiet iiif-qid-pick" onClick={() => setCategory(s)} title={`Use Category:${s}`}>
-                            {s}
-                          </button>
-                        ))}
-                      </p>
-                    )}
 
                     <label className="iiif-label" htmlFor="iiif-qid">Wikidata item of the manuscript (feeds “digital representation of” + depicts)</label>
                     <input id="iiif-qid" type="text" placeholder="Q…" value={qid} onChange={(e) => setQid(e.target.value)} />
@@ -412,7 +444,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 <button className="btn btn--quiet" onClick={() => toggleAll(true)}>Select all</button>
                 <button className="btn btn--quiet" onClick={() => toggleAll(false)}>Select none</button>
                 {manifest.downscaledCount > 0 && (
-                  <span className="iiif-hint">“25 MP” = delivered downscaled by the image server (accepted, design Q9)</span>
+                  <span className="iiif-hint">“25 MP” = delivered downscaled by the image server</span>
                 )}
               </div>
               <div className="iiif-gallery">

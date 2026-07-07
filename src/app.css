@@ -8286,3 +8286,39 @@ body.col-resizing * { cursor: col-resize !important; }
   color: var(--color-success, #14866d);
   font-weight: 700;
 }
+
+/* Category combobox dropdown (Commons-searchbox-style) */
+.iiif-combobox {
+  position: relative;
+}
+
+.iiif-combobox__list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  margin: 2px 0 0;
+  padding: 4px 0;
+  list-style: none;
+  background: var(--background-color-base, #fff);
+  border: 1px solid var(--border-color-base);
+  border-radius: 4px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  max-height: 230px;
+  overflow-y: auto;
+}
+
+.iiif-combobox__item {
+  padding: 7px 12px;
+  font-size: 13.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.iiif-combobox__item--active {
+  background: var(--background-color-progressive-subtle, #eaf3ff);
+  color: var(--color-progressive, #36c);
+}
