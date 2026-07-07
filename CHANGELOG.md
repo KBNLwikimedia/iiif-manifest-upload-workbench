@@ -9,6 +9,9 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 ### Added
 
 - **IIIF ingestor project started** — fork established (GitHub, `iiif-commons-upload-workbench`), design document with approved 6-phase build plan and full decision log at [`__inputs/iiif-ingestor-design.md`](__inputs/iiif-ingestor-design.md); 25 sample KB manuscript manifests under `__inputs/manifests/`.
+- **IIIF manifest parser** (`src/api/iiif.js`) — fetch/validate/parse for IIIF Presentation 3.0 with a three-level validation report; corpus harness `scripts/test-iiif-parser.mjs` (24/25 KB manifests parse clean, the zero-canvas one is correctly rejected).
+- **IIIF → workbench metadata mapper** (`src/api/iiif-map.js`) — manuscript- and canvas-level mapping to draft fields: derived short titles, `Title - KW sig - canvas-label` filenames (collision-safe), per-manuscript category proposal, `{{Licensed-PD-Art|PD-old-100-expired|Cc-zero}}` license, `{{other date|…}}` date conversion, `{{Size}}` dimensions, `{{unknown|author}}` handling, compact nl captions, and SDC statement inputs under `item.iiif`. Corpus harness `scripts/test-iiif-map.mjs`.
+- **Wikidata signature lookup** (`src/api/wikidata.js`) — finds the manuscript's Q-id by shelfmark (P217 SPARQL, cached), returning candidates for user confirmation.
 
 ### Changed
 
