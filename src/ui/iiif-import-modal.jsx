@@ -93,7 +93,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     const t = setTimeout(() => {
       categoryExists(cat).then((v) => { if (alive) setCatExists(v); }).catch(() => {});
       suggestCategories(cat)
-        .then((hits) => { if (alive) setCatSuggestions(hits.filter((h) => h !== cat).slice(0, 6)); })
+        .then((hits) => { if (alive) setCatSuggestions(hits.filter((h) => h !== cat).slice(0, 10)); })
         .catch(() => { if (alive) setCatSuggestions([]); });
     }, 350);
     return () => { alive = false; clearTimeout(t); };

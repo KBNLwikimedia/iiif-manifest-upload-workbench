@@ -8305,13 +8305,14 @@ body.col-resizing * { cursor: col-resize !important; }
   border: 1px solid var(--border-color-base);
   border-radius: 4px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-  max-height: 230px;
+  max-height: 280px;
   overflow-y: auto;
 }
 
 .iiif-combobox__item {
-  padding: 7px 12px;
+  padding: 3px 12px;
   font-size: 13.5px;
+  line-height: 1.5;
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
