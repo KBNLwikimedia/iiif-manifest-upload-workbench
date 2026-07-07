@@ -46,6 +46,9 @@ function placeholderFromMapped(mapped) {
     uploadedAt: new Date().toISOString(),
     expiresAt: new Date(Date.now() + 48 * 3600 * 1000).toISOString(),
     thumburl: mapped.iiif.thumbUrl || null,
+    // Persisted via the draft (DRAFT_FIELDS) so the preview survives reloads
+    // — the stash's own thumb URLs are auth-blocked for <img> tags (OI-12).
+    iiifThumbUrl: mapped.iiif.thumbUrl || null,
     issues: [],
     ...thumbColors(filename),
     // mapped prefills (all DRAFT_FIELDS-compatible):
@@ -162,6 +165,7 @@ export async function runIiifImport(mappedItems, {
         ...real,
         sha1: real.sha1 || sha1,
         thumburl: mapped.iiif.thumbUrl || real.thumburl,
+        iiifThumbUrl: mapped.iiif.thumbUrl || null,
         iiif: mapped.iiif,
         ...(existsOnCommons ? { existsOnCommons, issues: [...(real.issues || []), 'exists-on-commons'] } : {}),
       };

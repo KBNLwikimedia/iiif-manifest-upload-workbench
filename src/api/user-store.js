@@ -414,6 +414,11 @@ const DRAFT_FIELDS = [
   // and Wikidata-property kinds). The map is keyed by pid → string. Lives
   // here so values survive a reload like every other editable cell.
   'customProps',
+  // IIIF import (OI-12/OI-03): the manifest's public thumbnail URL for this
+  // page. Stash thumb URLs need session auth an <img> can't send, so this
+  // is the only preview that renders for stash rows; one short URL per
+  // draft, gone when the draft is cleaned up after publish.
+  'iiifThumbUrl',
 ];
 
 export function pickDraftFields(item) {

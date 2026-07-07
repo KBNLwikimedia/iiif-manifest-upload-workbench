@@ -10,7 +10,12 @@ function Thumb({ item, ratio, large }) {
   const isPortrait = aspect < 0.95;
   const isPano = aspect > 2.5;
   // Lightbox / detail-panel preview opts in to the large variant.
-  const thumbSrc = large ? (item.largeThumburl || item.thumburl) : item.thumburl;
+  // IIIF-imported stash rows carry a public manifest thumbnail
+  // (item.iiifThumbUrl, persisted via the draft) — preferred because the
+  // stash's own thumb URLs require session auth an <img> can't send.
+  const thumbSrc = large
+    ? (item.iiifThumbUrl || item.largeThumburl || item.thumburl)
+    : (item.iiifThumbUrl || item.thumburl);
 
   // Build a deterministic gradient + horizon "scene" from the seed colors
   const bg = item.thumbColor || "#3a4a6b";
