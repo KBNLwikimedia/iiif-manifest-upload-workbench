@@ -8331,3 +8331,18 @@ body.col-resizing * { cursor: col-resize !important; }
   color: var(--color-subtle);
   transition: background 0.15s ease;
 }
+
+/* Explicit category-creation approval in the confirm step */
+.iiif-cat-approve .iiif-check {
+  display: block;
+  margin: 4px 0 0 0;
+  cursor: pointer;
+}
+
+.iiif-cat-approve__warn {
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  color: var(--color-warning, #8a6d1f);
+  margin-top: 2px;
+}

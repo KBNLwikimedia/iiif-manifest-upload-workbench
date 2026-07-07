@@ -76,7 +76,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // mapping settings (step 2, editable)
   const [title, setTitle] = React.useState('');
   const [category, setCategory] = React.useState('');
-  const [createCat, setCreateCat] = React.useState(true);
+  // Explicit opt-in (default OFF): the user must approve category creation
+  // via the checkbox in the confirm step before the tool may create it.
+  const [createCat, setCreateCat] = React.useState(false);
   const [catExists, setCatExists] = React.useState(null); // null = checking/unknown
   const [catSuggestions, setCatSuggestions] = React.useState(null); // null = loading
   // Combobox dropdown state (Commons-searchbox-style typeahead).
@@ -413,15 +415,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       {catExists === true && (
                         <span className="iiif-cat-exists">✔ This category already exists on Commons — files will be added to it.</span>
                       )}
-                      {catExists === false && (
-                        <>
-                          ✚ This category does not exist yet.{' '}
-                          <label className="iiif-check">
-                            <input type="checkbox" checked={createCat} onChange={(e) => setCreateCat(e.target.checked)} />
-                            {' '}Create it (under “{KB_PARENT_CATEGORY}”) when the first page is published
-                          </label>
-                        </>
-                      )}
+                      {catExists === false && '✚ This category does not exist yet — you will be asked to approve its creation in the final step.'}
                     </p>
 
                     <label className="iiif-label" htmlFor="iiif-qid">Wikidata item of the manuscript (feeds “digital representation of” + depicts)</label>
@@ -539,7 +533,22 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 </div>
               </div>
               <ul className="iiif-recap">
-                <li><strong>Category:</strong> {category}{catExists === true ? ' (exists)' : createCat ? ' (created when you publish the first page)' : ' (must exist before publish!)'}</li>
+                <li>
+                  <strong>Category:</strong> {category}
+                  {catExists === true && <span className="iiif-cat-exists"> (exists — files will be added to it)</span>}
+                  {catExists !== true && (
+                    <span className="iiif-cat-approve">
+                      {' — does not exist yet:'}
+                      <label className="iiif-check">
+                        <input type="checkbox" checked={createCat} onChange={(e) => setCreateCat(e.target.checked)} />
+                        {' '}<strong>I approve creating this category</strong> (under “{KB_PARENT_CATEGORY}”) when the first page is published
+                      </label>
+                      {!createCat && (
+                        <em className="iiif-cat-approve__warn">Without approval, publishing stays blocked until the category exists on Commons.</em>
+                      )}
+                    </span>
+                  )}
+                </li>
                 <li><strong>License:</strong> <code>{mapping?.manuscript.license}</code></li>
                 <li><strong>Author:</strong> <code>{mapping?.manuscript.author}</code></li>
                 <li><strong>Wikidata:</strong> {qid.trim() || '— none —'}</li>
