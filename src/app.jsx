@@ -2147,23 +2147,22 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
             </header>
             <div className="modal__body">
               <p>
-                This hides all <strong>{stashItems.length}</strong> stash rows here (same as discarding them —
-                you can undo right after). The files themselves stay in Commons&apos; private stash until they
-                auto-expire within <strong>48 hours</strong>; nobody but you can see them there.
+                The real stash lives on Wikimedia Commons. To delete all {stashItems.length} files
+                from the server <strong>right now</strong>, open <strong>Special:UploadStash</strong> and
+                click <em>“Clear list”</em> there (you must be logged in to Commons in that browser tab —
+                MediaWiki offers no API for this, so the app can&apos;t do it for you). Afterwards, reload
+                the workbench and the rows disappear.
               </p>
               <p className="clear-stash-modal__hint">
-                Want them gone from the server right now? Open{' '}
-                <a href="https://commons.wikimedia.org/wiki/Special:UploadStash" target="_blank" rel="noopener noreferrer">
-                  Special:UploadStash
-                </a>{' '}
-                (you must be logged in to Commons in this browser) and use <em>“Clear list”</em> there —
-                MediaWiki offers no API for this, so it can&apos;t be done from inside the app.
+                Alternatively, <em>hide</em> all rows here in the workbench (undoable) and let the files
+                auto-expire server-side within <strong>48 hours</strong> — nobody but you can see them
+                there anyway.
               </p>
             </div>
             <footer className="modal__foot">
               <button className="btn" onClick={() => setClearStashOpen(false)}>Cancel</button>
               <button
-                className="btn btn--destructive"
+                className="btn btn--destructive-quiet"
                 onClick={() => {
                   discardItems(stashItems);
                   // Rows without sha1/filekey (e.g. failed imports) can't be
@@ -2172,8 +2171,17 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
                   setClearStashOpen(false);
                 }}
               >
-                Hide all {stashItems.length} files
+                Hide all {stashItems.length} here
               </button>
+              <a
+                className="btn btn--progressive"
+                href="https://commons.wikimedia.org/wiki/Special:UploadStash"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setClearStashOpen(false)}
+              >
+                Open Special:UploadStash ↗
+              </a>
             </footer>
           </div>
         </div>
