@@ -1153,6 +1153,13 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
   // add/update/replace callbacks as the drag-drop uploader below.
   const [iiifImportOpen, setIiifImportOpen] = React.useState(false);
 
+  // "Clear stash" confirmation. There is no MediaWiki API to delete stash
+  // entries server-side (verified against the Commons action list), so
+  // "clear" means: bulk-discard every visible stash row (the existing
+  // undoable soft-delete) and point power users at Special:UploadStash for
+  // the true server-side wipe. Bytes auto-expire within 48 h regardless.
+  const [clearStashOpen, setClearStashOpen] = React.useState(false);
+
   const addUploadItems = (newItems) =>
     setItems((prev) => [...newItems, ...prev]);
   const updateUploadItem = (id, partial) =>
@@ -1717,6 +1724,15 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
                   return <span className="section-head__expiry" title="Least time remaining before earliest file expires"> · expires in {label}</span>;
                 })()}
               </span>
+              {stashItems.length > 0 && (
+                <button
+                  className="btn btn--quiet section-head__clear"
+                  onClick={() => setClearStashOpen(true)}
+                  title="Hide all stash rows from the workbench (undoable; files auto-expire server-side within 48h)"
+                >
+                  Clear stash…
+                </button>
+              )}
             </div>
 
             {loadErrors?.stash && (
@@ -2117,6 +2133,50 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
           onUpdateItem={updateUploadItem}
           onReplaceItem={replaceUploadItem}
         />
+      )}
+
+      {/* Clear-stash confirmation */}
+      {clearStashOpen && (
+        <div className="modal-backdrop" onClick={() => setClearStashOpen(false)}>
+          <div className="modal clear-stash-modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+            <header className="modal__head">
+              <div>
+                <h2 className="modal__title">Clear your upload stash?</h2>
+                <p className="modal__sub">{stashItems.length} file{stashItems.length === 1 ? '' : 's'} will be hidden from the workbench.</p>
+              </div>
+            </header>
+            <div className="modal__body">
+              <p>
+                This hides all <strong>{stashItems.length}</strong> stash rows here (same as discarding them —
+                you can undo right after). The files themselves stay in Commons&apos; private stash until they
+                auto-expire within <strong>48 hours</strong>; nobody but you can see them there.
+              </p>
+              <p className="clear-stash-modal__hint">
+                Want them gone from the server right now? Open{' '}
+                <a href="https://commons.wikimedia.org/wiki/Special:UploadStash" target="_blank" rel="noopener noreferrer">
+                  Special:UploadStash
+                </a>{' '}
+                (you must be logged in to Commons in this browser) and use <em>“Clear list”</em> there —
+                MediaWiki offers no API for this, so it can&apos;t be done from inside the app.
+              </p>
+            </div>
+            <footer className="modal__foot">
+              <button className="btn" onClick={() => setClearStashOpen(false)}>Cancel</button>
+              <button
+                className="btn btn--destructive"
+                onClick={() => {
+                  discardItems(stashItems);
+                  // Rows without sha1/filekey (e.g. failed imports) can't be
+                  // hidden by key — drop them from local state directly.
+                  setItems((prev) => prev.filter((i) => !(i.status?.startsWith('stash') && !i.sha1 && !i.filekey)));
+                  setClearStashOpen(false);
+                }}
+              >
+                Hide all {stashItems.length} files
+              </button>
+            </footer>
+          </div>
+        </div>
       )}
 
       {/* Publish modal */}
