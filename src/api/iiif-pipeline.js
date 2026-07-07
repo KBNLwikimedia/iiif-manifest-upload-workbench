@@ -179,6 +179,7 @@ export async function runIiifImport(mappedItems, {
       onItemDone?.(r, i);
     } catch (e) {
       controller.abort();
+      console.error('IIIF import failed for', mapped.iiif.targetFilename, e);
       const error = e.message || String(e);
       failed += 1;
       onUpdateItem?.(temp.id, { status: 'upload-error', errorMessage: error, progress: 0 });

@@ -8154,3 +8154,17 @@ body.col-resizing * { cursor: col-resize !important; }
 }
 
 .iiif-summary p { margin: 6px 0; }
+
+.iiif-summary__errors {
+  margin: 4px 0 8px;
+  padding-left: 22px;
+  font-size: 12.5px;
+}
+
+.iiif-summary__errors code {
+  background: var(--background-color-neutral-subtle, #f8f9fa);
+  border: 1px solid var(--border-color-base);
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: var(--color-destructive, #b32424);
+}

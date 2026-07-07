@@ -395,7 +395,20 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 <div className="iiif-summary">
                   <p>✅ Uploaded to stash: <strong>{summary.uploaded}</strong></p>
                   {summary.duplicates > 0 && <p>♻️ Already on Commons (stashed &amp; flagged): <strong>{summary.duplicates}</strong></p>}
-                  {summary.failed > 0 && <p>⚠️ Failed: <strong>{summary.failed}</strong> (rows stay in the table with the error)</p>}
+                  {summary.failed > 0 && <p>⚠️ Failed: <strong>{summary.failed}</strong></p>}
+                  {/* Distinct error messages with counts — the failed rows are
+                      session-only, so this report is the user's (and the
+                      maintainer's) primary diagnostic. */}
+                  {summary.failed > 0 && (
+                    <ul className="iiif-summary__errors">
+                      {Object.entries(summary.results.filter((r) => r.state === 'error').reduce((acc, r) => {
+                        acc[r.error] = (acc[r.error] || 0) + 1;
+                        return acc;
+                      }, {})).map(([msg, count]) => (
+                        <li key={msg}><code>{msg}</code>{count > 1 ? ` — ${count}×` : ''}</li>
+                      ))}
+                    </ul>
+                  )}
                   {summary.aborted && <p>⏹️ Import was cancelled before finishing.</p>}
                   {summary.catNote && <p>🗂️ {summary.catNote}</p>}
                 </div>
