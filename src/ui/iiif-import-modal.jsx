@@ -340,6 +340,15 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   {/* manuscript passport */}
                   <table className="iiif-passport">
                     <tbody>
+                      {/* The manifest's own summary is the richest description
+                          the KB ships — show it in full, above the metadata
+                          pairs (it is not part of metadata[]). */}
+                      {manifest.summary && (
+                        <tr>
+                          <th>Summary</th>
+                          <td>{linkifyValue(manifest.summary)}</td>
+                        </tr>
+                      )}
                       {manifest.metadata.filter((m) => !m.placeholder && m.value).map((m, i) => (
                         <tr key={i}>
                           <th>{m.label}</th>
