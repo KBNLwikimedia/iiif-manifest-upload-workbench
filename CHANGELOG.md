@@ -14,11 +14,27 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 - **Wikidata signature lookup** (`src/api/wikidata.js`) — finds the manuscript's Q-id by shelfmark (P217 SPARQL, cached), returning candidates for user confirmation.
 - **"Import IIIF manifest" wizard** (`src/ui/iiif-import-modal.jsx` + topbar button) — five steps: URL/file entry, validation report + manuscript passport + editable title/category/Wikidata settings, canvas gallery with IIIF thumbnails and selection, confirm recap, sequential import run with progress/abort/report.
 - **IIIF import pipeline** (`src/api/iiif-pipeline.js`) — per selected canvas: download full-res → browser SHA-1 → Commons duplicate check (stash anyway + flag) → stash upload → normalized table row with all prefills persisted as sha1-keyed drafts. Imported rows show real previews via the public IIIF thumbnails. Idempotent re-imports (same sha1 coalesces).
-- **Category creation** (`createCategoryPage()` in `src/api/commons.js`) — the wizard creates the per-manuscript home category under *Medieval manuscripts from Koninklijke Bibliotheek* after user confirmation, unblocking the categories-must-exist publish check.
+- **Category creation** (`createCategoryPage()` in `src/api/commons.js`) — the per-manuscript home category under *Medieval manuscripts from Koninklijke Bibliotheek* is created **at publish time**, right before the first approved page goes live (never at import), and only after an **explicit approval checkbox** in the confirm step. An aborted/discarded import leaves nothing on Commons.
+- **Wizard polish** — canvas gallery full-detail tooltips (label + target filename + delivered size) and a hover-zoom preview (larger IIIF rendition); the confirm step lists **every** target filename in a scrollable box; the manifest **summary** shows in the passport; license/date/template recap; clickable license URLs; the Wikidata candidate links to the item.
+- **Commons-style category combobox** — the category field live-checks existence on Commons (grayed while checking; green-bold "already exists"), and offers a dropdown of matching existing category names with progressive-trim prefix search (keyboard + mouse selectable).
+- **PD-Art license as a first-class option** — `{{PD-Art|PD-old-100-expired}}` is now a licence-catalog entry (the IIIF import default), with a **"Reset to default"** action in the detail-panel licence field. Imported rows use the **{{Artwork}}** template (switched on Start import).
+- **Institution field** — a curated chooser for the `{{Artwork}}` `|institution=` parameter (one value for now: `{{Institution:Koninklijke Bibliotheek, Den Haag}}`), available as a column and in the detail panel.
+- **Clear entire stash** — a header action that bulk-hides all stash rows (undoable) and links to `Special:UploadStash` for a true server-side wipe (MediaWiki has no stash-delete API). "Import IIIF manifest" also appears on the empty-stash hero.
 
 ### Changed
 
 - **Repo identity updated for the fork** — `CLAUDE.md` and `README.md` rewritten (fork lineage, IIIF focus, GitHub/local-dev workflow replacing upstream's GitLab/Phabricator/Toolforge workflow); `package.json` renamed to `iiif-commons-upload-workbench`; `urls.txt` refreshed; upstream's `.gitlab-ci.yml` archived to `docs/upstream-gitlab-ci.yml` (it deploys to Daanvr's Toolforge project and must not run for this fork). In-app identity (`APP_USER_AGENT`, `index.html` title, `attributionSuffix()`) deliberately unchanged until the fork registers its own OAuth consumer — see `CLAUDE.md` → "Pending identity renames".
+- **KB IIIF endpoint update** — the canonical manifest base is now `https://iiif.bibliotheken.nl/<slug>` (June 2026); `presentation-api.dlc.services/32/<slug>` still works in parallel. The parser is base-agnostic.
+
+### Fixed
+
+- **IIIF previews survive reloads** — imported rows persist the public IIIF thumbnail (`iiifThumbUrl` draft field), so they don't fall back to placeholder tiles after a reload (the stash's own thumb URLs require session auth an `<img>` can't send).
+- **License no longer flags "missing" on import** — the mapper now sets the row's `license` to the PD-Art catalog id (recognised by the dropdown) instead of raw wikitext.
+
+### Notes / known issues
+
+- A multi-agent code review (2026-07-08) recorded 37 findings (OI-25…OI-61) in [`__inputs/open-issues.md`](__inputs/open-issues.md) § F — including a **critical** draft-write-amplification issue on 500-canvas imports and the absence of any retry/backoff. These are the actionable backlog; none are fixed yet.
+- Not authenticated interactively: owner-only OAuth consumers can't serve the PKCE "Log in with Wikimedia" flow — a public consumer (admin review) is needed. Local dev uses `VITE_OWNER_ACCESS_TOKEN`.
 
 ---
 
