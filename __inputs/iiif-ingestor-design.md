@@ -115,11 +115,13 @@ After the loop the modal closes and the user is looking at the normal workbench 
 | 0.1 | ~~CORS check dlc.services~~ | — | ✅ done, positive |
 | 0.2 | ~~Reference file wikitext + SDC~~ | — | ✅ done (see §2.3–2.4) |
 | 0.3 | **Best-practice mining** of `Category:Medieval manuscripts from Koninklijke Bibliotheek` (per `.prompt-page/prompt-page.txt`): sample 10–20 files across sub-categories, extract common wikitext/SDC patterns, confirm the Mandeville file is representative and not an outlier | — | The field-mapping table (Phase 3) is only as good as the target convention |
-| 0.4 | Verify in-browser SHA-1 on a 21 MB blob (WebCrypto `crypto.subtle.digest('SHA-1', buf)`) — timing + correctness vs a known Commons sha1 | — | Step 2 of the pipeline hinges on it |
-| 0.5 | Confirm stash quota: how many files can one user hold in the upload stash? (MW default config; test with a burst) | — | A 35–100 canvas manuscript must fit |
+| 0.4 | ~~Verify in-browser SHA-1~~ ✅ **done 2026-07-07**: WebCrypto `subtle.digest('SHA-1')` matches native hashing on all 3 sample images, 16 ms for a 20 MB blob; `aisha1=` round-trip against Commons works (all 3 samples: not yet on Commons) | — | Step 2 of the pipeline hinges on it |
+| 0.5 | ~~Confirm stash quota~~ ✅ **done 2026-07-07**: MediaWiki core has **no per-user stash count limit** — only `$wgUploadStashMaxAge` (the 48 h expiry). Real constraints for big imports: the 48 h window + Commons upload *rate* limits (sequential pipeline respects them); verify empirically with a real batch during Phase 4 testing | — | A 500-canvas manuscript must fit |
 | 0.6 | ~~Decide git/remote/deployment~~ → **execute**: `git init`, create public GitHub repo `iiif-commons-upload-workbench`, initial commit + push (decided in Q12; local-dev-first, no Toolforge yet) | — | Everything after Phase 0 wants version control |
 
-### Phase 1 — Manifest parser (`src/api/iiif.js`)
+### Phase 1 — Manifest parser (`src/api/iiif.js`) — ✅ **implemented 2026-07-07**
+
+Shipped as `src/api/iiif.js` (pure ESM: `fetchManifest`, `parseManifestFile`, `parseManifest`, language-map helpers, placeholder detection, canonical KB metadata-label normalisation, per-canvas full-res/thumb URL derivation with maxArea math, three-level validation report) + `scripts/test-iiif-parser.mjs` (corpus harness). Result over the 25-manifest corpus: **24 parse ok, 1 correctly rejected** (zero-canvas Wapenboek Beyeren); all known defects surface as report entries. Corpus fact: largest manifest is KW 129 A 10 Lancelotcompilatie at **484 canvases**.
 | # | Task | Depends on |
 |---|---|---|
 | 1.1 | Fetch manifest by URL (with `Api-User-Agent`-style politeness) or accept a dropped/pasted JSON file | — |
