@@ -326,9 +326,24 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                         <>
                           Found by signature:{' '}
                           {qidCandidates.map((c) => (
-                            <button key={c.qid} className="btn btn--quiet iiif-qid-pick" onClick={() => setQid(c.qid)}>
-                              {c.qid} — {c.label}
-                            </button>
+                            <span key={c.qid} className="iiif-qid-candidate">
+                              <button
+                                className="btn btn--quiet iiif-qid-pick"
+                                onClick={() => setQid(c.qid)}
+                                title="Use this item"
+                              >
+                                {qid.trim() === c.qid ? '✓ ' : ''}{c.qid}
+                              </button>
+                              {' '}
+                              <a
+                                href={`https://www.wikidata.org/wiki/${c.qid}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Open this item on Wikidata (new tab)"
+                              >
+                                {c.label} ↗
+                              </a>
+                            </span>
                           ))}
                         </>
                       )}
