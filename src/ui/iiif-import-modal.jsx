@@ -56,6 +56,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
 
   // selection (step 3)
   const [selected, setSelected] = React.useState(() => new Set());
+  // hover zoom in the gallery: { canvas, left, top } or null. The preview
+  // requests a larger IIIF rendition (700px) than the 400px tile thumbs.
+  const [hoverPreview, setHoverPreview] = React.useState(null);
 
   // pipeline (step 5)
   const abortRef = React.useRef({ current: false });
@@ -375,7 +378,22 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                     c.downscaled ? `Delivered downscaled to ~${target?.iiif.expectedWidth || c.expectedWidth}×${target?.iiif.expectedHeight || c.expectedHeight}px (25 MP cap)` : null,
                   ].filter(Boolean).join('\n');
                   return (
-                    <label key={c.index} className={`iiif-canvas${selected.has(c.index) ? ' iiif-canvas--on' : ''}`} title={tooltip}>
+                    <label
+                      key={c.index}
+                      className={`iiif-canvas${selected.has(c.index) ? ' iiif-canvas--on' : ''}`}
+                      title={tooltip}
+                      onMouseEnter={(e) => {
+                        const r = e.currentTarget.getBoundingClientRect();
+                        // Place the zoom panel beside the tile — right of it
+                        // when there's room, else left. Vertically clamped so
+                        // tall pages stay inside the viewport.
+                        const panelW = 440;
+                        const left = r.right + panelW + 20 < window.innerWidth ? r.right + 12 : Math.max(8, r.left - panelW - 12);
+                        const top = Math.max(8, Math.min(r.top, window.innerHeight - Math.min(window.innerHeight * 0.7, 640) - 8));
+                        setHoverPreview({ canvas: c, left, top });
+                      }}
+                      onMouseLeave={() => setHoverPreview(null)}
+                    >
                       <input
                         type="checkbox"
                         checked={selected.has(c.index)}
@@ -390,6 +408,18 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   );
                 })}
               </div>
+              {hoverPreview && (
+                <div className="iiif-hover-preview" style={{ left: hoverPreview.left, top: hoverPreview.top }} aria-hidden="true">
+                  <img
+                    src={hoverPreview.canvas.serviceId
+                      ? `${hoverPreview.canvas.serviceId}/full/700,/0/default.jpg`
+                      : hoverPreview.canvas.thumbUrl}
+                    alt=""
+                    onError={(e) => { if (e.target.src !== hoverPreview.canvas.thumbUrl) e.target.src = hoverPreview.canvas.thumbUrl; }}
+                  />
+                  <span className="iiif-hover-preview__label">{hoverPreview.canvas.label || `#${hoverPreview.canvas.index + 1}`}</span>
+                </div>
+              )}
             </div>
           )}
 

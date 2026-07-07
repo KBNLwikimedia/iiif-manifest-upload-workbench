@@ -8244,3 +8244,32 @@ body.col-resizing * { cursor: col-resize !important; }
   justify-content: flex-start;
   gap: 16px;
 }
+
+/* Gallery hover zoom: fixed-position panel with a larger IIIF rendition. */
+.iiif-hover-preview {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  background: var(--background-color-base, #fff);
+  border: 1px solid var(--border-color-base);
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+  padding: 6px;
+  max-width: 440px;
+}
+
+.iiif-hover-preview img {
+  display: block;
+  max-width: 428px;
+  max-height: 64vh;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.iiif-hover-preview__label {
+  display: block;
+  font-size: 11.5px;
+  color: var(--color-subtle);
+  padding: 5px 4px 1px;
+  text-align: center;
+}
