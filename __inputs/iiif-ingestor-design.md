@@ -114,7 +114,7 @@ After the loop the modal closes and the user is looking at the normal workbench 
 |---|---|---|---|
 | 0.1 | ~~CORS check dlc.services~~ | — | ✅ done, positive |
 | 0.2 | ~~Reference file wikitext + SDC~~ | — | ✅ done (see §2.3–2.4) |
-| 0.3 | **Best-practice mining** of `Category:Medieval manuscripts from Koninklijke Bibliotheek` (per `.prompt-page/prompt-page.txt`): sample 10–20 files across sub-categories, extract common wikitext/SDC patterns, confirm the Mandeville file is representative and not an outlier | — | The field-mapping table (Phase 3) is only as good as the target convention |
+| 0.3 | ~~Best-practice mining~~ ✅ **done 2026-07-07** — full findings in [`commons-best-practices.md`](commons-best-practices.md). Key outcomes: **license = `{{Licensed-PD-Art|PD-old-100-expired|Cc-zero}}`**; three template generations observed ({{Information}} → GWToolset {{Artwork}} → Pattypan {{Book}}, the {{Artwork}} generation being the richest — supports our Q3 choice); SDC core set on all KB files: P6216=Q19652, P195=Q1526131 (+P2868=Q29188408), P31=Q1250322+Q125191, P7482=Q74228490 (+P973 resolver URL, +P137 operator), P6243/P180/P921=manuscript Q-id; **P275 never used** (drop from Q5 set), P217 + captions absent everywhere (gaps our tool fills); category naming `<Common title> - <shelfmark>`; credit = `{{Institution:Koninklijke Bibliotheek}}` in the infobox **and** standalone `{{Koninklijke Bibliotheek}}` in source | — | The field-mapping table (Phase 3) is only as good as the target convention |
 | 0.4 | ~~Verify in-browser SHA-1~~ ✅ **done 2026-07-07**: WebCrypto `subtle.digest('SHA-1')` matches native hashing on all 3 sample images, 16 ms for a 20 MB blob; `aisha1=` round-trip against Commons works (all 3 samples: not yet on Commons) | — | Step 2 of the pipeline hinges on it |
 | 0.5 | ~~Confirm stash quota~~ ✅ **done 2026-07-07**: MediaWiki core has **no per-user stash count limit** — only `$wgUploadStashMaxAge` (the 48 h expiry). Real constraints for big imports: the 48 h window + Commons upload *rate* limits (sequential pipeline respects them); verify empirically with a real batch during Phase 4 testing | — | A 500-canvas manuscript must fit |
 | 0.6 | ~~Decide git/remote/deployment~~ → **execute**: `git init`, create public GitHub repo `iiif-commons-upload-workbench`, initial commit + push (decided in Q12; local-dev-first, no Toolforge yet) | — | Everything after Phase 0 wants version control |
@@ -215,13 +215,13 @@ Mark with `[x]`, add notes inline. ★ = my recommendation.
 - [ ] `{{CC-zero}}` — follow the manifest's `rights` field verbatim
 - [ ] `{{PD-old-70}}` — what the Mandeville exemplar uses (author died >70 y ago)
 - [x] ★ `{{PD-Art|PD-old-100-expired}}`-style / `{{Licensed-PD-Art|…|Cc-zero}}` combo — states both "work is PD" and "reproduction released CC0" (I'll confirm the exact best-practice template in Phase 0.3)
-- Notes: **DECIDED 2026-07-07** (exact template confirmed during Phase 0.3 research).
+- Notes: **DECIDED 2026-07-07**. Phase 0.3 research settled the exact call: **`{{Licensed-PD-Art|PD-old-100-expired|Cc-zero}}`** — KB IIIF images are photographs (EXIF: Canon EOS 5D II) so the PD-Art family applies (not PD-scan); `Licensed-PD-Art` records the KB's CC0 grant on the reproduction for jurisdictions that don't follow Bridgeman; `PD-old-100-expired` covers author-death + US status. See `commons-best-practices.md` §4.
 
 ### Q5. Structured-data scope for v1
 - [ ] Captions (nl/en) only — reuse what exists, zero new SDC code
 - [x] ★ Captions + core statements matching the exemplar: P6243 digital representation of, P180 depicts, P195 collection (+P217 qualifier), P6216 copyright status, P275 license, P7482 source of file
 - [ ] Everything incl. P4082 captured-with, P921 main subject
-- Notes: **DECIDED 2026-07-07: core statements in v1.**
+- Notes: **DECIDED 2026-07-07: core statements in v1.** Phase 0.3 refinement: **drop P275** (license — never used on PD works; P6216=Q19652 covers status) and match observed KB practice: P195 with qualifier P2868=Q29188408, P31=Q1250322+Q125191, P7482=Q74228490 with P973 (KB resolver URL) + P137 (operator) qualifiers. P217 and captions are absent from all existing KB files — our tool adds them as an improvement. See `commons-best-practices.md` §3/§5.
 
 ### Q6. Wikidata item for the manuscript (feeds P6243/P180/|Wikidata=)
 - [x] ★ Auto-lookup by signature via Wikidata SPARQL (P217 = "129 A 24"), with a manual override field in the wizard; blank if not found
