@@ -14,9 +14,10 @@
 // body). The license template is inlined separately. Categories become
 // [[Category:Foo]] lines.
 
-import { publishFromStash, addStructuredData } from './commons.js';
+import { publishFromStash, addStructuredData, createCategoryPage } from './commons.js';
 import { renderLicenseTemplate, isOwnWorkLicense } from '../licenses.js';
 import { renderTemplateBlock } from '../wikitext-templates.js';
+import { KB_PARENT_CATEGORY } from './iiif-map.js';
 
 // --- "Author = uploader" helpers (own-work uploads) ---
 //
@@ -288,6 +289,10 @@ export function buildSdcClaims(item, { selfUsername } = {}) {
 
 // --- Orchestrator ---
 
+// Per-session dedupe for pending-category creation: a 79-page bulk publish
+// must create the manuscript's category once, not once per file.
+const createdPendingCategories = new Set();
+
 // publishOne — commits one stash file to Commons.
 //
 // Options:
@@ -316,6 +321,23 @@ export async function publishOne(item, {
   const effectiveItem = resolvedTitle != null && resolvedTitle !== ''
     ? { ...item, title: String(resolvedTitle) }
     : item;
+
+  // IIIF import (Q8, revised): the per-manuscript category is created here —
+  // at publish time, right before the first file that uses it goes live —
+  // never at import time, so an abandoned import leaves nothing behind on
+  // Commons. Deduped per session; createonly makes racing calls harmless
+  // (articleexists counts as success). Failure is non-fatal: the file still
+  // publishes, the category is just a redlink the user can create by hand.
+  if (item.iiifPendingCategory && (item.categories || []).includes(item.iiifPendingCategory)
+      && !createdPendingCategories.has(item.iiifPendingCategory)) {
+    try {
+      await createCategoryPage(item.iiifPendingCategory, `[[Category:${KB_PARENT_CATEGORY}]]`);
+      createdPendingCategories.add(item.iiifPendingCategory);
+    } catch (e) {
+      console.warn('Pending category creation failed:', item.iiifPendingCategory, e);
+    }
+  }
+
   const filename = makeFinalFilename(effectiveItem, null);
   const wikitext = overrideWikitext != null
     ? String(overrideWikitext)

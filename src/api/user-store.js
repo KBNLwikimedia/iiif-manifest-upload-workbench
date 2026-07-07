@@ -419,6 +419,11 @@ const DRAFT_FIELDS = [
   // is the only preview that renders for stash rows; one short URL per
   // draft, gone when the draft is cleaned up after publish.
   'iiifThumbUrl',
+  // IIIF import (Q8): the per-manuscript category this row expects. The
+  // category page is created at PUBLISH time (never at import time) by
+  // publishOne; until then the categories-not-on-commons blocker treats
+  // this one name as will-be-created instead of blocking.
+  'iiifPendingCategory',
 ];
 
 export function pickDraftFields(item) {

@@ -710,6 +710,9 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
           const missing = cats.filter((c) => {
             const name = String(c || '').trim();
             if (!name) return false;
+            // IIIF imports (Q8): the row's pending category is created at
+            // publish time by publishOne — don't block publish on it.
+            if (name === row.iiifPendingCategory) return false;
             return resolved.get(name) === false;
           });
           const prevMissing = row.nonExistingCategories || [];

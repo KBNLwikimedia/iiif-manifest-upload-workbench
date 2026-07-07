@@ -49,6 +49,8 @@ function placeholderFromMapped(mapped) {
     // Persisted via the draft (DRAFT_FIELDS) so the preview survives reloads
     // — the stash's own thumb URLs are auth-blocked for <img> tags (OI-12).
     iiifThumbUrl: mapped.iiif.thumbUrl || null,
+    // Category to create at publish time (Q8) — never created at import.
+    iiifPendingCategory: mapped.iiifPendingCategory || null,
     issues: [],
     ...thumbColors(filename),
     // mapped prefills (all DRAFT_FIELDS-compatible):
@@ -166,6 +168,7 @@ export async function runIiifImport(mappedItems, {
         sha1: real.sha1 || sha1,
         thumburl: mapped.iiif.thumbUrl || real.thumburl,
         iiifThumbUrl: mapped.iiif.thumbUrl || null,
+        iiifPendingCategory: mapped.iiifPendingCategory || null,
         iiif: mapped.iiif,
         ...(existsOnCommons ? { existsOnCommons, issues: [...(real.issues || []), 'exists-on-commons'] } : {}),
       };

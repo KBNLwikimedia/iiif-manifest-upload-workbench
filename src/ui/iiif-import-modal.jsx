@@ -22,7 +22,7 @@ import { fetchManifest, parseManifestFile } from '../api/iiif.js';
 import { mapManifest } from '../api/iiif-map.js';
 import { findManuscriptItems } from '../api/wikidata.js';
 import { runIiifImport } from '../api/iiif-pipeline.js';
-import { categoryExists, createCategoryPage, searchCategories } from '../api/commons.js';
+import { categoryExists, searchCategories } from '../api/commons.js';
 import { KB_PARENT_CATEGORY } from '../api/iiif-map.js';
 import { DEMO_MODE } from '../config.js';
 
@@ -213,27 +213,30 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     abortRef.current = { current: false };
     setProgress({ done: 0, total: chosen.length });
 
-    // Create the home category first (Q8) — suggest → user accepted/edited
-    // → create. Skipped when it already exists or the user unticked it.
-    let catNote = null;
+    // Q8 revised: the category page is NOT created here. Import only tags
+    // each row with the pending category; publishOne creates the page right
+    // before the first file that uses it actually goes to Commons. Aborting
+    // or discarding an import therefore never leaves an empty category
+    // behind on Commons.
     const cat = category.replace(/^\s*Category\s*:\s*/i, '').trim();
-    if (cat && createCat && catExists !== true) {
-      try {
-        const res = await createCategoryPage(cat, `[[Category:${KB_PARENT_CATEGORY}]]`);
-        catNote = res.existed ? 'Category already existed.' : 'Category created.';
-      } catch (e) {
-        catNote = `Category creation failed: ${e.message} — publish will flag it (you can create it manually).`;
-      }
-    }
+    const pendingCategory = cat && createCat && catExists !== true ? cat : null;
+    const toImport = pendingCategory
+      ? chosen.map((it) => ({ ...it, iiifPendingCategory: pendingCategory }))
+      : chosen;
 
-    const result = await runIiifImport(chosen, {
+    const result = await runIiifImport(toImport, {
       onAddItems,
       onUpdateItem,
       onReplaceItem,
       onItemDone: (_r, _i) => setProgress((p) => ({ ...p, done: p.done + 1 })),
       abortRef: abortRef.current,
     });
-    setSummary({ ...result, catNote });
+    setSummary({
+      ...result,
+      catNote: pendingCategory
+        ? `Category “${pendingCategory}” will be created when you publish the first page.`
+        : null,
+    });
     setStep('done');
   };
 
@@ -415,7 +418,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                           ✚ This category does not exist yet.{' '}
                           <label className="iiif-check">
                             <input type="checkbox" checked={createCat} onChange={(e) => setCreateCat(e.target.checked)} />
-                            {' '}Create it (under “{KB_PARENT_CATEGORY}”) when the import starts
+                            {' '}Create it (under “{KB_PARENT_CATEGORY}”) when the first page is published
                           </label>
                         </>
                       )}
@@ -536,7 +539,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 </div>
               </div>
               <ul className="iiif-recap">
-                <li><strong>Category:</strong> {category}{catExists === true ? ' (exists)' : createCat ? ' (will be created)' : ' (must exist before publish!)'}</li>
+                <li><strong>Category:</strong> {category}{catExists === true ? ' (exists)' : createCat ? ' (created when you publish the first page)' : ' (must exist before publish!)'}</li>
                 <li><strong>License:</strong> <code>{mapping?.manuscript.license}</code></li>
                 <li><strong>Author:</strong> <code>{mapping?.manuscript.author}</code></li>
                 <li><strong>Wikidata:</strong> {qid.trim() || '— none —'}</li>
