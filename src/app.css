@@ -8197,5 +8197,18 @@ body.col-resizing * { cursor: col-resize !important; }
   display: flex;
   gap: 10px;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
+  margin-top: var(--spacing-50);
+}
+
+/* Both hero buttons share the anchor size (the row owns the top margin). */
+.empty-hero__actions .btn {
+  height: 40px;
+  padding: 0 var(--spacing-150);
+  font-size: var(--font-size-medium);
+  margin-top: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
