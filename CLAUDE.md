@@ -12,7 +12,11 @@ Maintainer of this fork: **Olaf Janssen** (KB, national library of the Netherlan
 
 ## The IIIF ingestor (current focus)
 
-**The approved design and build plan live in [`__inputs/iiif-ingestor-design.md`](__inputs/iiif-ingestor-design.md)** — read it before touching ingestor code. It contains the 6-phase roadmap (Phase 0 spikes → parser → wizard UI → mapping → pipeline → SDC → verify/ship) and the full decision log (all 14 design questions answered 2026-07-07). Highlights:
+**The approved design and build plan live in [`__inputs/iiif-ingestor-design.md`](__inputs/iiif-ingestor-design.md)** — read it before touching ingestor code. It contains the 6-phase roadmap (Phase 0 spikes → parser → wizard UI → mapping → pipeline → SDC → verify/ship) and the full decision log (all 14 design questions answered 2026-07-07).
+
+**Open issues, deferred decisions and known data defects are tracked in [`__inputs/open-issues.md`](__inputs/open-issues.md)** (stable `OI-nn` ids). Maintain it: add an entry the moment you defer something or spot a defect; on resolving one, move it to the *Closed* section with the commit that closed it — never silently delete. Check section A before starting any phase — it lists what that phase must absorb (e.g. OI-01 `formatDate()` truncation blocks Phase 5.2).
+
+Design highlights:
 
 - Manifest entry via **URL or dropped .json**; **IIIF Presentation 3.0 only** in v1.
 - Wikitext template: **`{{Artwork}}`** (best field-level match for the KB manifest metadata). License: PD-Art-style combo (exact template settled in Phase 0.3 research).

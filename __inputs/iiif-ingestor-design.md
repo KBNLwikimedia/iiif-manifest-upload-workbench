@@ -6,6 +6,7 @@
 - Date: 2026-07-07
 - Inputs read: `__inputs/conversation.md` (product vision, minus the Flask approach), `__inputs/manifests/` (25 live KB manifests), the Upload Workbench source (`src/`), `CLAUDE.md` (architecture, lessons learned, API-politeness rules), and the live Commons reference file [De reizen van Jan van Mandeville - KB 131 B 14 - 03.jpg](https://commons.wikimedia.org/wiki/File:De_reizen_van_Jan_van_Mandeville_-_KB_131_B_14_-_03.jpg) (wikitext **and** structured data, fetched via API).
 - Status: ✅ **APPROVED 2026-07-07** — all 14 questionnaire items decided by Olaf (answers recorded inline below); the 6-phase build plan is approved as the roadmap. Next action: Phase 0.
+- Open issues / deferred items / upstream data defects: tracked with stable ids in **[`open-issues.md`](open-issues.md)** — check its section A before starting a phase.
 
 ## Decision log (summary)
 
