@@ -8212,3 +8212,23 @@ body.col-resizing * { cursor: col-resize !important; }
   align-items: center;
   gap: 6px;
 }
+
+/* Confirm-step full filename list */
+.iiif-recap-files {
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.iiif-filelist {
+  margin-top: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color-base);
+  border-radius: 6px;
+  padding: 6px 10px;
+  background: var(--background-color-neutral-subtle, #f8f9fa);
+  font-family: var(--font-family-monospace, monospace);
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: nowrap;
+}

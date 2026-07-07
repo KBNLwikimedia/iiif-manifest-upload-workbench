@@ -385,8 +385,15 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
           {step === 'confirm' && (
             <div className="iiif-step-confirm">
               <p><strong>{chosen.length}</strong> pages → your upload stash, then review &amp; publish from the table as usual.</p>
+              <div className="iiif-recap-files">
+                <strong>Target filenames ({chosen.length}):</strong>
+                <div className="iiif-filelist" role="list">
+                  {chosen.map((it) => (
+                    <div key={it.iiif.canvasIndex} role="listitem">File:{it.iiif.targetFilename}</div>
+                  ))}
+                </div>
+              </div>
               <ul className="iiif-recap">
-                <li><strong>Filenames:</strong> {chosen[0] ? `File:${chosen[0].iiif.targetFilename}` : '—'}{chosen.length > 1 ? ` … File:${chosen[chosen.length - 1].iiif.targetFilename}` : ''}</li>
                 <li><strong>Category:</strong> {category}{catExists === true ? ' (exists)' : createCat ? ' (will be created)' : ' (must exist before publish!)'}</li>
                 <li><strong>License:</strong> <code>{mapping?.manuscript.license}</code></li>
                 <li><strong>Author:</strong> <code>{mapping?.manuscript.author}</code></li>
