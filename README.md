@@ -21,7 +21,7 @@ Paste a manifest URL (or drop the JSON), review the extracted metadata and page 
 
 This is a fork of [**Upload Workbench**](https://gitlab.wikimedia.org/daanvr/upload-workbench) by [Daanvr](https://gitlab.wikimedia.org/daanvr) (forked at v0.39.0), which provides the entire publish side: the spreadsheet UI, OAuth, stash management, wikitext templates, structured data, and bulk publish. This fork adds the IIIF ingestion funnel on top. The upstream tool lives at <https://upload-workbench.toolforge.org/>.
 
-Maintainer of this fork: **Olaf Janssen** (KB — [User:OlafJanssen](https://commons.wikimedia.org/wiki/User:OlafJanssen), GitHub [`ookgezellig`](https://github.com/ookgezellig)).
+Maintainer of this fork: **Olaf Janssen** (KB — [User:OlafJanssen](https://commons.wikimedia.org/wiki/User:OlafJanssen), GitHub org [`KBNLwikimedia`](https://github.com/KBNLwikimedia)).
 
 ## Tech stack
 

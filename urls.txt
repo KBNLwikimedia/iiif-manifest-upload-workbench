@@ -1,5 +1,5 @@
 # This fork (IIIF Commons Upload Workbench)
-https://github.com/ookgezellig/iiif-commons-upload-workbench --> code (public repo; created in Phase 0.6)
+https://github.com/KBNLwikimedia/iiif-commons-upload-workbench --> code (public repo)
 (no live deployment yet — local dev only, see CLAUDE.md)
 
 # Upstream (Upload Workbench by Daanvr, forked at v0.39.0)

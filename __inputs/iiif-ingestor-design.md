@@ -22,7 +22,7 @@
 | Q9 | **Accept the 25 MP** `full/max` delivery cap |
 | Q10 | Duplicates: **stash anyway and flag** (`exists-on-commons` chip); user decides per file |
 | Q11 | Drafts **persist to the Metadata.json user-store** (batched/debounced writes) |
-| Q12 | **Independent fork on GitHub**: repo `iiif-commons-upload-workbench`, **public**, under Olaf's account. **Local dev first** (`VITE_OWNER_ACCESS_TOKEN`); own Toolforge tool + OAuth consumer deferred until the ingestor works end-to-end |
+| Q12 | **Independent fork on GitHub**: repo `KBNLwikimedia/iiif-commons-upload-workbench` (org), **public**. **Local dev first** (`VITE_OWNER_ACCESS_TOKEN`); own Toolforge tool + OAuth consumer deferred until the ingestor works end-to-end |
 | Q13 | **Dutch verbatim + machine-drafted English**, marked for review before publish |
 | Q14 | Up to **500+ canvases** per manifest; UI name **"Import IIIF manifest"**; thin-milestone question revisited after Phase 1 |
 
@@ -258,11 +258,11 @@ Mark with `[x]`, add notes inline. ★ = my recommendation.
 
 ### Q12. Repository & deployment (blocking practical question)
 This folder is **not a git repository** (no `.git`), and it's a renamed copy of Daanvr's `upload-workbench`. Before writing code I need to know the intent:
-- [x] Independent fork: `git init` here, publish to **GitHub** (`ookgezellig/…`?), own Toolforge tool + **own OAuth consumer registration** later
+- [x] Independent fork: `git init` here, publish to **GitHub** (org `KBNLwikimedia`), own Toolforge tool + **own OAuth consumer registration** later
 - [ ] Independent fork on **Wikimedia GitLab**
 - [ ] Aim to contribute upstream to `daanvr/upload-workbench` via MR (then we should develop against a proper clone + branch, and follow the Phabricator task workflow from CLAUDE.md)
 - [ ] Just prototype locally for now (`git init` for safety, decide remote later)
-- Notes: **DECIDED 2026-07-07: independent fork on GitHub** — repo name `iiif-commons-upload-workbench`, **public**, under Olaf's account. **Deployment: local dev first** (`npm run dev` + `VITE_OWNER_ACCESS_TOKEN` against the real Commons API); own Toolforge tool + OAuth consumer registration deferred until the ingestor works end-to-end.
+- Notes: **DECIDED 2026-07-07: independent fork on GitHub** — repo `KBNLwikimedia/iiif-commons-upload-workbench` (org account), **public**. **Deployment: local dev first** (`npm run dev` + `VITE_OWNER_ACCESS_TOKEN` against the real Commons API); own Toolforge tool + OAuth consumer registration deferred until the ingestor works end-to-end.
 
 ### Q13. Description/caption languages
 - [ ] Dutch verbatim from the manifest (`{{nl|…}}` + nl caption); English field left empty for you to fill manually where wanted

@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 It is a **fork of [upload-workbench](https://gitlab.wikimedia.org/daanvr/upload-workbench)** by Daanvr (Daan van Ramshorst), forked at v0.39.0. The upstream tool is a general-purpose bulk-upload cockpit (stash + history as a spreadsheet); this fork adds the IIIF ingestion funnel on top of it. Architecture, most modules, and the lessons learned below are inherited from upstream and still apply.
 
-Maintainer of this fork: **Olaf Janssen** (KB, national library of the Netherlands — Wikimedia user [OlafJanssen](https://commons.wikimedia.org/wiki/User:OlafJanssen), GitHub `ookgezellig`).
+Maintainer of this fork: **Olaf Janssen** (KB, national library of the Netherlands — Wikimedia user [OlafJanssen](https://commons.wikimedia.org/wiki/User:OlafJanssen), GitHub org [`KBNLwikimedia`](https://github.com/KBNLwikimedia)).
 
 ## The IIIF ingestor (current focus)
 
@@ -35,7 +35,7 @@ Planned new modules (ESM, not window-globals): `src/api/iiif.js` (fetch/validate
 
 | Concern | Location |
 |---|---|
-| Source code | GitHub, public repo `iiif-commons-upload-workbench` under `ookgezellig` (Phase 0.6 creates it — until then this folder may not yet be a git repo) |
+| Source code | GitHub, public repo [`KBNLwikimedia/iiif-commons-upload-workbench`](https://github.com/KBNLwikimedia/iiif-commons-upload-workbench) |
 | Upstream | `gitlab.wikimedia.org/daanvr/upload-workbench` (GitLab; live at https://upload-workbench.toolforge.org/). This fork does **not** push there. |
 | Deployment | **Local dev only for now** (`npm run dev` + `VITE_OWNER_ACCESS_TOKEN`). Own Toolforge tool + own OAuth consumer registration are deferred until the ingestor works end-to-end. Upstream's `.gitlab-ci.yml` is archived at `docs/upstream-gitlab-ci.yml` for reference — do not resurrect it as-is; it rsyncs to *Daanvr's* Toolforge project. |
 | Issue tracking | GitHub issues on the fork repo (upstream uses Phabricator `#tool-upload-workbench` — that board is for upstream work only, don't file fork tasks there) |
