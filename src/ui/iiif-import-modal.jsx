@@ -560,7 +560,16 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                     <p className="iiif-hint">
                       {catExists === null && category.trim() && 'Checking Commons…'}
                       {catExists === true && (
-                        <span className="iiif-cat-exists">✔ This category already exists on Commons — files will be added to it.</span>
+                        <span className="iiif-cat-exists">
+                          ✔ This category{' '}
+                          <a
+                            href={`https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(category.replace(/^\s*Category\s*:\s*/i, '').trim().replace(/ /g, '_'))}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Open the category on Commons (new tab)"
+                          >already exists on Commons ↗</a>
+                          {' '}— files will be added to it.
+                        </span>
                       )}
                       {catExists === false && (
                         <span className="iiif-cat-missing">✚ This category does not exist yet — you will be asked to approve its creation in the final step.</span>
