@@ -1,7 +1,7 @@
 // Main app — Upload Workbench for Wikimedia Commons
 
 import React from 'react';
-import { DropZone, openFilePicker } from './ui/dropzone.jsx';
+import { DropZone } from './ui/dropzone.jsx';
 import { EmptyHero } from './ui/empty-hero.jsx';
 import { PublishModal, cleanupAfterPublish } from './ui/publish-modal.jsx';
 import { BulkPublishModal } from './ui/bulk-publish-modal.jsx';
@@ -1611,10 +1611,7 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
           About
         </button>
         <SaveStatus />
-        <button className="btn btn--progressive" onClick={openFilePicker}>
-          <Icon name="upload" size={16} /> Browse files
-        </button>
-        <button className="btn" onClick={() => setIiifImportOpen(true)} title="Import all pages of a IIIF manifest into your stash">
+        <button className="btn btn--progressive" onClick={() => setIiifImportOpen(true)} title="Import all pages of a IIIF manifest into your stash">
           <Icon name="upload" size={16} /> Import IIIF manifest
         </button>
         <UserMenu user={user} onLogout={onLogout} />

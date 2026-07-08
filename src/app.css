@@ -8236,7 +8236,7 @@ body.col-resizing * { cursor: col-resize !important; }
   margin-top: 12px;
 }
 
-/* Empty-hero action row (Browse files + Import IIIF manifest) */
+/* Empty-hero action row (Import IIIF manifest) */
 .empty-hero__actions {
   display: flex;
   gap: 10px;
