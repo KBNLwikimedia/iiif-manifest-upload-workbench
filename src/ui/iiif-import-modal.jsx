@@ -270,6 +270,14 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
       return next;
     });
   };
+  const invertSelection = () => {
+    if (!manifest) return;
+    setSelected((prev) => {
+      const next = new Set();
+      for (const c of manifest.canvases) if (!prev.has(c.index)) next.add(c.index);
+      return next;
+    });
+  };
 
   return (
     <div className="modal-backdrop" onClick={step === 'running' ? undefined : onClose}>
@@ -473,6 +481,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               <div className="iiif-select-bar">
                 <button className="btn btn--quiet" onClick={() => toggleAll(true)}>Select all</button>
                 <button className="btn btn--quiet" onClick={() => toggleAll(false)}>Select none</button>
+                <button className="btn btn--quiet" onClick={invertSelection}>Invert selection</button>
                 {manifest.downscaledCount > 0 && (
                   <span className="iiif-hint">A “25 MP” tag means that page is so large it arrives slightly smaller (still high-res).</span>
                 )}
