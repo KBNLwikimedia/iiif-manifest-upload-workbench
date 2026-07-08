@@ -530,6 +530,23 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       <span className="iiif-canvas__label">
                         {c.label || `#${c.index + 1}`}
                       </span>
+                      <span className="iiif-canvas__meta">
+                        {c.width > 0 && c.height > 0 && (
+                          <span className="iiif-canvas__dims" title="Native resolution of the source image on the IIIF server">
+                            {c.width} × {c.height} px
+                          </span>
+                        )}
+                        {c.fullResUrl && (
+                          <a
+                            className="iiif-canvas__fullres"
+                            href={c.fullResUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            title="Open the full-resolution image on the IIIF server (new tab)"
+                          >full-res ↗</a>
+                        )}
+                      </span>
                     </label>
                   );
                 })}

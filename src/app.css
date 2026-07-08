@@ -8404,3 +8404,24 @@ body.col-resizing * { cursor: col-resize !important; }
   color: var(--color-destructive, #b32424);
   font-weight: 700;
 }
+
+/* Per-tile dimensions + full-res link (below the filename label) */
+.iiif-canvas__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+  padding: 0 6px 5px;
+  font-size: 10px;
+  color: var(--color-subtle);
+}
+
+.iiif-canvas__dims {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.iiif-canvas__fullres {
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
