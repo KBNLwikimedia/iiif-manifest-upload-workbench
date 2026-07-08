@@ -301,7 +301,7 @@ export function parseManifest(json, { sourceUrl = null } = {}) {
   }
   if (!metadata.length) report.warn('no-metadata', 'Manifest has no metadata block at all.');
   if (placeholderCount) {
-    report.warn('placeholder-metadata', `${placeholderCount} metadata field(s) contain placeholder values ("Lorem ipsum", "Onbekend", "-", …) and were ignored.`);
+    report.warn('placeholder-metadata', `${placeholderCount} metadata field(s) look like placeholder values ("Lorem ipsum", "Onbekend", "-", …). They're imported and flagged with ⚠️ below — use the ✕ to drop any you don't want.`);
   }
 
   // --- canvases ---

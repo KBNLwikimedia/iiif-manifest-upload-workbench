@@ -8062,6 +8062,62 @@ body.col-resizing * { cursor: col-resize !important; }
   padding: 3px 0;
 }
 
+/* First-page preview thumbnail in the review step. */
+.iiif-review-thumb {
+  float: right;
+  margin: 0 0 8px 14px;
+}
+.iiif-review-thumb img {
+  display: block;
+  max-width: 150px;
+  max-height: 200px;
+  border: 1px solid var(--border-color-base);
+  border-radius: 4px;
+  background: var(--background-color-neutral-subtle, #f8f9fa);
+}
+
+/* Placeholder-field flag (⚠️) + deselect toggle (✕) in the passport. */
+.iiif-field-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+.iiif-field-flag__warn {
+  font-size: 12px;
+  cursor: help;
+}
+.iiif-field-flag__toggle {
+  border: 1px solid var(--border-color-base);
+  background: var(--background-color-neutral-subtle, #f8f9fa);
+  color: var(--color-subtle);
+  border-radius: 4px;
+  width: 18px;
+  height: 18px;
+  line-height: 1;
+  padding: 0;
+  font-size: 11px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.iiif-field-flag__toggle:hover {
+  border-color: var(--color-destructive, #d33);
+  color: var(--color-destructive, #d33);
+}
+.iiif-passport__row--excluded th,
+.iiif-passport__row--excluded .iiif-passport__value {
+  color: var(--color-subtle);
+  text-decoration: line-through;
+}
+.iiif-passport__row--excluded .iiif-field-flag__toggle {
+  border-color: var(--color-progressive, #36c);
+  color: var(--color-progressive, #36c);
+  text-decoration: none;
+}
+
 .iiif-settings input[type="text"],
 .iiif-settings input[type="url"] {
   width: 100%;

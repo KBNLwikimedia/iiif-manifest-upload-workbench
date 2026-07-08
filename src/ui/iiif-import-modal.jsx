@@ -75,6 +75,18 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // parse result
   const [parsed, setParsed] = React.useState(null); // { ok, report, manifest }
 
+  // Metadata fields the user has excluded from processing (keyed by label).
+  // Placeholder-looking fields ("Lorem ipsum", "Onbekend", "-", …) are still
+  // imported by default but flagged in the passport; this lets the user drop
+  // the junk ones so they don't reach the mapped wikitext/SDC.
+  const [excludedFields, setExcludedFields] = React.useState(() => new Set());
+  const toggleExcludedField = (label) =>
+    setExcludedFields((prev) => {
+      const next = new Set(prev);
+      if (next.has(label)) next.delete(label); else next.add(label);
+      return next;
+    });
+
   // mapping settings (step 2, editable)
   const [title, setTitle] = React.useState('');
   const [category, setCategory] = React.useState('');
@@ -167,6 +179,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     catImmediateRef.current = true; // check the derived category without debounce
     setCategory(manuscript.categoryName);
     setSelected(new Set(result.manifest.canvases.map((c) => c.index)));
+    setExcludedFields(new Set());
     setQid('');
     setQidCandidates(null);
     setCatExists(null);
@@ -217,8 +230,18 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
 
   const mapping = React.useMemo(() => {
     if (!parsed?.manifest) return null;
-    return mapManifest(parsed.manifest, { wikidataQid: qid.trim() || null });
-  }, [parsed, qid]); // user-edited title/category are applied in effectiveItems below
+    const m = parsed.manifest;
+    // Placeholder-flagged fields are excluded from the parser's `fields` map;
+    // re-include them here (they're imported by default, shown with ⚠️) unless
+    // the user deselected them via the ✕. Non-placeholder values keep priority.
+    const fields = { ...m.fields };
+    for (const md of m.metadata) {
+      if (md.placeholder && md.key && md.value && !excludedFields.has(md.label) && !(md.key in fields)) {
+        fields[md.key] = md.value;
+      }
+    }
+    return mapManifest({ ...m, fields }, { wikidataQid: qid.trim() || null });
+  }, [parsed, qid, excludedFields]); // user-edited title/category are applied in effectiveItems below
 
   // Apply user-edited title/category on top of the mapped items without
   // re-deriving everything: filenames and captions substitute the derived
@@ -396,6 +419,18 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
 
               {manifest && mapping && (
                 <>
+                  {/* First-page preview thumbnail (public IIIF thumb). */}
+                  {manifest.canvases[0]?.thumbUrl && (
+                    <figure className="iiif-review-thumb">
+                      <img
+                        src={manifest.canvases[0].thumbUrl}
+                        alt={`First page of ${manifest.label || 'the manuscript'}`}
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                      />
+                    </figure>
+                  )}
+
                   {/* manuscript passport */}
                   <table className="iiif-passport">
                     <tbody>
@@ -408,12 +443,41 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                           <td>{linkifyValue(manifest.summary)}</td>
                         </tr>
                       )}
-                      {manifest.metadata.filter((m) => !m.placeholder && m.value).map((m, i) => (
-                        <tr key={i}>
-                          <th>{m.label}</th>
-                          <td>{linkifyValue(m.value.length > 220 ? `${m.value.slice(0, 220)}…` : m.value)}</td>
-                        </tr>
-                      ))}
+                      {/* All fields with a value are shown. Placeholder-looking
+                          ones ("Lorem ipsum", "Onbekend", "-", …) get a ⚠️ and a
+                          ✕ to drop them from the import (OI: don't silently
+                          ignore — flag + let the user decide). */}
+                      {manifest.metadata.filter((m) => m.value).map((m, i) => {
+                        const excluded = excludedFields.has(m.label);
+                        return (
+                          <tr key={i} className={excluded ? 'iiif-passport__row--excluded' : ''}>
+                            <th>{m.label}</th>
+                            <td>
+                              <span className="iiif-passport__value">
+                                {linkifyValue(m.value.length > 220 ? `${m.value.slice(0, 220)}…` : m.value)}
+                              </span>
+                              {m.placeholder && (
+                                <span className="iiif-field-flag">
+                                  <span
+                                    className="iiif-field-flag__warn"
+                                    title="This looks like a placeholder or 'unknown' value — review it before publishing."
+                                    aria-label="Possible placeholder value"
+                                  >⚠️</span>
+                                  <button
+                                    type="button"
+                                    className="iiif-field-flag__toggle"
+                                    onClick={() => toggleExcludedField(m.label)}
+                                    title={excluded
+                                      ? 'Include this field in the import again'
+                                      : 'Drop this field from the import (e.g. a "Lorem ipsum" placeholder)'}
+                                    aria-pressed={excluded}
+                                  >{excluded ? '↺' : '✕'}</button>
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
 
