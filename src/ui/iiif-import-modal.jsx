@@ -487,7 +487,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 <button className="btn btn--quiet" onClick={() => toggleAll(false)}>Select none</button>
                 <button className="btn btn--quiet" onClick={invertSelection}>Invert selection</button>
                 {manifest.downscaledCount > 0 && (
-                  <span className="iiif-hint">A “25 MP” tag means that page is so large it arrives slightly smaller (still high-res).</span>
+                  <span className="iiif-hint">A “&gt;25 MP” tag means that page is so large it arrives slightly smaller (still high-res).</span>
                 )}
               </div>
               <div className="iiif-gallery">
@@ -525,7 +525,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       />
                       <img src={c.thumbUrl} alt={c.label || `canvas ${c.index + 1}`} loading="lazy" />
                       {c.downscaled && (
-                        <em className="iiif-canvas__badge" title="This page is larger than 25 megapixels, so it arrives slightly smaller (still high-res).">25 MP</em>
+                        <em className="iiif-canvas__badge" title="This page is larger than 25 megapixels, so it arrives slightly smaller (still high-res).">&gt;25 MP</em>
                       )}
                       <span className="iiif-canvas__label">
                         {c.label || `#${c.index + 1}`}
