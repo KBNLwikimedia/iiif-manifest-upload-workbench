@@ -128,6 +128,10 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
 
   // pipeline (step 5)
   const abortRef = React.useRef({ current: false });
+  // OI-30: token the async Q-id lookup so a slow lookup for an earlier
+  // manifest can't stamp its result onto a later one (load A, Back, load B →
+  // A resolves last). Bumped on each parse and invalidated on unmount.
+  const qidLookupRef = React.useRef(0);
   const [progress, setProgress] = React.useState({ done: 0, total: 0 });
   const [summary, setSummary] = React.useState(null);
 
@@ -150,6 +154,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     };
   }, [onClose, step]);
 
+  // OI-30: invalidate any in-flight Q-id lookup when the wizard unmounts.
+  React.useEffect(() => () => { qidLookupRef.current = -1; }, []);
+
   // --- step 1 → 2: parse ---------------------------------------------------
 
   const acceptParse = (result) => {
@@ -166,12 +173,18 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     setError(null);
     setStep('review');
     // Fire the Q-id auto-lookup + category existence check (best-effort).
+    // OI-30: guard with a per-parse token so a superseded lookup (user loaded
+    // another manifest meanwhile) can't overwrite the current candidates/Q-id,
+    // and only auto-fill when the field is still empty (never clobber a value
+    // the user typed while the lookup was in flight).
+    const myLookup = ++qidLookupRef.current;
     findManuscriptItems(manuscript.signature)
       .then((hits) => {
+        if (qidLookupRef.current !== myLookup) return;
         setQidCandidates(hits);
-        if (hits.length === 1) setQid(hits[0].qid);
+        if (hits.length === 1) setQid((q) => q || hits[0].qid);
       })
-      .catch(() => setQidCandidates([]));
+      .catch(() => { if (qidLookupRef.current === myLookup) setQidCandidates([]); });
     // category existence + suggestions run in the debounced effect above
   };
 
