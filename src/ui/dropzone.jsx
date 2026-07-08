@@ -72,7 +72,7 @@ async function lookupExistingOnCommons(sha1) {
   }
 }
 
-export function DropZone({ onAddItems, onUpdateItem, onReplaceItem }) {
+export function DropZone({ onAddItems, onUpdateItem, onReplaceItem, onManifestFile }) {
   const inputRef = React.useRef();
   const [overlay, setOverlay] = React.useState(false);
   const dragDepthRef = React.useRef(0); // counter so nested children don't toggle off
@@ -83,6 +83,21 @@ export function DropZone({ onAddItems, onUpdateItem, onReplaceItem }) {
   // batch one file at a time (Commons rate-limits parallel uploads, and stash
   // thumbnails generated server-side benefit from one-at-a-time).
   const enqueue = React.useCallback(async (files) => {
+    // 0) Route dropped IIIF manifest JSON files to the import wizard instead
+    //    of stashing them as media. The wizard validates that they are
+    //    genuine Presentation 3.0 manifests (and reports if not). A .json
+    //    almost never belongs in the media stash, so pulling it out here is
+    //    safe; any additional JSONs beyond the first are ignored (one
+    //    manifest per wizard run).
+    if (onManifestFile) {
+      const manifests = files.filter((f) => /\.json$/i.test(f.name) || f.type === 'application/json');
+      if (manifests.length) {
+        onManifestFile(manifests[0]);
+        files = files.filter((f) => !manifests.includes(f));
+        if (!files.length) return;
+      }
+    }
+
     // 1) Build placeholder rows for every dropped file and prepend them all
     //    in one shot. This is the "10 rows appear immediately" guarantee from
     //    T425873 — no awaiting the CSRF round-trip first.
@@ -166,7 +181,7 @@ export function DropZone({ onAddItems, onUpdateItem, onReplaceItem }) {
         onUpdateItem(temp.id, { status: 'upload-error', errorMessage: e.message, progress: 0 });
       }
     }
-  }, [onAddItems, onUpdateItem, onReplaceItem]);
+  }, [onAddItems, onUpdateItem, onReplaceItem, onManifestFile]);
 
   React.useEffect(() => {
     const isFiles = (e) => e.dataTransfer?.types?.includes?.('Files');
@@ -236,7 +251,7 @@ export function DropZone({ onAddItems, onUpdateItem, onReplaceItem }) {
           <div className="dropzone-overlay__panel">
             <div className="dropzone-overlay__icon"><Icon name="upload" size={48} /></div>
             <h2 className="dropzone-overlay__title">Drop to upload</h2>
-            <p className="dropzone-overlay__hint">Files land in your stash, ready to enrich and publish.</p>
+            <p className="dropzone-overlay__hint">Images land in your stash; a IIIF manifest <code>.json</code> opens the import wizard.</p>
           </div>
         </div>
       )}

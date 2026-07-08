@@ -1164,6 +1164,9 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
   // "Import IIIF manifest" wizard (design Phase 2) — feeds the same
   // add/update/replace callbacks as the drag-drop uploader below.
   const [iiifImportOpen, setIiifImportOpen] = React.useState(false);
+  // A manifest .json dropped onto the app opens the wizard pre-loaded.
+  const [pendingManifestFile, setPendingManifestFile] = React.useState(null);
+  const openManifestFile = (file) => { setPendingManifestFile(file); setIiifImportOpen(true); };
 
   // "Clear stash" confirmation. There is no MediaWiki API to delete stash
   // entries server-side (verified against the Commons action list), so
@@ -2137,12 +2140,14 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
       <DropZone
         onAddItems={addUploadItems}
         onUpdateItem={updateUploadItem}
-        onReplaceItem={replaceUploadItem} />
+        onReplaceItem={replaceUploadItem}
+        onManifestFile={openManifestFile} />
 
       {/* IIIF manifest import wizard */}
       {iiifImportOpen && (
         <IiifImportModal
-          onClose={() => setIiifImportOpen(false)}
+          onClose={() => { setIiifImportOpen(false); setPendingManifestFile(null); }}
+          initialFile={pendingManifestFile}
           onAddItems={addUploadItems}
           onUpdateItem={updateUploadItem}
           onReplaceItem={replaceUploadItem}

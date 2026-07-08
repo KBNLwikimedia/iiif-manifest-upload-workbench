@@ -64,7 +64,7 @@ const STEP_TITLES = {
   done: 'Import finished',
 };
 
-export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceItem, onEnsureArtworkTemplate }) {
+export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceItem, onEnsureArtworkTemplate, initialFile }) {
   const [step, setStep] = React.useState('input');
   const [url, setUrl] = React.useState('');
   const [busy, setBusy] = React.useState(false);
@@ -113,6 +113,13 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   const abortRef = React.useRef({ current: false });
   const [progress, setProgress] = React.useState({ done: 0, total: 0 });
   const [summary, setSummary] = React.useState(null);
+
+  // When opened via a dropped .json manifest, parse it immediately so the
+  // user lands on the validation/review step. Runs once on mount.
+  React.useEffect(() => {
+    if (initialFile) loadFile(initialFile);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Esc closes (except mid-run — abort first); lock body scroll while open.
   React.useEffect(() => {
