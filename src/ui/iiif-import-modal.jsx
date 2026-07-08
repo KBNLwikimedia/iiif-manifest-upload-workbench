@@ -243,7 +243,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     return mapManifest({ ...m, fields }, { wikidataQid: qid.trim() || null });
   }, [parsed, qid, excludedFields]); // user-edited title/category are applied in effectiveItems below
 
-  // Review-step preview thumbs: the first page (leftmost) plus up to two
+  // Review-step preview thumbs: the first page (leftmost) plus up to three
   // random other pages. Memoized on the parse result so the random picks are
   // stable while the user edits title/category (no reshuffle per keystroke);
   // random-per-manifest-load is fine — it's a visual spot check.
@@ -252,10 +252,10 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     if (!canvases.length) return [];
     const [first, ...pool] = canvases;
     const picks = [];
-    while (picks.length < 2 && pool.length) {
+    while (picks.length < 3 && pool.length) {
       picks.push(...pool.splice(Math.floor(Math.random() * pool.length), 1));
     }
-    picks.sort((a, b) => a.index - b.index); // random pair in page order
+    picks.sort((a, b) => a.index - b.index); // random picks in page order
     return [first, ...picks];
   }, [parsed]);
 
@@ -440,7 +440,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               {manifest && mapping && (
                 <>
                   {/* Preview thumbnails (public IIIF thumbs): the first page
-                      leftmost, plus up to two random other pages — a quick
+                      leftmost, plus up to three random other pages — a quick
                       visual sanity check that this is the right manuscript. */}
                   {previewThumbs.length > 0 && (
                     <div className="iiif-review-thumbs">

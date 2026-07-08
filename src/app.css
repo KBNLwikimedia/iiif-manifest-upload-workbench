@@ -8062,7 +8062,7 @@ body.col-resizing * { cursor: col-resize !important; }
   padding: 3px 0;
 }
 
-/* Preview thumbnails in the review step: first page leftmost + up to two
+/* Preview thumbnails in the review step: first page leftmost + up to three
    random other pages, in one right-floated row. */
 .iiif-review-thumbs {
   float: right;
