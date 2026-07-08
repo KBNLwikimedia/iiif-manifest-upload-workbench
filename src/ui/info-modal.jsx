@@ -100,7 +100,6 @@ export default function InfoModal({ onClose }) {
               <li><a href={GITHUB_CHANGELOG} target="_blank" rel="noopener noreferrer"><Icon name="external" size={14} /> Changelog</a></li>
               <li><a href={COMMONS_CATEGORY} target="_blank" rel="noopener noreferrer"><Icon name="image" size={14} /> Files uploaded with this tool (on Commons)</a></li>
               <li><a href={OAUTH_DOCS} target="_blank" rel="noopener noreferrer"><Icon name="external" size={14} /> OAuth registration docs</a></li>
-              <li><a href={UPSTREAM} target="_blank" rel="noopener noreferrer"><Icon name="external" size={14} /> Upstream project (Upload Workbench, GitLab)</a></li>
             </ul>
           </Section>
         </div>

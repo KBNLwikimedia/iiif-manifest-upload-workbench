@@ -4339,6 +4339,15 @@ body.col-resizing * { cursor: col-resize !important; }
   padding: 18px 20px 12px;
   border-bottom: 1px solid var(--border-color-muted);
 }
+/* IIIF app icon, top-left of every modal header (branding). */
+.modal__head::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  margin-top: 1px;
+  background: url('/app-logo.png') center / contain no-repeat;
+}
 .modal__head > div { flex: 1; min-width: 0; }
 .modal__title { font-size: 17px; font-weight: 600; margin: 0; }
 .modal__sub { margin: 4px 0 0; font-size: 13px; color: var(--color-subtle); line-height: 1.4; }
