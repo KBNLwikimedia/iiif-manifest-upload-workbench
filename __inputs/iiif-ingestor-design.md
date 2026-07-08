@@ -27,6 +27,8 @@
 | Q13 | **Dutch verbatim + machine-drafted English**, marked for review before publish |
 | Q14 | Up to **500+ canvases** per manifest; UI name **"Import IIIF manifest"**; thin-milestone question revisited after Phase 1 |
 
+> **Update 2026-07-08:** the repo slug in Q12/task 0.6 (`iiif-commons-upload-workbench`) was renamed to **`iiif-manifest-upload-workbench`** to match the tool name *IIIF Manifest Upload Workbench*. The entries above are left as originally decided; the repo (GitHub + local + `package.json`) now uses the new slug. GitHub keeps permanent redirects from the old URL.
+
 ---
 
 ## 1. Why this slots in cleanly: what already exists

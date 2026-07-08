@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-**IIIF Commons Upload Workbench** is a frontend-only React app that ingests **IIIF Presentation manifests** (starting with the KB's medieval manuscripts) and turns them into **Wikimedia Commons uploads**: manifest in → metadata parsed → full-res images derived → items land in a spreadsheet-style workbench → prefilled `{{Artwork}}` wikitext + structured data → review → publish.
+**IIIF Manifest Upload Workbench** is a frontend-only React app that ingests **IIIF Presentation manifests** (starting with the KB's medieval manuscripts) and turns them into **Wikimedia Commons uploads**: manifest in → metadata parsed → full-res images derived → items land in a spreadsheet-style workbench → prefilled `{{Artwork}}` wikitext + structured data → review → publish.
 
 It is a **fork of [upload-workbench](https://gitlab.wikimedia.org/daanvr/upload-workbench)** by Daanvr (Daan van Ramshorst), forked at v0.39.0. The upstream tool is a general-purpose bulk-upload cockpit (stash + history as a spreadsheet); this fork adds the IIIF ingestion funnel on top of it. Architecture, most modules, and the lessons learned below are inherited from upstream and still apply.
 
@@ -41,7 +41,7 @@ Planned new modules (ESM, not window-globals): `src/api/iiif.js` (fetch/validate
 
 | Concern | Location |
 |---|---|
-| Source code | GitHub, public repo [`KBNLwikimedia/iiif-commons-upload-workbench`](https://github.com/KBNLwikimedia/iiif-commons-upload-workbench) |
+| Source code | GitHub, public repo [`KBNLwikimedia/iiif-manifest-upload-workbench`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench) |
 | On-wiki (Commons) | Homepage/docs: [`Commons:IIIF Manifest Upload Workbench`](https://commons.wikimedia.org/wiki/Commons:IIIF_Manifest_Upload_Workbench). Project category: [`Category:IIIF Manifest Upload Workbench`](https://commons.wikimedia.org/wiki/Category:IIIF_Manifest_Upload_Workbench). Uploaded files (hidden tracking subcat, applied by `publish.js`): [`Category:Uploaded with IIIF Manifest Upload Workbench`](https://commons.wikimedia.org/wiki/Category:Uploaded_with_IIIF_Manifest_Upload_Workbench). Edit summaries link to the homepage as a wikilink. |
 | Upstream | `gitlab.wikimedia.org/daanvr/upload-workbench` (GitLab; live at https://upload-workbench.toolforge.org/). This fork does **not** push there. |
 | Deployment | **Local dev only for now** (`npm run dev` + `VITE_OWNER_ACCESS_TOKEN`). Own Toolforge tool + own OAuth consumer registration are deferred until the ingestor works end-to-end. Upstream's `.gitlab-ci.yml` is archived at `docs/upstream-gitlab-ci.yml` for reference — do not resurrect it as-is; it rsyncs to *Daanvr's* Toolforge project. |

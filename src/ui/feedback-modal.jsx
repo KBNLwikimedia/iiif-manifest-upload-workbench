@@ -3,7 +3,7 @@
 //
 // Sibling of src/ui/error-report-modal.jsx: same `window.open` plumbing.
 // Destination is a pre-filled GitHub issue on the fork repo
-// (KBNLwikimedia/iiif-commons-upload-workbench), no OAuth scopes.
+// (KBNLwikimedia/iiif-manifest-upload-workbench), no OAuth scopes.
 // (error-report-modal.jsx still points at upstream Phabricator/GitLab —
 // repoint it too when convenient.) Differences from the error flow:
 //
@@ -30,7 +30,7 @@ import React from 'react';
 const Icon = window.Icon;
 const { useState, useEffect, useMemo, useRef } = React;
 
-const GITHUB_ISSUES_NEW_URL = 'https://github.com/KBNLwikimedia/iiif-commons-upload-workbench/issues/new';
+const GITHUB_ISSUES_NEW_URL = 'https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/issues/new';
 // Map feedback type → an existing repo label (unknown labels would make
 // GitHub show a warning). Only 'bug' and 'enhancement' exist; question /
 // praise get no label.
@@ -457,7 +457,7 @@ export default function FeedbackModal({ onClose }) {
               className="btn btn--progressive"
               onClick={openGithub}
               disabled={!hasComment}
-              title="Opens a pre-filled new issue on GitHub (KBNLwikimedia/iiif-commons-upload-workbench). Requires a GitHub account."
+              title="Opens a pre-filled new issue on GitHub (KBNLwikimedia/iiif-manifest-upload-workbench). Requires a GitHub account."
             >
               <Icon name="external" size={14} /> Open GitHub issue
             </button>

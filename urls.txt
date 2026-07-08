@@ -1,5 +1,5 @@
 # This fork (IIIF Manifest Upload Workbench)
-https://github.com/KBNLwikimedia/iiif-commons-upload-workbench --> code (public repo)
+https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench --> code (public repo)
 (no live deployment yet — local dev only, see CLAUDE.md)
 
 # On Wikimedia Commons

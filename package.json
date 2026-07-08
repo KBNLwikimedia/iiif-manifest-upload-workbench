@@ -1,5 +1,5 @@
 {
-  "name": "iiif-commons-upload-workbench",
+  "name": "iiif-manifest-upload-workbench",
   "private": true,
   "version": "0.39.0",
   "type": "module",

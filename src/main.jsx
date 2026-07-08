@@ -124,7 +124,7 @@ function Login() {
         <p className="login-screen__hint">
           Beta — found a bug? File it on{' '}
           <a
-            href="https://github.com/KBNLwikimedia/iiif-commons-upload-workbench/issues"
+            href="https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/issues"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -132,11 +132,11 @@ function Login() {
           </a>
           . Source at{' '}
           <a
-            href="https://github.com/KBNLwikimedia/iiif-commons-upload-workbench"
+            href="https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench"
             target="_blank"
             rel="noopener noreferrer"
           >
-            KBNLwikimedia/iiif-commons-upload-workbench
+            KBNLwikimedia/iiif-manifest-upload-workbench
           </a>
           .
         </p>

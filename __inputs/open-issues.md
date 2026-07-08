@@ -1,4 +1,4 @@
-# Open issues & deferred decisions — IIIF Commons Upload Workbench
+# Open issues & deferred decisions — IIIF Manifest Upload Workbench
 
 Living register of everything known-but-not-yet-done: technical debt, deferred design decisions, upstream data defects, and nice-to-haves. Companion to the build plan in [`iiif-ingestor-design.md`](iiif-ingestor-design.md).
 

@@ -1,4 +1,4 @@
-# IIIF Commons Upload Workbench
+# IIIF Manifest Upload Workbench
 
 Turn **IIIF Presentation manifests** into **Wikimedia Commons uploads** — starting with the medieval manuscripts of the [KB, national library of the Netherlands](https://www.kb.nl/).
 

@@ -15,7 +15,7 @@ import React from 'react';
 const Icon = window.Icon;
 const { useEffect } = React;
 
-const GITHUB_REPO = 'https://github.com/KBNLwikimedia/iiif-commons-upload-workbench';
+const GITHUB_REPO = 'https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench';
 const GITHUB_ISSUES = `${GITHUB_REPO}/issues`;
 const GITHUB_CHANGELOG = `${GITHUB_REPO}/blob/main/CHANGELOG.md`;
 const OAUTH_DOCS = `${GITHUB_REPO}/blob/main/docs/oauth-registration.md`;
