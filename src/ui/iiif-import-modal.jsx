@@ -243,6 +243,22 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     return mapManifest({ ...m, fields }, { wikidataQid: qid.trim() || null });
   }, [parsed, qid, excludedFields]); // user-edited title/category are applied in effectiveItems below
 
+  // Review-step preview thumbs: the first page (leftmost) plus up to two
+  // random other pages. Memoized on the parse result so the random picks are
+  // stable while the user edits title/category (no reshuffle per keystroke);
+  // random-per-manifest-load is fine — it's a visual spot check.
+  const previewThumbs = React.useMemo(() => {
+    const canvases = (parsed?.manifest?.canvases || []).filter((c) => c.thumbUrl);
+    if (!canvases.length) return [];
+    const [first, ...pool] = canvases;
+    const picks = [];
+    while (picks.length < 2 && pool.length) {
+      picks.push(...pool.splice(Math.floor(Math.random() * pool.length), 1));
+    }
+    picks.sort((a, b) => a.index - b.index); // random pair in page order
+    return [first, ...picks];
+  }, [parsed]);
+
   // Apply user-edited title/category on top of the mapped items without
   // re-deriving everything: filenames and captions substitute the derived
   // title; the category array is replaced wholesale.
@@ -423,16 +439,25 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
 
               {manifest && mapping && (
                 <>
-                  {/* First-page preview thumbnail (public IIIF thumb). */}
-                  {manifest.canvases[0]?.thumbUrl && (
-                    <figure className="iiif-review-thumb">
-                      <img
-                        src={manifest.canvases[0].thumbUrl}
-                        alt={`First page of ${manifest.label || 'the manuscript'}`}
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                      />
-                    </figure>
+                  {/* Preview thumbnails (public IIIF thumbs): the first page
+                      leftmost, plus up to two random other pages — a quick
+                      visual sanity check that this is the right manuscript. */}
+                  {previewThumbs.length > 0 && (
+                    <div className="iiif-review-thumbs">
+                      {previewThumbs.map((c, i) => (
+                        <figure key={c.index} className="iiif-review-thumb">
+                          <img
+                            src={c.thumbUrl}
+                            alt={i === 0
+                              ? `First page of ${manifest.label || 'the manuscript'}`
+                              : `Page ${c.label || c.index + 1} of ${manifest.label || 'the manuscript'}`}
+                            title={c.label || `canvas ${c.index + 1}`}
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                          />
+                        </figure>
+                      ))}
+                    </div>
                   )}
 
                   {/* manuscript passport */}

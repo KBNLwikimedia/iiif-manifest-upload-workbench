@@ -8062,15 +8062,22 @@ body.col-resizing * { cursor: col-resize !important; }
   padding: 3px 0;
 }
 
-/* First-page preview thumbnail in the review step. */
-.iiif-review-thumb {
+/* Preview thumbnails in the review step: first page leftmost + up to two
+   random other pages, in one right-floated row. */
+.iiif-review-thumbs {
   float: right;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
   margin: 0 0 8px 14px;
+}
+.iiif-review-thumb {
+  margin: 0;
 }
 .iiif-review-thumb img {
   display: block;
-  max-width: 150px;
-  max-height: 200px;
+  max-width: 110px;
+  max-height: 150px;
   border: 1px solid var(--border-color-base);
   border-radius: 4px;
   background: var(--background-color-neutral-subtle, #f8f9fa);
