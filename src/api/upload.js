@@ -10,6 +10,7 @@
 
 import { COMMONS_API, DEMO_MODE, APP_USER_AGENT } from '../config.js';
 import { getAccessToken } from './oauth.js';
+import { apiError } from './retry.js';
 
 // Sanitize a filename for Commons. Removes characters MediaWiki forbids
 // in titles ([#<>[]|{}]) and squeezes whitespace.
@@ -56,6 +57,7 @@ export async function uploadFile(file, csrfToken, { onProgress } = {}) {
   fd.append('format', 'json');
   fd.append('formatversion', '2');
   fd.append('assert', 'user');
+  fd.append('maxlag', '5'); // OI-26: back off when the DB replicas lag
   fd.append('token', csrfToken);
   fd.append('file', file, filename);
 
@@ -72,24 +74,30 @@ export async function uploadFile(file, csrfToken, { onProgress } = {}) {
     };
 
     xhr.onload = () => {
+      // OI-26: structured errors so the caller's retry layer can classify
+      // (rate-limit/maxlag/5xx → retry with backoff; badtoken → refresh token;
+      // auth → abort batch). Retry-After (secs) guides the backoff when set.
+      const retryAfter = Number(xhr.getResponseHeader('Retry-After')) || 0;
       let data;
       try {
         data = JSON.parse(xhr.responseText);
       } catch {
-        reject(new Error('Invalid JSON response from upload API'));
+        // Non-JSON body (e.g. an HTML 5xx from the CDN/proxy) — carry the HTTP
+        // status so a 5xx is retried.
+        reject(apiError('Invalid JSON response from upload API', { code: 'http', status: xhr.status, retryAfter }));
         return;
       }
       if (data.error) {
-        reject(new Error(`${data.error.code}: ${data.error.info}`));
+        reject(apiError(`${data.error.code}: ${data.error.info}`, { code: data.error.code, status: xhr.status, retryAfter }));
         return;
       }
       const u = data.upload;
       if (!u || (u.result !== 'Success' && u.result !== 'Warning')) {
-        reject(new Error(`Upload returned: ${u?.result || 'unknown'}`));
+        reject(apiError(`Upload returned: ${u?.result || 'unknown'}`, { status: xhr.status }));
         return;
       }
       if (!u.filekey) {
-        reject(new Error('Upload succeeded but no filekey returned'));
+        reject(apiError('Upload succeeded but no filekey returned', { status: xhr.status }));
         return;
       }
       resolve({
@@ -99,8 +107,8 @@ export async function uploadFile(file, csrfToken, { onProgress } = {}) {
         imageinfo: u.imageinfo || null,
       });
     };
-    xhr.onerror = () => reject(new Error('Network error during upload'));
-    xhr.onabort = () => reject(new Error('Upload aborted'));
+    xhr.onerror = () => reject(apiError('Network error during upload', { isNetwork: true }));
+    xhr.onabort = () => reject(apiError('Upload aborted', { code: 'aborted' }));
     xhr.send(fd);
   });
 }

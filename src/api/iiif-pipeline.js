@@ -22,6 +22,13 @@ import { uploadFile } from './upload.js';
 import { normalizeStashItem, thumbColors } from './normalize.js';
 import { setStashedFilename } from './local-store.js';
 import { setDraft, setSharedDraft, pickDraftFields, setStashedFilename as setStashedFilenameWiki, suspendSaves, resumeSaves, flushAll } from './user-store.js';
+import { withRetry, apiError } from './retry.js';
+
+// OI-26: abort the whole batch after this many back-to-back item failures —
+// a run that's failing every item (dead network, content blocker, expired
+// session) shouldn't keep downloading each 12–20 MB JPEG only to fail its
+// upload for the rest of a 500-page manifest.
+const MAX_CONSECUTIVE_FAILURES = 5;
 
 // OI-25: how often to flush accumulated drafts to Metadata.json mid-import.
 // A single end-of-run write would mean a crash loses every draft; flushing
@@ -133,6 +140,16 @@ export async function runIiifImport(mappedItems, {
   let duplicates = 0;
   let failed = 0;
   let aborted = false;
+  let consecutiveFailures = 0; // OI-26
+
+  // OI-26: mark the not-yet-started rows when the batch aborts early, so they
+  // don't sit on a stale "stash-selected" spinner. sha1 dedupe makes a re-run
+  // skip whatever already reached the stash.
+  const markRemaining = (fromIdx, message) => {
+    for (let j = fromIdx; j < placeholders.length; j++) {
+      onUpdateItem?.(placeholders[j].id, { status: 'upload-error', errorMessage: message, progress: 0 });
+    }
+  };
 
   // OI-25: suspend the user-store's debounced saves for the whole batch so the
   // per-canvas setDraft() writes coalesce (one edit per SAVE_CHECKPOINT items)
@@ -158,10 +175,22 @@ export async function runIiifImport(mappedItems, {
 
     try {
       // 1) Download the full-res rendition (CORS is open on the KB hosts).
+      //    OI-26: retry transient network/5xx failures with backoff — a blip
+      //    at item 300/500 shouldn't drop the page (and the rest of the run).
       onUpdateItem?.(temp.id, { status: 'stash-uploading', progress: 5 });
-      const res = await fetch(mapped.iiif.fullResUrl, { signal: controller.signal });
-      if (!res.ok) throw new Error(`Image download failed: HTTP ${res.status}`);
-      const buf = await res.arrayBuffer();
+      const buf = await withRetry(async () => {
+        let res;
+        try {
+          res = await fetch(mapped.iiif.fullResUrl, { signal: controller.signal });
+        } catch (e) {
+          if (e.name === 'AbortError') throw e; // user cancel — don't retry
+          throw apiError(`Image download failed: ${e.message}`, { isNetwork: true });
+        }
+        if (!res.ok) throw apiError(`Image download failed: HTTP ${res.status}`, { code: 'http', status: res.status });
+        return res.arrayBuffer();
+      }, {
+        onRetry: (err, n, ms) => onUpdateItem?.(temp.id, { errorMessage: `Download retry ${n}/3 in ${Math.round(ms / 1000)}s — ${err.message}` }),
+      });
       if (abortRef.current) throw new Error('Import cancelled');
       onUpdateItem?.(temp.id, { progress: 30, bytes: buf.byteLength });
 
@@ -179,9 +208,18 @@ export async function runIiifImport(mappedItems, {
       // 4) Stash upload (single POST — files are 6–21 MB, well under the
       //    ~100 MB action=upload ceiling).
       const file = new File([buf], mapped.iiif.targetFilename, { type: 'image/jpeg' });
-      const result = await uploadFile(file, csrf, {
-        onProgress: (p) => onUpdateItem?.(temp.id, { progress: 40 + Math.round(p * 0.6) }),
-      });
+      // OI-26: retry transient upload failures (ratelimited/maxlag/5xx/network)
+      // with backoff, and refresh the CSRF token once on `badtoken` (it rotates
+      // over a multi-hour batch). Auth failures rethrow to abort the batch.
+      const result = await withRetry(
+        () => uploadFile(file, csrf, {
+          onProgress: (p) => onUpdateItem?.(temp.id, { progress: 40 + Math.round(p * 0.6) }),
+        }),
+        {
+          onBadToken: async () => { csrf = await fetchCSRFToken(); },
+          onRetry: (err, n, ms) => onUpdateItem?.(temp.id, { errorMessage: `Upload retry ${n}/3 in ${Math.round(ms / 1000)}s — ${err.message}` }),
+        },
+      );
 
       // Persist the target filename in both caches (the stash list API
       // doesn't return original names) — same pair the dropzone writes.
@@ -231,19 +269,45 @@ export async function runIiifImport(mappedItems, {
       }
 
       uploaded += 1;
+      consecutiveFailures = 0; // OI-26: a success breaks a failure streak
       const r = { mapped, state: 'ok', item: real, existsOnCommons };
       results.push(r);
       onItemDone?.(r, i);
     } catch (e) {
       controller.abort();
       console.error('IIIF import failed for', mapped.iiif.targetFilename, e);
+
+      // OI-26: an auth failure (expired session / owner token) hits every
+      // remaining item identically — abort the whole batch with one clear
+      // message instead of hundreds of identical failures. A re-run after
+      // re-login skips whatever already reached the stash (sha1 dedupe).
+      if (e.kind === 'auth') {
+        const msg = 'Session expired — log in and re-run. Pages already stashed are kept.';
+        onUpdateItem?.(temp.id, { status: 'upload-error', errorMessage: msg, progress: 0 });
+        results.push({ mapped, state: 'error', error: msg });
+        failed += 1;
+        onItemDone?.({ mapped, state: 'error', error: msg }, i);
+        markRemaining(i + 1, msg);
+        aborted = true;
+        break;
+      }
+
       const error = e.message || String(e);
       failed += 1;
+      consecutiveFailures += 1;
       onUpdateItem?.(temp.id, { status: 'upload-error', errorMessage: error, progress: 0 });
       const r = { mapped, state: 'error', error };
       results.push(r);
       onItemDone?.(r, i);
       if (abortRef.current) { aborted = true; break; }
+      // OI-26: give up on a run that's failing everything (dead network,
+      // content blocker, quota) rather than grind through all 500 pages.
+      if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+        const msg = `Import stopped after ${MAX_CONSECUTIVE_FAILURES} failures in a row — check your connection / browser extensions and re-run (stashed pages are kept).`;
+        markRemaining(i + 1, msg);
+        aborted = true;
+        break;
+      }
     }
 
     // OI-25 checkpoint: persist the drafts accumulated so far in one wiki edit
