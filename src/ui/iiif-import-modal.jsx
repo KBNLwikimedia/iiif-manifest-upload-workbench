@@ -426,7 +426,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       {catExists === true && (
                         <span className="iiif-cat-exists">✔ This category already exists on Commons — files will be added to it.</span>
                       )}
-                      {catExists === false && '✚ This category does not exist yet — you will be asked to approve its creation in the final step.'}
+                      {catExists === false && (
+                        <span className="iiif-cat-missing">✚ This category does not exist yet — you will be asked to approve its creation in the final step.</span>
+                      )}
                     </p>
 
                     <label className="iiif-label" htmlFor="iiif-qid">Wikidata item of the manuscript (feeds “digital representation of” + depicts)</label>

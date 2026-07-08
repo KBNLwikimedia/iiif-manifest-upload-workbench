@@ -8366,3 +8366,8 @@ body.col-resizing * { cursor: col-resize !important; }
 .lic-field__reset:hover {
   color: var(--color-progressive--hover, #2a4b8d);
 }
+
+.iiif-cat-missing {
+  color: var(--color-destructive, #b32424);
+  font-weight: 700;
+}
