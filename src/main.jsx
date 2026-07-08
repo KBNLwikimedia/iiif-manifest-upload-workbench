@@ -103,14 +103,14 @@ function Login() {
     <div className="login-screen">
       <div className="login-screen__card">
         <div className="login-screen__brand">
-          <span className="topbar__logo">W</span>
-          <span className="login-screen__title">Upload Workbench</span>
+          <img className="topbar__logo" src="/app-logo.png" alt="" width="28" height="28" />
+          <span className="login-screen__title">IIIF Manifest Upload Workbench</span>
           <span className="chip chip--info" style={{ marginLeft: 'var(--spacing-50)' }}>Beta</span>
         </div>
         <p className="login-screen__lede">
-          A bulk upload cockpit for Wikimedia Commons — view your stash and
-          history side-by-side, fill in metadata across many files at once,
-          and publish.
+          Turn IIIF manifests (starting with the KB's medieval manuscripts)
+          into Wikimedia Commons uploads — parse the metadata, derive full-res
+          images, prefill wikitext + structured data, review, and publish.
         </p>
         <button
           className="btn btn--progressive btn--large"
@@ -122,21 +122,21 @@ function Login() {
           You'll be redirected to meta.wikimedia.org and back.
         </p>
         <p className="login-screen__hint">
-          Beta — found a bug? File it at{' '}
+          Beta — found a bug? File it on{' '}
           <a
-            href="https://phabricator.wikimedia.org/tag/tool-upload-workbench/"
+            href="https://github.com/KBNLwikimedia/iiif-commons-upload-workbench/issues"
             target="_blank"
             rel="noopener noreferrer"
           >
-            #tool-upload-workbench on Phabricator
+            GitHub
           </a>
-          . Source on{' '}
+          . Source at{' '}
           <a
-            href="https://gitlab.wikimedia.org/daanvr/upload-workbench"
+            href="https://github.com/KBNLwikimedia/iiif-commons-upload-workbench"
             target="_blank"
             rel="noopener noreferrer"
           >
-            GitLab
+            KBNLwikimedia/iiif-commons-upload-workbench
           </a>
           .
         </p>
