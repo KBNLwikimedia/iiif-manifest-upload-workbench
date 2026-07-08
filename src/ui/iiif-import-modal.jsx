@@ -482,13 +482,15 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
 
           {step === 'select' && manifest && (
             <div className="iiif-step-select">
+              {manifest.downscaledCount > 0 && (
+                <p className="iiif-hint iiif-downscale-note">
+                  A “&gt;25 MP” tag means the source image is larger than 25 megapixels. The KB's IIIF image server caps what it delivers at 25 MP, so those pages arrive slightly smaller than the original (but still high-res) — e.g. an 8040 × 6030 page (48 MP) downloads at ~25 MP. This is a limit of the IIIF server — not of Wikimedia Commons, which accepts much larger files.
+                </p>
+              )}
               <div className="iiif-select-bar">
                 <button className="btn btn--quiet" onClick={() => toggleAll(true)}>Select all</button>
                 <button className="btn btn--quiet" onClick={() => toggleAll(false)}>Select none</button>
                 <button className="btn btn--quiet" onClick={invertSelection}>Invert selection</button>
-                {manifest.downscaledCount > 0 && (
-                  <span className="iiif-hint">A “&gt;25 MP” tag means the source image is larger than 25 megapixels. The KB's IIIF image server caps what it delivers at 25 MP, so those pages arrive slightly smaller than the original (but still high-res) — e.g. an 8040 × 6030 page (48 MP) downloads at ~25 MP. This is a limit of the IIIF server — not of Wikimedia Commons, which accepts much larger files.</span>
-                )}
               </div>
               <div className="iiif-gallery">
                 {manifest.canvases.map((c) => {
