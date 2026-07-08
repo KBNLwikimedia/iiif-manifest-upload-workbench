@@ -42,12 +42,9 @@ body {
 .topbar__logo {
   width: 28px; height: 28px;
   border-radius: var(--border-radius-base);
-  background: var(--color-progressive);
-  color: #fff;
-  display: grid; place-items: center;
-  font-weight: var(--font-weight-bold);
-  font-size: 13px;
-  font-family: var(--font-family-serif);
+  object-fit: contain;
+  display: block;
+  flex: 0 0 auto;
 }
 .topbar__spacer { flex: 1; }
 .topbar__user {
@@ -1183,7 +1180,7 @@ hr.divider { border: 0; border-top: 1px solid var(--border-color-muted); margin:
 .tbl-focus__media {
   width: 100%;
   /* Fit the image inside the panel's available height. */
-  max-height: calc(100vh - 32px);
+  max-height: calc(100vh - 200px);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -1205,7 +1202,7 @@ hr.divider { border: 0; border-top: 1px solid var(--border-color-muted); margin:
   position: static;
   width: 100%;
   height: auto;
-  max-height: calc(100vh - 32px);
+  max-height: calc(100vh - 200px);
   object-fit: contain;
   display: block;
 }

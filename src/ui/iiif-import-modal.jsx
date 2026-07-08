@@ -538,7 +538,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               </div>
               <ul className="iiif-recap">
                 <li>
-                  <strong>Category:</strong> {category}
+                  <strong>Category:</strong>{' '}
+                  <a
+                    href={`https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(category.replace(/^\s*Category\s*:\s*/i, '').trim().replace(/ /g, '_'))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >{category}</a>
                   {catExists === true && <span className="iiif-cat-exists"> (exists — files will be added to it)</span>}
                   {catExists !== true && (
                     <span className="iiif-cat-approve">
@@ -556,7 +561,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 <li><strong>License:</strong> <code>{KB_LICENSE_WIKITEXT}</code></li>
                 <li><strong>Template:</strong> <code>{'{{Artwork}}'}</code></li>
                 <li><strong>Author:</strong> <code>{mapping?.manuscript.author}</code></li>
-                <li><strong>Wikidata:</strong> {qid.trim() || '— none —'}</li>
+                <li>
+                  <strong>Wikidata:</strong>{' '}
+                  {qid.trim()
+                    ? <a href={`https://www.wikidata.org/wiki/${qid.trim()}`} target="_blank" rel="noopener noreferrer">{qid.trim()} ↗</a>
+                    : '— none —'}
+                </li>
                 <li><strong>Date:</strong> <code>{mapping?.manuscript.dateWikitext || '—'}</code></li>
               </ul>
               <p className="iiif-hint">

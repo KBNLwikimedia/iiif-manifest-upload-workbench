@@ -1575,8 +1575,8 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
       {/* Top bar */}
       <header className="topbar">
         <div className="topbar__brand">
-          <span className="topbar__logo">W</span>
-          Upload Workbench
+          <img className="topbar__logo" src="/app-logo.png" alt="" width="28" height="28" />
+          IIIF Manifest Upload Workbench
           {/* Version chip replaces the old "· Wikimedia Commons" sub-title
               (T426443). Color-coded by deploy target (green=main,
               yellow=archived /v…, blue=MR preview, grey=dev), click to
@@ -1608,11 +1608,11 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
           About
         </button>
         <SaveStatus />
+        <button className="btn btn--progressive" onClick={openFilePicker}>
+          <Icon name="upload" size={16} /> Browse files
+        </button>
         <button className="btn" onClick={() => setIiifImportOpen(true)} title="Import all pages of a IIIF manifest into your stash">
           <Icon name="upload" size={16} /> Import IIIF manifest
-        </button>
-        <button className="btn btn--progressive" onClick={openFilePicker}>
-          <Icon name="upload" size={16} /> Upload
         </button>
         <UserMenu user={user} onLogout={onLogout} />
       </header>
