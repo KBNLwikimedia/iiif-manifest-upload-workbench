@@ -8405,12 +8405,14 @@ body.col-resizing * { cursor: col-resize !important; }
   font-weight: 700;
 }
 
-/* Per-tile dimensions + full-res link (below the filename label) */
+/* Per-tile dimensions + full-res link (below the filename label). Tiles are
+   narrow (~100px), so stack the two lines rather than cramming them onto one
+   row. */
 .iiif-canvas__meta {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 6px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
   padding: 0 6px 5px;
   font-size: 10px;
   color: var(--color-subtle);
@@ -8423,7 +8425,6 @@ body.col-resizing * { cursor: col-resize !important; }
 
 .iiif-canvas__fullres {
   white-space: nowrap;
-  flex: 0 0 auto;
 }
 
 /* >25 MP explanation: full-width note above the selection controls */
