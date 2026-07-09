@@ -22,7 +22,7 @@ import { fetchManifest, parseManifestFile } from '../api/iiif.js';
 import { mapManifest } from '../api/iiif-map.js';
 import { findManuscriptItems, resolveQid } from '../api/wikidata.js';
 import { runIiifImport } from '../api/iiif-pipeline.js';
-import { categoryExists, searchCategories } from '../api/commons.js';
+import { categoryExists, searchCategories, findManuscriptCategoryVariants } from '../api/commons.js';
 import { KB_PARENT_CATEGORY, KB_LICENSE_WIKITEXT } from '../api/iiif-map.js';
 import { DEMO_MODE } from '../config.js';
 
@@ -217,6 +217,11 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   const [qidCandidates, setQidCandidates] = React.useState(null);
   // Merged-item note: { qid, text } shown while `qid` still equals its target.
   const [qidNote, setQidNote] = React.useState(null);
+  // OI-68 B/C: existing category variants discovered on Commons (naming + fuzzy
+  // search, verified under the KB parent). null = not searched, 'searching', or
+  // [{name, source}]. Runs once per parse, only when the suggestion is missing.
+  const [variantCats, setVariantCats] = React.useState(null);
+  const variantSearchRef = React.useRef(0);
 
   // Normalize a manually-entered Q-id that points at a merged/redirected item
   // to its canonical target (Q114990994 → Q16641064): SDC statements must
@@ -237,6 +242,19 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     }, 500);
     return () => { alive = false; clearTimeout(t); };
   }, [qid]);
+
+  // OI-68 B/C: when the suggested category turns out NOT to exist, search
+  // Commons for the manuscript's existing category under another name (once
+  // per parse — keyed on the stable manuscript identity, not the editable
+  // field). Reset to null in acceptParse so each manifest re-searches.
+  React.useEffect(() => {
+    if (catExists !== false || !mapping || variantCats !== null) return;
+    const token = ++variantSearchRef.current;
+    setVariantCats('searching');
+    findManuscriptCategoryVariants({ title: mapping.manuscript.title, signature: mapping.manuscript.signature })
+      .then((cats) => { if (variantSearchRef.current === token) setVariantCats(cats); })
+      .catch(() => { if (variantSearchRef.current === token) setVariantCats([]); });
+  }, [catExists, mapping, variantCats]);
 
   // selection (step 3)
   const [selected, setSelected] = React.useState(() => new Set());
@@ -343,6 +361,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     setExcludedFields(new Set());
     setLightbox(null);
     setShowJson(false);
+    setVariantCats(null);
     { const dp = loadDefaultParent(); setDefaultParent(dp); setParentCategory(dp); }
     setQid('');
     setQidCandidates(null);
@@ -756,34 +775,46 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                         )}
                       </p>
 
-                      {/* OI-68 Phase A: the manuscript's Wikidata item may
-                          carry P373 (Commons category) — the category that
-                          ALREADY exists under a different naming convention
-                          (e.g. "Den Haag KB 76 E 5"). Offer it so the user
-                          adopts it instead of creating a near-duplicate.
-                          Replaces the suggestion (single category per
-                          manuscript — decided 2026-07-09). */}
-                      {(() => {
+                      {/* OI-68: when the suggestion doesn't exist, offer the
+                          manuscript's existing category(-ies) found under other
+                          names — Wikidata P373 (★, authoritative) + generated
+                          naming variants + fuzzy search verified under the KB
+                          parent. Adopting one REPLACES the suggestion (single
+                          category per manuscript, decided 2026-07-09). */}
+                      {catExists === false && (() => {
                         const cand = (Array.isArray(qidCandidates) ? qidCandidates : []).find((c) => c.qid === qid.trim());
-                        const wdCat = cand?.commonsCategory;
-                        if (!wdCat || stripCatPrefix(category) === wdCat) return null;
+                        const wdCat = cand?.commonsCategory || null;
+                        const cur = stripCatPrefix(category);
+                        const existing = [];
+                        if (wdCat && wdCat !== cur) existing.push({ name: wdCat, source: 'wikidata' });
+                        for (const v of (Array.isArray(variantCats) ? variantCats : [])) {
+                          if (v.name !== cur && !existing.some((e) => e.name === v.name)) existing.push(v);
+                        }
+                        const searching = variantCats === 'searching';
+                        if (!existing.length && !searching) return null;
+                        const srcLabel = (s) => (s === 'wikidata' ? '★ Wikidata' : s === 'naming' ? 'name match' : 'search');
                         return (
-                          <p className="iiif-hint iiif-wd-cat">
-                            ★ Wikidata says this manuscript already has a Commons category:{' '}
-                            <a
-                              href={commonsCatUrl(wdCat)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title="Open this category on Commons (new tab)"
-                            >{wdCat} ↗</a>
-                            {' · '}
-                            <button
-                              type="button"
-                              className="iiif-linkbtn"
-                              onClick={() => setCategory(wdCat)}
-                              title="Use this existing category instead of the suggestion"
-                            >Use this category</button>
-                          </p>
+                          <div className="iiif-existing-cats">
+                            {existing.length > 0 ? (
+                              <p className="iiif-existing-cats__head">This manuscript may already be on Commons — use an existing category instead of creating a new one:</p>
+                            ) : (
+                              <p className="iiif-existing-cats__head iiif-existing-cats__searching">Searching Commons for an existing category…</p>
+                            )}
+                            {existing.map((e) => (
+                              <p key={e.name} className="iiif-existing-cats__item">
+                                <button
+                                  type="button"
+                                  className="btn btn--quiet iiif-existing-cats__use"
+                                  onClick={() => setCategory(e.name)}
+                                  title="Use this existing category instead of the suggestion"
+                                >Use this</button>
+                                {' '}
+                                <a href={commonsCatUrl(e.name)} target="_blank" rel="noopener noreferrer">{e.name} ↗</a>
+                                {' '}
+                                <span className="iiif-existing-cats__src">{srcLabel(e.source)}</span>
+                              </p>
+                            ))}
+                          </div>
                         );
                       })()}
 

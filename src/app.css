@@ -8188,12 +8188,35 @@ body.col-resizing * { cursor: col-resize !important; }
   font-size: 13px;
 }
 
-/* OI-68 Phase A: "Wikidata says this manuscript already has a category" —
-   lightly highlighted so the don't-create-a-duplicate moment stands out. */
-.iiif-wd-cat {
+/* OI-68: "already on Commons?" panel — existing category variants (Wikidata
+   P373 + naming + fuzzy search) offered so the user doesn't create a
+   duplicate. Lightly highlighted so the moment stands out. */
+.iiif-existing-cats {
+  margin: 4px 0 2px;
+  padding: 7px 10px;
   background: rgba(255, 193, 7, 0.14);
   border-radius: 4px;
-  padding: 5px 8px;
+  font-size: 13px;
+}
+.iiif-existing-cats__head {
+  margin: 0 0 4px;
+  color: var(--color-subtle);
+}
+.iiif-existing-cats__searching { font-style: italic; }
+.iiif-existing-cats__item {
+  margin: 3px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.iiif-existing-cats__use {
+  padding: 1px 8px;
+  font-size: 12px;
+}
+.iiif-existing-cats__src {
+  color: var(--color-subtle);
+  font-size: 11px;
 }
 
 /* Raw-manifest JSON inspector overlay. */

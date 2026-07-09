@@ -387,6 +387,98 @@ export async function categoryExists(name) {
   return !page.missing && typeof page.pageid === 'number';
 }
 
+// --- OI-68 B/C: discover existing category variants for a manuscript -------
+//
+// The suggested per-manuscript category ("Bout psalter-getijdenboek - KW 79 K
+// 11") often does NOT exist, yet the manuscript already has a category under a
+// different name ("Bout Psalter-Hours KB 79K11"). We surface those so the user
+// adopts one instead of creating a near-duplicate. Two sources, both verified:
+//   B  generated KB naming-convention variants → existence check
+//   C  full-text category search (title + signature) → keep only categories
+//      that are actually filed under the KB parent (kills search noise like
+//      German heritage monuments whose codes contain "76…5")
+
+const KB_PARENT_HINT = 'Koninklijke Bibliotheek'; // any parent containing this = a real KB manuscript category
+
+// Full-text category search (namespace 14). Returns bare category names.
+export async function searchCategoriesFullText(query, limit = 8) {
+  const q = String(query || '').replace(/^\s*Category\s*:\s*/i, '').trim();
+  if (!q || DEMO_MODE) return [];
+  const params = new URLSearchParams({
+    action: 'query', list: 'search', srsearch: q, srnamespace: '14',
+    srlimit: String(limit), srprop: '', format: 'json', formatversion: '2', origin: '*',
+  });
+  const data = await fetchJSON(`${COMMONS_API}?${params}`);
+  return (data.query?.search || []).map((r) => String(r.title).replace(/^Category:/, ''));
+}
+
+// Parent categories of a category page (bare names).
+export async function categoryParents(name) {
+  const n = String(name || '').replace(/^\s*Category\s*:\s*/i, '').trim();
+  if (!n || DEMO_MODE) return [];
+  const params = new URLSearchParams({
+    action: 'query', prop: 'categories', titles: `Category:${n}`,
+    cllimit: '100', format: 'json', formatversion: '2', origin: '*',
+  });
+  const data = await fetchJSON(`${COMMONS_API}?${params}`);
+  const page = data.query?.pages?.[0];
+  return (page?.categories || []).map((c) => String(c.title).replace(/^Category:/, ''));
+}
+
+// Is this category filed (directly) under a KB parent? (verification for C)
+async function isUnderKbParent(name) {
+  try { return (await categoryParents(name)).some((p) => p.includes(KB_PARENT_HINT)); }
+  catch { return false; }
+}
+
+// KB signature → candidate existing-category names (Phase B). The real ones
+// are unpunctuated and KB- (not KW-) prefixed: "Den Haag KB 76 E 5",
+// "Bout Psalter-Hours KB 79K11". We try the KB naming conventions.
+function namingVariants(signature) {
+  const sig = String(signature || '').replace(/^KW\s+/i, '').trim(); // bare shelfmark
+  if (!sig) return [];
+  const nospace = sig.replace(/([A-Za-z])\s+(\d)/g, '$1$2'); // "79 K 11" → "79 K11"
+  const cands = new Set([
+    `Den Haag KB ${sig}`, `Den Haag, KB ${sig}`,
+    `KB ${sig}`, `KB ${nospace}`,
+    sig,
+  ]);
+  return [...cands];
+}
+
+// findManuscriptCategoryVariants({ title, signature }) → existing categories
+// that are (verified) this manuscript's home on Commons, each { name, source }.
+// `source`: 'naming' (B) or 'search' (C). Sequential + apiCache-backed to
+// respect API-politeness; runs only behind the user gesture (a parsed
+// manifest whose suggested category is missing).
+export async function findManuscriptCategoryVariants({ title, signature }) {
+  if (DEMO_MODE) return [];
+  const found = new Map(); // name → { name, source } (insertion order: B before C)
+  const add = (name, source) => { if (name && !found.has(name)) found.set(name, { name, source }); };
+
+  const terms = [String(title || '').trim(), String(signature || '').replace(/^KW\s+/i, '').trim()].filter(Boolean);
+
+  // Fire B (existence of generated variants) and the C searches together — a
+  // bounded, user-triggered read burst (not bootstrap, doesn't scale with
+  // canvas count), all apiCache-backed.
+  const [bResults, searchLists] = await Promise.all([
+    Promise.all(namingVariants(signature).map(async (cand) => ({ cand, exists: await categoryExists(cand).catch(() => false) }))),
+    Promise.all(terms.map((t) => searchCategoriesFullText(t, 8).catch(() => []))),
+  ]);
+
+  // B — keep the naming variants that exist (deterministic, preferred).
+  for (const { cand, exists } of bResults) if (exists) add(cand, 'naming');
+
+  // C — verify the search hits are actually filed under the KB parent
+  // (kills noise: heritage monuments whose codes contain "76…5"). Parallel,
+  // capped, skipping any already confirmed via B.
+  const hits = [...new Set(searchLists.flat())].filter((n) => !found.has(n)).slice(0, 8);
+  const verified = await Promise.all(hits.map(async (name) => ({ name, ok: await isUnderKbParent(name) })));
+  for (const { name, ok } of verified) if (ok) add(name, 'search');
+
+  return [...found.values()];
+}
+
 // Create a category page on Commons (IIIF ingestor, design Q8 / OI-04).
 //
 // The T425950 publish check blocks rows whose categories don't exist; the
