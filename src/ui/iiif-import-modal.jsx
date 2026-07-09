@@ -1017,7 +1017,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
           return (
             <div
               className="iiif-lightbox"
-              onClick={(e) => { e.stopPropagation(); setLightbox(null); }}
+              onClick={(e) => e.stopPropagation()}
               role="dialog"
               aria-modal="true"
               aria-label={`Page ${pos + 1}`}
