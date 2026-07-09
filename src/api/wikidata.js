@@ -64,10 +64,11 @@ export async function findManuscriptItems(signature) {
   if (!variants.length) return [];
   const values = variants.map((v) => `"${v.replace(/"/g, '\\"')}"`).join(' ');
   const query = `
-    SELECT DISTINCT ?item ?itemLabel ?commonsCat ?commonsPage WHERE {
+    SELECT DISTINCT ?item ?itemLabel ?commonsCat ?commonsGallery ?commonsPage WHERE {
       VALUES ?sig { ${values} }
       ?item wdt:P217 ?sig .
       OPTIONAL { ?item wdt:P373 ?commonsCat . }
+      OPTIONAL { ?item wdt:P935 ?commonsGallery . }
       OPTIONAL {
         ?sitelink schema:about ?item ;
                   schema:isPartOf <https://commons.wikimedia.org/> ;
@@ -81,9 +82,12 @@ export async function findManuscriptItems(signature) {
   const byQid = new Map();
   for (const b of data?.results?.bindings || []) {
     const qid = b.item.value.split('/').pop();
-    const cur = byQid.get(qid) || { qid, label: '', commonsCategory: null, commonsPage: null };
+    const cur = byQid.get(qid) || { qid, label: '', commonsCategory: null, commonsGallery: null, commonsPage: null };
     if (!cur.label && b.itemLabel?.value) cur.label = b.itemLabel.value;
     if (!cur.commonsCategory && b.commonsCat?.value) cur.commonsCategory = b.commonsCat.value;
+    // Prefer P935 (the dedicated "Commons gallery" property); fall back to the
+    // commonswiki sitelink, which usually points at the same gallery.
+    if (!cur.commonsGallery && b.commonsGallery?.value) cur.commonsGallery = b.commonsGallery.value;
     if (!cur.commonsPage && b.commonsPage?.value) cur.commonsPage = b.commonsPage.value;
     byQid.set(qid, cur);
   }

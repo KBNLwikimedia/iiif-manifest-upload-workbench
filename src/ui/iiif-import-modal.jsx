@@ -907,14 +907,14 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                                 >
                                   {c.label} ↗
                                 </a>
-                                {c.commonsPage && (
+                                {(c.commonsGallery || c.commonsPage) && (
                                   <>
                                     {' · '}
                                     <a
-                                      href={`https://commons.wikimedia.org/wiki/${encodeURIComponent(c.commonsPage.replace(/ /g, '_'))}`}
+                                      href={`https://commons.wikimedia.org/wiki/${encodeURIComponent((c.commonsGallery || c.commonsPage).replace(/ /g, '_'))}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      title="This item's gallery page on Commons (new tab)"
+                                      title="This item's gallery page on Commons (Wikidata P935, new tab)"
                                     >Gallery ↗</a>
                                   </>
                                 )}
