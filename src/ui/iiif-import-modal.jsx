@@ -767,9 +767,6 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                             {' '}— files will be added to it.
                           </span>
                         )}
-                        {catExists === false && (
-                          <span className="iiif-cat-missing">✚ This category does not exist yet — you will be asked to approve its creation in the final step.</span>
-                        )}
                         {catExists === 'unknown' && (
                           <span>⚠️ Couldn't check Commons just now (network) — it'll be treated as not yet existing.</span>
                         )}
@@ -791,30 +788,43 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                           if (v.name !== cur && !existing.some((e) => e.name === v.name)) existing.push(v);
                         }
                         const searching = variantCats === 'searching';
-                        if (!existing.length && !searching) return null;
                         const srcLabel = (s) => (s === 'wikidata' ? '★ Wikidata' : s === 'naming' ? 'name match' : 'search');
-                        return (
-                          <div className="iiif-existing-cats">
-                            {existing.length > 0 ? (
-                              <p className="iiif-existing-cats__head">This manuscript may already be on Commons — use an existing category instead of creating a new one:</p>
-                            ) : (
-                              <p className="iiif-existing-cats__head iiif-existing-cats__searching">Searching Commons for an existing category…</p>
-                            )}
-                            {existing.map((e) => (
-                              <p key={e.name} className="iiif-existing-cats__item">
-                                <button
-                                  type="button"
-                                  className="btn btn--quiet iiif-existing-cats__use"
-                                  onClick={() => setCategory(e.name)}
-                                  title="Use this existing category instead of the suggestion"
-                                >Use this</button>
-                                {' '}
-                                <a href={commonsCatUrl(e.name)} target="_blank" rel="noopener noreferrer">{e.name} ↗</a>
-                                {' '}
-                                <span className="iiif-existing-cats__src">{srcLabel(e.source)}</span>
+
+                        // Case 1 — existing categories found under another name:
+                        // lead with adopting one; the suggested name is the
+                        // fallback (so it doesn't read as "must be created").
+                        if (existing.length > 0) {
+                          return (
+                            <div className="iiif-existing-cats">
+                              <p className="iiif-existing-cats__head">
+                                <strong>This manuscript already has a category on Commons</strong> — use it instead of creating “{cur}”:
                               </p>
-                            ))}
-                          </div>
+                              {existing.map((e) => (
+                                <div key={e.name} className="iiif-existing-cats__item">
+                                  <button
+                                    type="button"
+                                    className="btn btn--progressive iiif-existing-cats__use"
+                                    onClick={() => setCategory(e.name)}
+                                  >Use this category</button>
+                                  <a href={commonsCatUrl(e.name)} target="_blank" rel="noopener noreferrer">{e.name} ↗</a>
+                                  <span className="iiif-existing-cats__src">{srcLabel(e.source)}</span>
+                                </div>
+                              ))}
+                              <p className="iiif-existing-cats__foot">…or keep “{cur}” — it'll be created for you when you publish the first page.</p>
+                            </div>
+                          );
+                        }
+
+                        // Case 2 — still checking for an existing category.
+                        if (searching) {
+                          return <p className="iiif-hint iiif-existing-cats__searching">Checking Commons for an existing category under another name…</p>;
+                        }
+
+                        // Case 3 — genuinely new: the category will be created.
+                        return (
+                          <p className="iiif-hint">
+                            <span className="iiif-cat-missing">✚ New category — “{cur}” isn't on Commons yet; you'll approve creating it in the final step.</span>
+                          </p>
                         );
                       })()}
 

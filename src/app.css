@@ -8199,24 +8199,31 @@ body.col-resizing * { cursor: col-resize !important; }
   font-size: 13px;
 }
 .iiif-existing-cats__head {
-  margin: 0 0 4px;
-  color: var(--color-subtle);
+  margin: 0 0 6px;
+  color: var(--color-base);
 }
-.iiif-existing-cats__searching { font-style: italic; }
+.iiif-existing-cats__searching { font-style: italic; color: var(--color-subtle); }
 .iiif-existing-cats__item {
-  margin: 3px 0;
+  margin: 4px 0;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 .iiif-existing-cats__use {
-  padding: 1px 8px;
-  font-size: 12px;
+  padding: 3px 12px;
+  font-size: 13px;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 .iiif-existing-cats__src {
   color: var(--color-subtle);
   font-size: 11px;
+}
+.iiif-existing-cats__foot {
+  margin: 6px 0 0;
+  color: var(--color-subtle);
+  font-size: 12px;
 }
 
 /* Raw-manifest JSON inspector overlay. */
