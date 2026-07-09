@@ -409,7 +409,13 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // --- render helpers -------------------------------------------------------
 
   const report = parsed?.report || [];
-  const reportOf = (level) => report.filter((e) => e.level === level);
+  // Entries actually shown in the review report. The `downscaled-canvases`
+  // info is deliberately excluded here — the select step carries it (with the
+  // counts) next to the ">25 MP" badges, so it isn't stated twice.
+  const reportErrors = report.filter((e) => e.level === 'error');
+  const reportWarnings = report.filter((e) => e.level === 'warning');
+  const reportInfos = report.filter((e) => e.level === 'info' && e.code !== 'downscaled-canvases');
+  const hasReport = reportErrors.length + reportWarnings.length + reportInfos.length > 0;
   const manifest = parsed?.manifest;
 
   const toggleAll = (on) => {
@@ -501,20 +507,18 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
 
           {step === 'review' && (
             <div className="iiif-step-review">
-              {/* validation report */}
-              {report.length > 0 && (
+              {/* validation report — only rendered when there's something to
+                  show, so a manifest with no (visible) issues doesn't leave an
+                  empty box at the top. */}
+              {hasReport && (
                 <div className="iiif-report">
-                  {reportOf('error').map((e, i) => (
+                  {reportErrors.map((e, i) => (
                     <p key={`e${i}`} className="iiif-report__line iiif-report__line--error">⛔ {e.message}</p>
                   ))}
-                  {reportOf('warning').map((e, i) => (
+                  {reportWarnings.map((e, i) => (
                     <p key={`w${i}`} className="iiif-report__line iiif-report__line--warning">⚠️ {e.message}</p>
                   ))}
-                  {/* The downscaled-canvases info is deliberately NOT shown
-                      here — the select step carries it (with the counts) next
-                      to the ">25 MP" badges it explains, so it isn't stated
-                      twice in a row. */}
-                  {reportOf('info').filter((e) => e.code !== 'downscaled-canvases').map((e, i) => (
+                  {reportInfos.map((e, i) => (
                     <p key={`i${i}`} className="iiif-report__line">ℹ️ {e.message}</p>
                   ))}
                 </div>
