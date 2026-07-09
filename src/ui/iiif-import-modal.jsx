@@ -243,19 +243,6 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     return () => { alive = false; clearTimeout(t); };
   }, [qid]);
 
-  // OI-68 B/C: when the suggested category turns out NOT to exist, search
-  // Commons for the manuscript's existing category under another name (once
-  // per parse — keyed on the stable manuscript identity, not the editable
-  // field). Reset to null in acceptParse so each manifest re-searches.
-  React.useEffect(() => {
-    if (catExists !== false || !mapping || variantCats !== null) return;
-    const token = ++variantSearchRef.current;
-    setVariantCats('searching');
-    findManuscriptCategoryVariants({ title: mapping.manuscript.title, signature: mapping.manuscript.signature })
-      .then((cats) => { if (variantSearchRef.current === token) setVariantCats(cats); })
-      .catch(() => { if (variantSearchRef.current === token) setVariantCats([]); });
-  }, [catExists, mapping, variantCats]);
-
   // selection (step 3)
   const [selected, setSelected] = React.useState(() => new Set());
   // hover zoom in the gallery: { canvas, left, top } or null. The preview
@@ -432,6 +419,19 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     }
     return mapManifest({ ...m, fields }, { wikidataQid: qid.trim() || null });
   }, [parsed, qid, excludedFields]); // user-edited title/category are applied in effectiveItems below
+
+  // OI-68 B/C: when the suggested category turns out NOT to exist, search
+  // Commons for the manuscript's existing category under another name (once
+  // per parse — keyed on the stable manuscript identity, not the editable
+  // field). Reset to null in acceptParse so each manifest re-searches.
+  React.useEffect(() => {
+    if (catExists !== false || !mapping || variantCats !== null) return;
+    const token = ++variantSearchRef.current;
+    setVariantCats('searching');
+    findManuscriptCategoryVariants({ title: mapping.manuscript.title, signature: mapping.manuscript.signature })
+      .then((cats) => { if (variantSearchRef.current === token) setVariantCats(cats); })
+      .catch(() => { if (variantSearchRef.current === token) setVariantCats([]); });
+  }, [catExists, mapping, variantCats]);
 
   // Review-step carousel: a horizontally-scrollable strip of every canvas
   // thumbnail so the user can eyeball the whole manuscript. Thumbs are
