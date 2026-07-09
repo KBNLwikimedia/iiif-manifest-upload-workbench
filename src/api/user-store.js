@@ -504,6 +504,9 @@ const DRAFT_FIELDS = [
   // publishOne; until then the categories-not-on-commons blocker treats
   // this one name as will-be-created instead of blocking.
   'iiifPendingCategory',
+  // The umbrella category the pending category is filed under when created
+  // (user-editable in the wizard; defaults to KB_PARENT_CATEGORY).
+  'iiifPendingParentCategory',
 ];
 
 export function pickDraftFields(item) {

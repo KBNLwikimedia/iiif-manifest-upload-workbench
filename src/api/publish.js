@@ -331,7 +331,7 @@ export async function publishOne(item, {
   if (item.iiifPendingCategory && (item.categories || []).includes(item.iiifPendingCategory)
       && !createdPendingCategories.has(item.iiifPendingCategory)) {
     try {
-      await createCategoryPage(item.iiifPendingCategory, `[[Category:${KB_PARENT_CATEGORY}]]`);
+      await createCategoryPage(item.iiifPendingCategory, `[[Category:${item.iiifPendingParentCategory || KB_PARENT_CATEGORY}]]`);
       createdPendingCategories.add(item.iiifPendingCategory);
     } catch (e) {
       console.warn('Pending category creation failed:', item.iiifPendingCategory, e);

@@ -7994,6 +7994,38 @@ body.col-resizing * { cursor: col-resize !important; }
   font-size: 13px;
   margin: 14px 0 4px;
 }
+.iiif-label__note {
+  font-weight: 400;
+  color: var(--color-subtle);
+}
+
+/* Grouped "Categories" section in the review step. */
+.iiif-catbox {
+  border: 1px solid var(--border-color-base);
+  border-radius: 6px;
+  padding: 2px 14px 14px;
+  margin: 16px 0 4px;
+  min-width: 0; /* let inner inputs shrink within the modal */
+}
+.iiif-catbox legend {
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-subtle);
+  padding: 0 6px;
+}
+
+/* Inline link-styled button (e.g. "Reset to default"). */
+.iiif-linkbtn {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-progressive, #36c);
+  cursor: pointer;
+  font: inherit;
+}
+.iiif-linkbtn:hover { text-decoration: underline; }
 
 .iiif-url-row {
   display: flex;

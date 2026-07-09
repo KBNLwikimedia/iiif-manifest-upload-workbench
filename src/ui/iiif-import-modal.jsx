@@ -90,6 +90,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // mapping settings (step 2, editable)
   const [title, setTitle] = React.useState('');
   const [category, setCategory] = React.useState('');
+  // The umbrella category a newly-created per-manuscript category is filed
+  // under. Editable; defaults to KB_PARENT_CATEGORY with a reset action.
+  const [parentCategory, setParentCategory] = React.useState(KB_PARENT_CATEGORY);
   // Explicit opt-in (default OFF): the user must approve category creation
   // via the checkbox in the confirm step before the tool may create it.
   const [createCat, setCreateCat] = React.useState(false);
@@ -180,6 +183,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     setCategory(manuscript.categoryName);
     setSelected(new Set(result.manifest.canvases.map((c) => c.index)));
     setExcludedFields(new Set());
+    setParentCategory(KB_PARENT_CATEGORY);
     setQid('');
     setQidCandidates(null);
     setCatExists(null);
@@ -303,8 +307,11 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     // behind on Commons.
     const cat = category.replace(/^\s*Category\s*:\s*/i, '').trim();
     const pendingCategory = cat && createCat && catExists !== true ? cat : null;
+    // The (possibly user-edited) parent the new category is filed under; falls
+    // back to the KB default if the field was cleared.
+    const parentCat = parentCategory.replace(/^\s*Category\s*:\s*/i, '').trim() || KB_PARENT_CATEGORY;
     const toImport = pendingCategory
-      ? chosen.map((it) => ({ ...it, iiifPendingCategory: pendingCategory }))
+      ? chosen.map((it) => ({ ...it, iiifPendingCategory: pendingCategory, iiifPendingParentCategory: parentCat }))
       : chosen;
 
     const result = await runIiifImport(toImport, {
@@ -515,79 +522,104 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                     <label className="iiif-label" htmlFor="iiif-title">Short title (used in filenames and the category)</label>
                     <input id="iiif-title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
 
-                    <label className="iiif-label" htmlFor="iiif-cat">Commons category for this manuscript</label>
-                    <div className="iiif-combobox">
+                    <fieldset className="iiif-catbox">
+                      <legend>Categories</legend>
+
+                      <label className="iiif-label" htmlFor="iiif-cat">Category for this manuscript</label>
+                      <div className="iiif-combobox">
+                        <input
+                          id="iiif-cat"
+                          type="text"
+                          value={category}
+                          className={catExists === null && category.trim() ? 'iiif-input--checking' : ''}
+                          role="combobox"
+                          aria-expanded={catOpen && !!catSuggestions?.length}
+                          aria-autocomplete="list"
+                          autoComplete="off"
+                          onChange={(e) => { setCategory(e.target.value); setCatOpen(true); setCatIdx(-1); }}
+                          onFocus={() => setCatOpen(true)}
+                          onBlur={() => setTimeout(() => setCatOpen(false), 150)}
+                          onKeyDown={(e) => {
+                            const list = catSuggestions || [];
+                            if (!list.length) return;
+                            if (e.key === 'ArrowDown') { e.preventDefault(); setCatOpen(true); setCatIdx((i) => (i + 1) % list.length); }
+                            else if (e.key === 'ArrowUp') { e.preventDefault(); setCatIdx((i) => (i <= 0 ? list.length - 1 : i - 1)); }
+                            else if (e.key === 'Enter' && catOpen && catIdx >= 0) { e.preventDefault(); setCategory(list[catIdx]); setCatOpen(false); setCatIdx(-1); }
+                            else if (e.key === 'Escape') { setCatOpen(false); setCatIdx(-1); }
+                          }}
+                        />
+                        {catOpen && catSuggestions && catSuggestions.length > 0 && (
+                          <ul className="iiif-combobox__list" role="listbox">
+                            {catSuggestions.map((s, i) => (
+                              <li
+                                key={s}
+                                role="option"
+                                aria-selected={i === catIdx}
+                                className={`iiif-combobox__item${i === catIdx ? ' iiif-combobox__item--active' : ''}`}
+                                // mousedown, not click: fires before the input's
+                                // blur closes the dropdown.
+                                onMouseDown={(e) => { e.preventDefault(); setCategory(s); setCatOpen(false); setCatIdx(-1); }}
+                                onMouseEnter={() => setCatIdx(i)}
+                              >
+                                {s}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                      <p className="iiif-hint">
+                        {catExists === null && category.trim() && 'Checking Commons…'}
+                        {catExists === true && (
+                          <span className="iiif-cat-exists">
+                            ✔ This category{' '}
+                            <a
+                              href={`https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(category.replace(/^\s*Category\s*:\s*/i, '').trim().replace(/ /g, '_'))}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Open the category on Commons (new tab)"
+                            >already exists on Commons ↗</a>
+                            {' '}— files will be added to it.
+                          </span>
+                        )}
+                        {catExists === false && (
+                          <span className="iiif-cat-missing">✚ This category does not exist yet — you will be asked to approve its creation in the final step.</span>
+                        )}
+                        {catExists === 'unknown' && (
+                          <span>⚠️ Couldn't check Commons just now (network) — it'll be treated as not yet existing.</span>
+                        )}
+                      </p>
+
+                      <label className="iiif-label" htmlFor="iiif-parent-cat">
+                        Parent category <span className="iiif-label__note">— the umbrella the manuscript's category is filed under</span>
+                      </label>
                       <input
-                        id="iiif-cat"
+                        id="iiif-parent-cat"
                         type="text"
-                        value={category}
-                        className={catExists === null && category.trim() ? 'iiif-input--checking' : ''}
-                        role="combobox"
-                        aria-expanded={catOpen && !!catSuggestions?.length}
-                        aria-autocomplete="list"
-                        autoComplete="off"
-                        onChange={(e) => { setCategory(e.target.value); setCatOpen(true); setCatIdx(-1); }}
-                        onFocus={() => setCatOpen(true)}
-                        onBlur={() => setTimeout(() => setCatOpen(false), 150)}
-                        onKeyDown={(e) => {
-                          const list = catSuggestions || [];
-                          if (!list.length) return;
-                          if (e.key === 'ArrowDown') { e.preventDefault(); setCatOpen(true); setCatIdx((i) => (i + 1) % list.length); }
-                          else if (e.key === 'ArrowUp') { e.preventDefault(); setCatIdx((i) => (i <= 0 ? list.length - 1 : i - 1)); }
-                          else if (e.key === 'Enter' && catOpen && catIdx >= 0) { e.preventDefault(); setCategory(list[catIdx]); setCatOpen(false); setCatIdx(-1); }
-                          else if (e.key === 'Escape') { setCatOpen(false); setCatIdx(-1); }
-                        }}
+                        value={parentCategory}
+                        onChange={(e) => setParentCategory(e.target.value)}
                       />
-                      {catOpen && catSuggestions && catSuggestions.length > 0 && (
-                        <ul className="iiif-combobox__list" role="listbox">
-                          {catSuggestions.map((s, i) => (
-                            <li
-                              key={s}
-                              role="option"
-                              aria-selected={i === catIdx}
-                              className={`iiif-combobox__item${i === catIdx ? ' iiif-combobox__item--active' : ''}`}
-                              // mousedown, not click: fires before the input's
-                              // blur closes the dropdown.
-                              onMouseDown={(e) => { e.preventDefault(); setCategory(s); setCatOpen(false); setCatIdx(-1); }}
-                              onMouseEnter={() => setCatIdx(i)}
-                            >
-                              {s}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                    <p className="iiif-hint iiif-cat-parent">
-                      Parent category:{' '}
-                      <a
-                        href={`https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(KB_PARENT_CATEGORY.replace(/ /g, '_'))}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="Open the parent category on Commons (new tab)"
-                      >{KB_PARENT_CATEGORY} ↗</a>
-                      {' '}— this manuscript's category is filed under it.
-                    </p>
-                    <p className="iiif-hint">
-                      {catExists === null && category.trim() && 'Checking Commons…'}
-                      {catExists === true && (
-                        <span className="iiif-cat-exists">
-                          ✔ This category{' '}
+                      <p className="iiif-hint">
+                        {parentCategory.replace(/^\s*Category\s*:\s*/i, '').trim() && (
                           <a
-                            href={`https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(category.replace(/^\s*Category\s*:\s*/i, '').trim().replace(/ /g, '_'))}`}
+                            href={`https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(parentCategory.replace(/^\s*Category\s*:\s*/i, '').trim().replace(/ /g, '_'))}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            title="Open the category on Commons (new tab)"
-                          >already exists on Commons ↗</a>
-                          {' '}— files will be added to it.
-                        </span>
-                      )}
-                      {catExists === false && (
-                        <span className="iiif-cat-missing">✚ This category does not exist yet — you will be asked to approve its creation in the final step.</span>
-                      )}
-                      {catExists === 'unknown' && (
-                        <span>⚠️ Couldn't check Commons just now (network) — it'll be treated as not yet existing.</span>
-                      )}
-                    </p>
+                            title="Open the parent category on Commons (new tab)"
+                          >View on Commons ↗</a>
+                        )}
+                        {parentCategory.trim() !== KB_PARENT_CATEGORY && (
+                          <>
+                            {parentCategory.replace(/^\s*Category\s*:\s*/i, '').trim() && ' · '}
+                            <button
+                              type="button"
+                              className="iiif-linkbtn"
+                              onClick={() => setParentCategory(KB_PARENT_CATEGORY)}
+                              title={`Reset to “${KB_PARENT_CATEGORY}”`}
+                            >Reset to default</button>
+                          </>
+                        )}
+                      </p>
+                    </fieldset>
 
                     <label className="iiif-label" htmlFor="iiif-qid">
                       Wikidata item of the manuscript (feeds{' '}

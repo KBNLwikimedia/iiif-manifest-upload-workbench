@@ -65,6 +65,7 @@ function placeholderFromMapped(mapped) {
     iiifThumbUrl: mapped.iiif.thumbUrl || null,
     // Category to create at publish time (Q8) — never created at import.
     iiifPendingCategory: mapped.iiifPendingCategory || null,
+    iiifPendingParentCategory: mapped.iiifPendingParentCategory || null,
     issues: [],
     ...thumbColors(filename),
     // mapped prefills (all DRAFT_FIELDS-compatible):
@@ -251,6 +252,7 @@ export async function runIiifImport(mappedItems, {
         thumburl: mapped.iiif.thumbUrl || real.thumburl,
         iiifThumbUrl: mapped.iiif.thumbUrl || null,
         iiifPendingCategory: mapped.iiifPendingCategory || null,
+        iiifPendingParentCategory: mapped.iiifPendingParentCategory || null,
         institution: mapped.institution || null,
         iiif: mapped.iiif,
         ...(existsOnCommons ? { existsOnCommons, issues: [...(real.issues || []), 'exists-on-commons'] } : {}),
