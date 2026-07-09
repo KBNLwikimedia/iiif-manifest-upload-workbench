@@ -20,7 +20,7 @@
 import React from 'react';
 import { fetchManifest, parseManifestFile } from '../api/iiif.js';
 import { mapManifest } from '../api/iiif-map.js';
-import { findManuscriptItems } from '../api/wikidata.js';
+import { findManuscriptItems, resolveQid } from '../api/wikidata.js';
 import { runIiifImport } from '../api/iiif-pipeline.js';
 import { categoryExists, searchCategories } from '../api/commons.js';
 import { KB_PARENT_CATEGORY, KB_LICENSE_WIKITEXT } from '../api/iiif-map.js';
@@ -215,6 +215,28 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   const [qid, setQid] = React.useState('');
   // null = loading, 'error' = lookup failed (retry-able), [] = genuine no-hit.
   const [qidCandidates, setQidCandidates] = React.useState(null);
+  // Merged-item note: { qid, text } shown while `qid` still equals its target.
+  const [qidNote, setQidNote] = React.useState(null);
+
+  // Normalize a manually-entered Q-id that points at a merged/redirected item
+  // to its canonical target (Q114990994 → Q16641064): SDC statements must
+  // never target a redirect. Debounced; a null resolve (invalid / missing /
+  // network) keeps the typed value untouched — we only act on a positive
+  // redirect answer.
+  React.useEffect(() => {
+    const q = qid.trim().toUpperCase();
+    setQidNote((n) => (n && n.qid === q ? n : null));
+    if (!/^Q\d+$/.test(q)) return undefined;
+    let alive = true;
+    const t = setTimeout(() => {
+      resolveQid(q).then((r) => {
+        if (!alive || !r?.redirectedFrom) return;
+        setQid(r.qid);
+        setQidNote({ qid: r.qid, text: `${r.redirectedFrom} was merged into ${r.qid} — using the canonical item.` });
+      });
+    }, 500);
+    return () => { alive = false; clearTimeout(t); };
+  }, [qid]);
 
   // selection (step 3)
   const [selected, setSelected] = React.useState(() => new Set());
@@ -816,6 +838,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
 
                       <label className="iiif-label" htmlFor="iiif-qid">Item of the manuscript</label>
                       <input id="iiif-qid" type="text" placeholder="Q…" value={qid} onChange={(e) => setQid(e.target.value)} />
+                      {qidNote && qidNote.qid === qid.trim().toUpperCase() && (
+                        <p className="iiif-hint">ℹ️ {qidNote.text}</p>
+                      )}
                       <p className="iiif-hint">
                         {qidCandidates === null && 'Searching Wikidata by signature…'}
                         {qidCandidates === 'error' && (

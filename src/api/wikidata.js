@@ -13,6 +13,28 @@
 import { fetchJSON } from '../utils.js';
 
 const SPARQL_ENDPOINT = 'https://query.wikidata.org/sparql';
+const WIKIDATA_API = 'https://www.wikidata.org/w/api.php';
+
+// Resolve a Q-id to its canonical target — merged items leave redirects
+// behind (Q114990994 → Q16641064), and SDC statements must never point at a
+// redirect. Returns { qid: <canonical>, redirectedFrom: <original>|null },
+// or null when the id is invalid, missing, or the check failed (callers
+// treat null as "couldn't verify — keep the typed value", never as an
+// error). The SPARQL signature lookup needs no such step: WDQS only matches
+// canonical items (verified: the redirect Q never appears via wdt:P217).
+export async function resolveQid(qid) {
+  const q = String(qid || '').trim().toUpperCase();
+  if (!/^Q\d+$/.test(q)) return null;
+  const url = `${WIKIDATA_API}?action=wbgetentities&ids=${q}&props=info&redirects=yes&format=json&origin=*`;
+  try {
+    const data = await fetchJSON(url);
+    const ent = Object.values(data?.entities || {})[0];
+    if (!ent || ent.missing !== undefined || !ent.id) return null;
+    return { qid: ent.id, redirectedFrom: ent.id !== q ? q : null };
+  } catch {
+    return null;
+  }
+}
 
 // Both "129 A 24" and "KW 129 A 24" forms exist in the wild; P217 values on
 // the KB stubs use the bare form. Try the signature as given plus the
