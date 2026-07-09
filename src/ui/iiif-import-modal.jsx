@@ -222,6 +222,8 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   const [hoverPreview, setHoverPreview] = React.useState(null);
   // Lightbox: the canvas shown enlarged (or null). Click a carousel thumb.
   const [lightbox, setLightbox] = React.useState(null);
+  // Raw-manifest JSON inspector overlay.
+  const [showJson, setShowJson] = React.useState(false);
   // Whether the current lightbox image has finished loading (drives the
   // spinner). Reset on every page change; the spinner itself is CSS-delayed
   // so cached/instant loads don't flash it.
@@ -273,6 +275,15 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lightbox]);
 
+  // Esc closes the JSON inspector (capture phase, so it doesn't reach the
+  // wizard's Esc and close the whole import).
+  React.useEffect(() => {
+    if (!showJson) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') { e.stopPropagation(); setShowJson(false); } };
+    document.addEventListener('keydown', onKey, true);
+    return () => document.removeEventListener('keydown', onKey, true);
+  }, [showJson]);
+
   // Preload the lightbox's neighbours (±2) so ‹ / › feels instant — the
   // browser caches the 1200 px renditions, so navigating hits cache instead
   // of a fresh IIIF fetch. Only fires while the lightbox is open (user
@@ -307,6 +318,8 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     setCategory(manuscript.categoryName);
     setSelected(new Set(result.manifest.canvases.map((c) => c.index)));
     setExcludedFields(new Set());
+    setLightbox(null);
+    setShowJson(false);
     { const dp = loadDefaultParent(); setDefaultParent(dp); setParentCategory(dp); }
     setQid('');
     setQidCandidates(null);
@@ -667,6 +680,14 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       })}
                     </tbody>
                   </table>
+
+                  {parsed?.raw && (
+                    <p className="iiif-viewjson">
+                      <button type="button" className="iiif-linkbtn" onClick={() => setShowJson(true)}>
+                        View manifest (JSON)
+                      </button>
+                    </p>
+                  )}
 
                   {/* editable mapping settings */}
                   <div className="iiif-settings">
@@ -1064,6 +1085,28 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
             </div>
           );
         })()}
+
+        {showJson && parsed?.raw && (
+          <div className="iiif-jsonview" onClick={() => setShowJson(false)} role="dialog" aria-modal="true" aria-label="Manifest JSON">
+            <div className="iiif-jsonview__panel" onClick={(e) => e.stopPropagation()}>
+              <div className="iiif-jsonview__head">
+                <strong>Manifest JSON</strong>
+                {parsed.manifest?.sourceUrl && (
+                  <a className="iiif-jsonview__src" href={parsed.manifest.sourceUrl} target="_blank" rel="noopener noreferrer">{parsed.manifest.sourceUrl} ↗</a>
+                )}
+                <span className="iiif-jsonview__spacer" />
+                <button
+                  type="button"
+                  className="btn btn--quiet"
+                  onClick={() => navigator.clipboard?.writeText(JSON.stringify(parsed.raw, null, 2))}
+                  title="Copy the JSON to the clipboard"
+                >Copy</button>
+                <button type="button" className="btn btn--quiet btn--icon-only" onClick={() => setShowJson(false)} aria-label="Close">×</button>
+              </div>
+              <pre className="iiif-jsonview__body">{JSON.stringify(parsed.raw, null, 2)}</pre>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

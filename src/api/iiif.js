@@ -325,6 +325,7 @@ export function parseManifest(json, { sourceUrl = null } = {}) {
   return {
     ok: !report.hasErrors(),
     report: report.entries,
+    raw: json, // original manifest JSON, for the "View manifest (JSON)" inspector
     manifest: {
       id: json.id || json['@id'] || null,
       sourceUrl,
