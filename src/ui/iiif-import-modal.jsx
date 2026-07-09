@@ -557,6 +557,16 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                         </ul>
                       )}
                     </div>
+                    <p className="iiif-hint iiif-cat-parent">
+                      Parent category:{' '}
+                      <a
+                        href={`https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(KB_PARENT_CATEGORY.replace(/ /g, '_'))}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Open the parent category on Commons (new tab)"
+                      >{KB_PARENT_CATEGORY} ↗</a>
+                      {' '}— this manuscript's category is filed under it.
+                    </p>
                     <p className="iiif-hint">
                       {catExists === null && category.trim() && 'Checking Commons…'}
                       {catExists === true && (
@@ -734,7 +744,14 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       {' — does not exist yet:'}
                       <label className="iiif-check">
                         <input type="checkbox" checked={createCat} onChange={(e) => setCreateCat(e.target.checked)} />
-                        {' '}<strong>I approve creating this category</strong> (under “{KB_PARENT_CATEGORY}”) when the first page is published
+                        {' '}<strong>I approve creating this category</strong> (under{' '}
+                        <a
+                          href={`https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(KB_PARENT_CATEGORY.replace(/ /g, '_'))}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          title="Open the parent category on Commons (new tab)"
+                        >{KB_PARENT_CATEGORY} ↗</a>) when the first page is published
                       </label>
                       {!createCat && (
                         <em className="iiif-cat-approve__warn">Without approval, publishing stays blocked until the category exists on Commons.</em>
