@@ -8096,11 +8096,11 @@ body.col-resizing * { cursor: col-resize !important; }
 
 /* Preview thumbnails in the review step: first page leftmost + up to three
    random other pages, in one right-floated row. */
-/* Review-step carousel: nav buttons flanking a horizontally-scrollable strip
-   of every canvas thumbnail. */
+/* Review-step carousel: compact nav buttons flanking a horizontally-
+   scrollable strip of every canvas thumbnail. */
 .iiif-carousel {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   gap: 6px;
   margin: 0 0 12px;
 }
@@ -8119,7 +8119,17 @@ body.col-resizing * { cursor: col-resize !important; }
   flex: 0 0 auto;
   margin: 0;
 }
-.iiif-carousel__item img {
+/* The thumbnail is a bare button (clickable → lightbox), positioned so the
+   page-number badge can overlay it. */
+.iiif-carousel__thumb {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
+}
+.iiif-carousel__thumb img {
   display: block;
   height: 150px;
   width: auto;
@@ -8127,6 +8137,23 @@ body.col-resizing * { cursor: col-resize !important; }
   border: 1px solid var(--border-color-base);
   border-radius: 4px;
   background: var(--background-color-neutral-subtle, #f8f9fa);
+}
+.iiif-carousel__thumb:hover img {
+  border-color: var(--color-progressive, #36c);
+}
+.iiif-carousel__num {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  min-width: 16px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
 }
 .iiif-carousel__ph {
   display: flex;
@@ -8141,17 +8168,84 @@ body.col-resizing * { cursor: col-resize !important; }
 }
 .iiif-carousel__nav {
   flex: 0 0 auto;
-  width: 28px;
+  width: 26px;
+  height: 26px;
   border: 1px solid var(--border-color-base);
-  border-radius: 4px;
+  border-radius: 50%;
   background: var(--background-color-neutral-subtle, #f8f9fa);
   color: var(--color-base);
-  font-size: 20px;
+  font-size: 15px;
   line-height: 1;
   cursor: pointer;
 }
 .iiif-carousel__nav:hover {
   background: var(--border-color-base);
+}
+
+/* Lightbox: click a carousel thumb to see the page enlarged. */
+.iiif-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.82);
+}
+.iiif-lightbox__fig {
+  margin: 0;
+  max-width: 88%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.iiif-lightbox__fig img {
+  max-width: 100%;
+  max-height: calc(100vh - 96px);
+  object-fit: contain;
+  border-radius: 4px;
+  background: #fff;
+}
+.iiif-lightbox__fig figcaption {
+  margin-top: 8px;
+  color: #eee;
+  font-size: 13px;
+  text-align: center;
+}
+.iiif-lightbox__fig figcaption a { color: #9cc2ff; }
+.iiif-lightbox__nav,
+.iiif-lightbox__close {
+  flex: 0 0 auto;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  cursor: pointer;
+  line-height: 1;
+}
+.iiif-lightbox__nav {
+  width: 44px;
+  height: 44px;
+  font-size: 26px;
+}
+.iiif-lightbox__nav:hover:not(:disabled),
+.iiif-lightbox__close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+.iiif-lightbox__nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.iiif-lightbox__close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  font-size: 22px;
 }
 
 /* Placeholder-field flag (⚠️) + deselect toggle (✕) in the passport. */

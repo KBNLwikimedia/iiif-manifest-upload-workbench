@@ -69,6 +69,10 @@ function saveDefaultParent(name) {
   try { localStorage.setItem(PARENT_CAT_KEY, name); } catch { /* private mode etc. */ }
 }
 
+// A larger IIIF rendition for the lightbox (1200 px wide — well under the
+// 25 MP cap), falling back to the tile thumb / full-res URL.
+const largeRendition = (c) => (c?.serviceId ? `${c.serviceId}/full/1200,/0/default.jpg` : (c?.thumbUrl || c?.fullResUrl || ''));
+
 const stripCatPrefix = (s) => String(s || '').replace(/^\s*Category\s*:\s*/i, '').trim();
 const commonsCatUrl = (name) =>
   `https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(stripCatPrefix(name).replace(/ /g, '_'))}`;
@@ -216,6 +220,8 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // hover zoom in the gallery: { canvas, left, top } or null. The preview
   // requests a larger IIIF rendition (700px) than the 400px tile thumbs.
   const [hoverPreview, setHoverPreview] = React.useState(null);
+  // Lightbox: the canvas shown enlarged (or null). Click a carousel thumb.
+  const [lightbox, setLightbox] = React.useState(null);
 
   // pipeline (step 5)
   const abortRef = React.useRef({ current: false });
@@ -244,6 +250,20 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
       document.body.style.overflow = prev;
     };
   }, [onClose, step]);
+
+  // Lightbox keys, in the capture phase so Esc closes the lightbox (and
+  // stops the wizard's Esc from firing); ← / → step between pages.
+  React.useEffect(() => {
+    if (!lightbox) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') { e.stopPropagation(); setLightbox(null); }
+      else if (e.key === 'ArrowRight') { e.stopPropagation(); stepLightbox(1); }
+      else if (e.key === 'ArrowLeft') { e.stopPropagation(); stepLightbox(-1); }
+    };
+    document.addEventListener('keydown', onKey, true);
+    return () => document.removeEventListener('keydown', onKey, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lightbox]);
 
   // OI-30: invalidate any in-flight Q-id lookup when the wizard unmounts.
   React.useEffect(() => () => { qidLookupRef.current = -1; }, []);
@@ -332,6 +352,13 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     const el = carouselRef.current;
     if (el) el.scrollBy({ left: dir * Math.max(el.clientWidth * 0.8, 200), behavior: 'smooth' });
   };
+  // Move the lightbox to the previous/next canvas (by array position).
+  const stepLightbox = (dir) => setLightbox((cur) => {
+    const list = parsed?.manifest?.canvases || [];
+    if (!cur || !list.length) return cur;
+    const pos = list.findIndex((c) => c.index === cur.index);
+    return list[pos + dir] || cur;
+  });
 
   // Apply user-edited title/category on top of the mapped items without
   // re-deriving everything: filenames and captions substitute the derived
@@ -531,18 +558,26 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                         aria-label="Scroll thumbnails left"
                       >‹</button>
                       <div className="iiif-carousel__strip" ref={carouselRef}>
-                        {manifest.canvases.map((c) => (
-                          <figure key={c.index} className="iiif-carousel__item" title={c.label || `canvas ${c.index + 1}`}>
-                            {c.thumbUrl
-                              ? (
-                                <img
-                                  src={c.thumbUrl}
-                                  alt={c.label || `canvas ${c.index + 1}`}
-                                  loading="lazy"
-                                  referrerPolicy="no-referrer"
-                                />
-                              )
-                              : <span className="iiif-carousel__ph">#{c.index + 1}</span>}
+                        {manifest.canvases.map((c, i) => (
+                          <figure key={c.index} className="iiif-carousel__item" title={c.label || `page ${i + 1}`}>
+                            <button
+                              type="button"
+                              className="iiif-carousel__thumb"
+                              onClick={() => setLightbox(c)}
+                              aria-label={`Enlarge page ${i + 1}${c.label ? ` (${c.label})` : ''}`}
+                            >
+                              <span className="iiif-carousel__num">{i + 1}</span>
+                              {c.thumbUrl
+                                ? (
+                                  <img
+                                    src={c.thumbUrl}
+                                    alt={c.label || `canvas ${c.index + 1}`}
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer"
+                                  />
+                                )
+                                : <span className="iiif-carousel__ph">#{c.index + 1}</span>}
+                            </button>
                           </figure>
                         ))}
                       </div>
@@ -947,6 +982,51 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
             <button className="btn btn--progressive" onClick={onClose}>Go to the table</button>
           )}
         </footer>
+
+        {lightbox && (() => {
+          const canv = parsed?.manifest?.canvases || [];
+          const pos = canv.findIndex((c) => c.index === lightbox.index);
+          return (
+            <div
+              className="iiif-lightbox"
+              onClick={(e) => { e.stopPropagation(); setLightbox(null); }}
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Page ${pos + 1}`}
+            >
+              <button type="button" className="iiif-lightbox__close" onClick={(e) => { e.stopPropagation(); setLightbox(null); }} aria-label="Close">×</button>
+              <button
+                type="button"
+                className="iiif-lightbox__nav iiif-lightbox__nav--prev"
+                onClick={(e) => { e.stopPropagation(); stepLightbox(-1); }}
+                disabled={pos <= 0}
+                aria-label="Previous page"
+              >‹</button>
+              <figure className="iiif-lightbox__fig" onClick={(e) => e.stopPropagation()}>
+                <img
+                  src={largeRendition(lightbox)}
+                  alt={lightbox.label || `page ${pos + 1}`}
+                  referrerPolicy="no-referrer"
+                  onError={(e) => { if (lightbox.thumbUrl && e.target.src !== lightbox.thumbUrl) e.target.src = lightbox.thumbUrl; }}
+                />
+                <figcaption>
+                  Page {pos + 1} of {canv.length}
+                  {lightbox.label ? ` — ${lightbox.label}` : ''}
+                  {lightbox.fullResUrl && (
+                    <>{' · '}<a href={lightbox.fullResUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>full-res ↗</a></>
+                  )}
+                </figcaption>
+              </figure>
+              <button
+                type="button"
+                className="iiif-lightbox__nav iiif-lightbox__nav--next"
+                onClick={(e) => { e.stopPropagation(); stepLightbox(1); }}
+                disabled={pos >= canv.length - 1}
+                aria-label="Next page"
+              >›</button>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
