@@ -6,7 +6,9 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
-_(nothing yet)_
+### Changed
+
+- **Wizard, Wikidata section**: removed the "Feeds digital representation of (P6243) + depicts (P180)" hint — developer-facing property plumbing that added noise to the review step.
 
 ---
 
