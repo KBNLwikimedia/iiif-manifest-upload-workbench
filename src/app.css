@@ -8188,6 +8188,14 @@ body.col-resizing * { cursor: col-resize !important; }
   font-size: 13px;
 }
 
+/* OI-68 Phase A: "Wikidata says this manuscript already has a category" —
+   lightly highlighted so the don't-create-a-duplicate moment stands out. */
+.iiif-wd-cat {
+  background: rgba(255, 193, 7, 0.14);
+  border-radius: 4px;
+  padding: 5px 8px;
+}
+
 /* Raw-manifest JSON inspector overlay. */
 .iiif-jsonview {
   position: fixed;

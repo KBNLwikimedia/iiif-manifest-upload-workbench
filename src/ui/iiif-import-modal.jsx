@@ -726,6 +726,37 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                         )}
                       </p>
 
+                      {/* OI-68 Phase A: the manuscript's Wikidata item may
+                          carry P373 (Commons category) — the category that
+                          ALREADY exists under a different naming convention
+                          (e.g. "Den Haag KB 76 E 5"). Offer it so the user
+                          adopts it instead of creating a near-duplicate.
+                          Replaces the suggestion (single category per
+                          manuscript — decided 2026-07-09). */}
+                      {(() => {
+                        const cand = (qidCandidates || []).find((c) => c.qid === qid.trim());
+                        const wdCat = cand?.commonsCategory;
+                        if (!wdCat || stripCatPrefix(category) === wdCat) return null;
+                        return (
+                          <p className="iiif-hint iiif-wd-cat">
+                            ★ Wikidata says this manuscript already has a Commons category:{' '}
+                            <a
+                              href={commonsCatUrl(wdCat)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Open this category on Commons (new tab)"
+                            >{wdCat} ↗</a>
+                            {' · '}
+                            <button
+                              type="button"
+                              className="iiif-linkbtn"
+                              onClick={() => setCategory(wdCat)}
+                              title="Use this existing category instead of the suggestion"
+                            >Use this category</button>
+                          </p>
+                        );
+                      })()}
+
                       <label className="iiif-label" htmlFor="iiif-parent-cat">
                         Parent category <span className="iiif-label__note">— the umbrella the manuscript's category is filed under</span>
                       </label>
@@ -801,6 +832,17 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                                 >
                                   {c.label} ↗
                                 </a>
+                                {c.commonsPage && (
+                                  <>
+                                    {' · '}
+                                    <a
+                                      href={`https://commons.wikimedia.org/wiki/${encodeURIComponent(c.commonsPage.replace(/ /g, '_'))}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      title="This item's page/gallery on Commons (new tab)"
+                                    >Commons ↗</a>
+                                  </>
+                                )}
                               </span>
                             ))}
                           </>

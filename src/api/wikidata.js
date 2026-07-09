@@ -27,23 +27,43 @@ function signatureVariants(signature) {
   return out;
 }
 
-// findManuscriptItems('KW 129 A 24') → [{ qid, label }] (possibly empty).
+// findManuscriptItems('KW 129 A 24') →
+//   [{ qid, label, commonsCategory, commonsPage }] (possibly empty).
 // Multiple hits are possible (other institutions reuse inventory numbers),
 // so the caller shows the list and the user confirms — we don't guess.
+//
+// OI-68 Phase A: the same query also pulls the item's P373 (Commons
+// category — for KB manuscripts this is the *existing* category under a
+// KB naming convention, e.g. Q1929931 → "Den Haag KB 76 E 5") and the
+// commonswiki sitelink (usually a gallery page). The wizard uses P373 to
+// offer the already-existing category instead of creating a near-duplicate.
 export async function findManuscriptItems(signature) {
   const variants = signatureVariants(signature);
   if (!variants.length) return [];
   const values = variants.map((v) => `"${v.replace(/"/g, '\\"')}"`).join(' ');
   const query = `
-    SELECT DISTINCT ?item ?itemLabel WHERE {
+    SELECT DISTINCT ?item ?itemLabel ?commonsCat ?commonsPage WHERE {
       VALUES ?sig { ${values} }
       ?item wdt:P217 ?sig .
+      OPTIONAL { ?item wdt:P373 ?commonsCat . }
+      OPTIONAL {
+        ?sitelink schema:about ?item ;
+                  schema:isPartOf <https://commons.wikimedia.org/> ;
+                  schema:name ?commonsPage .
+      }
       SERVICE wikibase:label { bd:serviceParam wikibase:language "nl,en". }
-    } LIMIT 10`;
+    } LIMIT 20`;
   const url = `${SPARQL_ENDPOINT}?query=${encodeURIComponent(query)}&format=json`;
   const data = await fetchJSON(url, { headers: { Accept: 'application/sparql-results+json' } });
-  return (data?.results?.bindings || []).map((b) => ({
-    qid: b.item.value.split('/').pop(),
-    label: b.itemLabel?.value || '',
-  }));
+  // The OPTIONALs can yield several rows per item — merge them by Q-id.
+  const byQid = new Map();
+  for (const b of data?.results?.bindings || []) {
+    const qid = b.item.value.split('/').pop();
+    const cur = byQid.get(qid) || { qid, label: '', commonsCategory: null, commonsPage: null };
+    if (!cur.label && b.itemLabel?.value) cur.label = b.itemLabel.value;
+    if (!cur.commonsCategory && b.commonsCat?.value) cur.commonsCategory = b.commonsCat.value;
+    if (!cur.commonsPage && b.commonsPage?.value) cur.commonsPage = b.commonsPage.value;
+    byQid.set(qid, cur);
+  }
+  return [...byQid.values()];
 }
