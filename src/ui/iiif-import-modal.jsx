@@ -823,7 +823,11 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                                     className="btn btn--progressive iiif-existing-cats__use"
                                     onClick={() => setCategory(e.name)}
                                   >Use this category</button>
-                                  <a href={commonsCatUrl(e.name)} target="_blank" rel="noopener noreferrer">{e.name} ↗</a>
+                                  {/* With one variant the head already names+links it —
+                                      repeating the name here read as clutter. */}
+                                  {!single && (
+                                    <a href={commonsCatUrl(e.name)} target="_blank" rel="noopener noreferrer">{e.name} ↗</a>
+                                  )}
                                   <span className="iiif-existing-cats__src" title={SRC[e.source]?.tip}>{SRC[e.source]?.label} ⓘ</span>
                                 </div>
                               ))}
