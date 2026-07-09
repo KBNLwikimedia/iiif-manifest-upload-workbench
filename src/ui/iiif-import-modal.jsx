@@ -265,6 +265,24 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lightbox]);
 
+  // Preload the lightbox's neighbours (±2) so ‹ / › feels instant — the
+  // browser caches the 1200 px renditions, so navigating hits cache instead
+  // of a fresh IIIF fetch. Only fires while the lightbox is open (user
+  // gesture), so it doesn't add background traffic to normal browsing.
+  React.useEffect(() => {
+    if (!lightbox) return;
+    const list = parsed?.manifest?.canvases || [];
+    const pos = list.findIndex((c) => c.index === lightbox.index);
+    [pos - 1, pos + 1, pos - 2, pos + 2].forEach((p) => {
+      const c = list[p];
+      if (!c) return;
+      const img = new Image();
+      img.referrerPolicy = 'no-referrer';
+      img.src = largeRendition(c);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lightbox]);
+
   // OI-30: invalidate any in-flight Q-id lookup when the wizard unmounts.
   React.useEffect(() => () => { qidLookupRef.current = -1; }, []);
 
