@@ -145,7 +145,7 @@ function CategoryCombobox({ id, value, onChange, inputClassName }) {
 const STEP_TITLES = {
   input: 'Import IIIF manifest',
   review: 'Check the manifest',
-  select: 'Select images',
+  select: 'Select images for uploading to Wikimedia Commons',
   confirm: 'Ready to import',
   running: 'Importing…',
   done: 'Import finished',
@@ -248,6 +248,20 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // hover zoom in the gallery: { canvas, left, top } or null. The preview
   // requests a larger IIIF rendition (700px) than the 400px tile thumbs.
   const [hoverPreview, setHoverPreview] = React.useState(null);
+  // OI-47: the 700px request only fires after a ~250ms intent delay, so
+  // sweeping the mouse across a 484-tile grid doesn't burst hundreds of
+  // rendition requests at the IIIF server. The timer is cleared on
+  // mouseleave, on scroll (the fixed panel would go stale), and on step
+  // change.
+  const hoverTimerRef = React.useRef(null);
+  const clearHoverPreview = React.useCallback(() => {
+    if (hoverTimerRef.current) { clearTimeout(hoverTimerRef.current); hoverTimerRef.current = null; }
+    setHoverPreview(null);
+  }, []);
+  React.useEffect(() => {
+    clearHoverPreview();
+    return () => { if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current); };
+  }, [step, clearHoverPreview]);
   // Lightbox: the canvas shown enlarged (or null). Click a carousel thumb.
   const [lightbox, setLightbox] = React.useState(null);
   // Raw-manifest JSON inspector overlay.
@@ -596,7 +610,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
           )}
         </header>
 
-        <div className="modal__body iiif-modal__body">
+        {/* onScroll: the hover-zoom panel is fixed-positioned, so any scroll
+            would leave it floating over the wrong tile (OI-47). */}
+        <div className="modal__body iiif-modal__body" onScroll={clearHoverPreview}>
 
           {step === 'input' && (
             <div className="iiif-step-input">
@@ -1064,9 +1080,15 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                         const panelW = 440;
                         const left = r.right + panelW + 20 < window.innerWidth ? r.right + 12 : Math.max(8, r.left - panelW - 12);
                         const top = Math.max(8, Math.min(r.top, window.innerHeight - Math.min(window.innerHeight * 0.7, 640) - 8));
-                        setHoverPreview({ canvas: c, left, top });
+                        // Intent delay (OI-47): only show — and thus request —
+                        // the 700px rendition when the pointer actually rests.
+                        if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+                        hoverTimerRef.current = setTimeout(() => {
+                          hoverTimerRef.current = null;
+                          setHoverPreview({ canvas: c, left, top });
+                        }, 250);
                       }}
-                      onMouseLeave={() => setHoverPreview(null)}
+                      onMouseLeave={clearHoverPreview}
                     >
                       <input
                         type="checkbox"
