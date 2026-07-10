@@ -16,6 +16,8 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Changed
 
+- **Dismissed warning boxes are restorable** — closing the select-step >25 MP note or the review-step validation report (which also gained a dismiss ×) leaves a small "⚠️ There are warnings for this manifest — show them" line that brings the box back; a new manifest load resets both.
+- **Clearly visible scrollbar** on the wizard's scroll surfaces (modal body + select-step grid): explicit 12 px thumb/track instead of the hairline default.
 - **Select step: pinned header, scrolling grid** — the >25 MP note and the Select all/none/invert toolbar stay put; only the thumbnail grid scrolls. The note is now dismissible (small ×, returns on the next manifest load) and its lead clause ("N of M images are larger than 25 megapixels") is bold. Step title: "Select images for importing into Wikimedia Commons".
 - **Ready-to-import header restructured** — identity line, blank line, then "**N images** will be downloaded…" and "An **estimate of ~X MB** will be transferred." each on their own line; header identity line reads "… — N images in this manifest".
 - **Wizard: the "N of M images selected" counter moved into the select-step toolbar**, right-aligned next to Select all / Select none / Invert selection; the header stays identity-only there.
