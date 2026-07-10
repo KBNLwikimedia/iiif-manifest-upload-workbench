@@ -14,6 +14,7 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Changed
 
+- **Wizard header: the manuscript identity line ("Title (signature) — N pages") now stays on every step** past input; step-specific info (selection count, transfer estimate, progress) moved to a second line.
 - **Wizard, Wikidata section redesigned** — the cramped "Found by signature: ✓ Q… · Gallery ↗ · Category ↗" line became a structured match panel (blue-tinted sibling of the amber existing-category box): "Found on Wikidata by signature ⓘ" head (tooltip explains the P217 match), a "✓ in use" chip or a real "Use this item" button per candidate, the Q-id + label as one Wikidata link, and an explicit provenance line "This Wikidata item also links to: its gallery on Commons (P935) · its category on Commons (P373)". The no-match message now names the signature it searched for.
 - **Wizard, Wikidata section**: removed the "Feeds digital representation of (P6243) + depicts (P180)" hint — developer-facing property plumbing that added noise to the review step.
 
