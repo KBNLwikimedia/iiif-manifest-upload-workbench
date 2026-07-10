@@ -145,7 +145,7 @@ function CategoryCombobox({ id, value, onChange, inputClassName }) {
 const STEP_TITLES = {
   input: 'Import IIIF manifest',
   review: 'Check the manifest',
-  select: 'Select images for uploading to Wikimedia Commons',
+  select: 'Select images for importing into Wikimedia Commons',
   confirm: 'Ready to import',
   running: 'Importing…',
   done: 'Import finished',
@@ -262,6 +262,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     clearHoverPreview();
     return () => { if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current); };
   }, [step, clearHoverPreview]);
+  // The >25 MP note on the select step can be clicked away; a newly loaded
+  // manifest brings it back.
+  const [downscaleNoteHidden, setDownscaleNoteHidden] = React.useState(false);
   // Lightbox: the canvas shown enlarged (or null). Click a carousel thumb.
   const [lightbox, setLightbox] = React.useState(null);
   // Raw-manifest JSON inspector overlay.
@@ -363,6 +366,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     setCategory(manuscript.categoryName);
     setSelected(new Set(result.manifest.canvases.map((c) => c.index)));
     setExcludedFields(new Set());
+    setDownscaleNoteHidden(false);
     setLightbox(null);
     setShowJson(false);
     setVariantCats(null);
@@ -611,8 +615,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
         </header>
 
         {/* onScroll: the hover-zoom panel is fixed-positioned, so any scroll
-            would leave it floating over the wrong tile (OI-47). */}
-        <div className="modal__body iiif-modal__body" onScroll={clearHoverPreview}>
+            would leave it floating over the wrong tile (OI-47). On the select
+            step the body is pinned (only the thumbnail grid scrolls). */}
+        <div
+          className={`modal__body iiif-modal__body${step === 'select' ? ' iiif-modal__body--select' : ''}`}
+          onScroll={clearHoverPreview}
+        >
 
           {step === 'input' && (
             <div className="iiif-step-input">
@@ -1043,9 +1051,16 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
 
           {step === 'select' && manifest && (
             <div className="iiif-step-select">
-              {manifest.downscaledCount > 0 && (
+              {manifest.downscaledCount > 0 && !downscaleNoteHidden && (
                 <p className="iiif-hint iiif-downscale-note">
-                  {manifest.downscaledCount} of the {manifest.canvasCount} images are larger than 25 megapixels — they carry a “&gt;25 MP” tag below. The KB's IIIF image server caps what it delivers at 25 MP, so those images arrive slightly smaller than the original (but still high-res) — e.g. an 8040 × 6030 image (48 MP) downloads at ~25 MP. This is a limit of the IIIF server — not of Wikimedia Commons, which accepts much larger files.
+                  <button
+                    type="button"
+                    className="iiif-downscale-note__close"
+                    onClick={() => setDownscaleNoteHidden(true)}
+                    aria-label="Dismiss this note"
+                    title="Dismiss this note"
+                  >×</button>
+                  <strong>{manifest.downscaledCount} of the {manifest.canvasCount} images are larger than 25 megapixels</strong> — they carry a “&gt;25 MP” tag below. The KB's IIIF image server caps what it delivers at 25 MP, so those images arrive slightly smaller than the original (but still high-res) — e.g. an 8040 × 6030 image (48 MP) downloads at ~25 MP. This is a limit of the IIIF server — not of Wikimedia Commons, which accepts much larger files.
                 </p>
               )}
               <div className="iiif-select-bar">
@@ -1056,7 +1071,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   <strong>{selected.size}</strong> of {manifest.canvasCount} images selected
                 </span>
               </div>
-              <div className="iiif-gallery">
+              <div className="iiif-gallery" onScroll={clearHoverPreview}>
                 {manifest.canvases.map((c) => {
                   // Full-detail native tooltip: labels are ellipsized in the
                   // tile, so hovering must reveal the whole story — canvas

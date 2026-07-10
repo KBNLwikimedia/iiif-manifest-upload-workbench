@@ -8848,9 +8848,44 @@ body.col-resizing * { cursor: col-resize !important; }
   width: 100%;
   box-sizing: border-box;
   margin: 0 0 10px;
-  padding: 8px 12px;
+  padding: 8px 28px 8px 12px; /* room for the dismiss × */
   background: var(--background-color-neutral-subtle, #f8f9fa);
   border: 1px solid var(--border-color-base);
   border-radius: 6px;
   line-height: 1.5;
+  position: relative;
+}
+.iiif-downscale-note__close {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  border: 0;
+  background: none;
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px 4px;
+  cursor: pointer;
+  color: var(--color-subtle);
+}
+.iiif-downscale-note__close:hover { color: var(--color-base); }
+
+/* Select step: the header note + toolbar stay pinned; only the
+   thumbnail grid scrolls (maintainer request 2026-07-10). */
+.iiif-modal__body--select { overflow: hidden; }
+.iiif-step-select {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; /* let the step shrink so the gallery gets the scrollbar */
+}
+.iiif-step-select .iiif-gallery {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  /* Explicit row sizing is load-bearing: with `auto` rows Chrome sizes
+     them to 0 inside this shrunk flex context and every tile squashes
+     to its 4px of borders. */
+  grid-auto-rows: max-content;
+  /* keep tiles clear of the scrollbar */
+  padding-right: 4px;
 }
