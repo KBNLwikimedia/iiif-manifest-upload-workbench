@@ -455,15 +455,15 @@ export default function FeedbackModal({ onClose }) {
               <Icon name="copy" size={14} /> Copy text
             </button>
             <button
-              className="btn"
+              className="btn btn--progressive"
               onClick={openGithub}
               disabled={!hasComment}
               title="Opens a pre-filled new issue on GitHub (KBNLwikimedia/iiif-manifest-upload-workbench). Requires a GitHub account."
             >
               <Icon name="external" size={14} /> Open GitHub issue
             </button>
-            <button className="btn btn--progressive" onClick={onClose}>Close</button>
           </div>
+          <button className="btn feedback-modal__cancel" onClick={onClose}>Cancel</button>
         </footer>
       </div>
     </div>

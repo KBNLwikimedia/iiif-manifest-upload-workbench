@@ -7873,15 +7873,16 @@ body.col-resizing * { cursor: col-resize !important; }
   flex-wrap: wrap;
   gap: var(--spacing-75);
 }
+/* The privacy hint takes its own full-width row on top; the button row
+   below has the actions (Copy text + blue Open GitHub issue) on the left
+   and the white Cancel pushed to the bottom-right. */
+.feedback-modal__foot .modal__hint { flex-basis: 100%; }
 .feedback-modal__actions {
   display: flex;
   gap: var(--spacing-50);
   flex-wrap: wrap;
-  justify-content: flex-end;
-  /* When the footer wraps (long hint), the actions drop to their own row;
-     margin-left:auto keeps them — and the blue Close — hugging the right. */
-  margin-left: auto;
 }
+.feedback-modal__cancel { margin-left: auto; }
 .feedback-modal__label-hint {
   font-weight: var(--font-weight-normal);
   color: var(--color-subtle);

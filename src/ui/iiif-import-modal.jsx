@@ -1333,7 +1333,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
           </div>
           {step === 'done'
             ? <button className="btn btn--progressive" onClick={onClose}>Go to the table</button>
-            : step !== 'running' && <button className="btn btn--progressive iiif-modal__close-btn" onClick={onClose}>Close</button>}
+            : step !== 'running' && <button className="btn iiif-modal__close-btn" onClick={onClose}>Cancel</button>}
         </footer>
 
         {lightbox && (() => {
