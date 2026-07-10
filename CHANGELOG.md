@@ -12,6 +12,7 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 - **"Gallery" link no longer shown for a `Category:` sitelink** — a Wikidata item whose only Commons link is a category-namespace sitelink (e.g. Q114989690 / KW 70 H 19) was presented as having a gallery; the sitelink is now rerouted to the category slot.
 - **"Choose a manifest .json file" label text vertically centered** — the `.iiif-file-btn` display override dropped `.btn`'s flex centering.
 - **Stale header comment in `iiif-map.js`** (OI-61 #61) — cited the pre-revision Q4 license and described the Phase 5.2 Artwork extras as future work; both now match the shipped code.
+- **Hover-zoom no longer bursts rendition requests** (OI-47 #47) — the gallery's 700 px zoom panel now waits for a ~250 ms intent delay (sweeping the grid fires zero requests), dismisses on scroll (it went stale over the wrong tile), and clears on step change.
 
 ### Changed
 
