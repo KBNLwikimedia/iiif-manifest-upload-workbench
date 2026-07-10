@@ -817,13 +817,17 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
 
                   {/* editable mapping settings */}
                   <div className="iiif-settings">
-                    <label className="iiif-label" htmlFor="iiif-title">Short title (used in filenames and the category)</label>
+                    <label className="iiif-label" htmlFor="iiif-title">
+                      Short title <span className="iiif-label__note">— used in filenames and the category (type to change it)</span>
+                    </label>
                     <input id="iiif-title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
 
                     <fieldset className="iiif-fieldset">
                       <legend>Categories</legend>
 
-                      <label className="iiif-label" htmlFor="iiif-cat">Suggested category for this manuscript</label>
+                      <label className="iiif-label" htmlFor="iiif-cat">
+                        Suggested category for this manuscript <span className="iiif-label__note">(type to change it)</span>
+                      </label>
                       <CategoryCombobox
                         id="iiif-cat"
                         value={category}
@@ -927,7 +931,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       })()}
 
                       <label className="iiif-label" htmlFor="iiif-parent-cat">
-                        Parent category <span className="iiif-label__note">— the umbrella the manuscript's category is filed under</span>
+                        Parent category <span className="iiif-label__note">— the umbrella the manuscript's category is filed under (type to change it)</span>
                       </label>
                       <CategoryCombobox
                         id="iiif-parent-cat"
@@ -976,7 +980,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       <legend>Wikidata</legend>
 
                       <label className="iiif-label" htmlFor="iiif-qid">
-                        Item of the manuscript <span className="iiif-label__note">— its Q-id on Wikidata</span>
+                        Item of the manuscript <span className="iiif-label__note">— its Q-id on Wikidata (type to change it)</span>
                       </label>
                       <input id="iiif-qid" type="text" placeholder="Q…" value={qid} onChange={(e) => setQid(e.target.value)} />
                       {qidNote && qidNote.qid === qid.trim().toUpperCase() && (
