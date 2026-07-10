@@ -23,6 +23,7 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Changed
 
+- **Consistent modal footers** — a blue "Close" button now anchors the bottom-right of every modal (the About-modal pattern). The Feedback and Templates-and-columns modals no longer close on Esc or a backdrop click (so a half-typed report or an in-progress column arrangement can't vanish on a stray key/click); the × and the footer button remain. In the import wizard, Back/Next moved to a bottom-left group with the blue Close bottom-right on each step-by-step screen.
 - **Dismissed warning boxes are restorable** — closing the select-step >25 MP note or the review-step validation report (which also gained a dismiss ×) leaves a small "⚠️ There are warnings for this manifest — show them" line that brings the box back; a new manifest load resets both.
 - **Clearly visible scrollbar** on the wizard's scroll surfaces (modal body + select-step grid): explicit 12 px thumb/track instead of the hairline default.
 - **Select step: pinned header, scrolling grid** — the >25 MP note and the Select all/none/invert toolbar stay put; only the thumbnail grid scrolls. The note is now dismissible (small ×, returns on the next manifest load) and its lead clause ("N of M images are larger than 25 megapixels") is bold. Step title: "Select images for importing into Wikimedia Commons".
