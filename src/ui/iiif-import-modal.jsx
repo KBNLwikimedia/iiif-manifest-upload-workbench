@@ -425,9 +425,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   };
 
   const loadUrl = async (overrideUrl) => {
-    const u = String(overrideUrl ?? url).trim();
+    // Only treat a STRING arg as an override — passing loadUrl straight to
+    // onClick would otherwise hand us the click event (→ "[object Object]").
+    const hasOverride = typeof overrideUrl === 'string';
+    const u = String(hasOverride ? overrideUrl : url).trim();
     if (!u) return;
-    if (overrideUrl != null) setUrl(u);
+    if (hasOverride) setUrl(u);
     setBusy(true); setError(null);
     try {
       const result = await fetchManifest(u);
@@ -685,7 +688,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   disabled={busy}
                   autoFocus
                 />
-                <button className="btn btn--progressive" onClick={loadUrl} disabled={busy || !url.trim()}>
+                <button className="btn btn--progressive" onClick={() => loadUrl()} disabled={busy || !url.trim()}>
                   {busy ? 'Loading…' : 'Load'}
                 </button>
               </div>
