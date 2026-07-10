@@ -12,6 +12,9 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Fixed
 
+- **Import retry now recognizes real MediaWiki DB errors** (OI-75 #75) — `internal_api_error_*` codes (e.g. `internal_api_error_DBQueryError`) classify as transient and retry instead of failing fatally.
+- **A failed CSRF-token refresh mid-import aborts cleanly** (OI-76 #76) — when a `badtoken` refresh fails because the session died, the batch now aborts with the session-expired message instead of grinding through more failures.
+- **The import wizard can no longer wedge on the running step** (OI-77 #77) — an unexpected error during the import lands on the finished step with a clear message and a reachable "Go to the table", instead of a stuck modal.
 - **Esc / backdrop-click no longer destroy the import wizard** (OI-31 #31, OI-70 #70) — both dismissed the whole modal on any step, silently discarding the manifest, lookups and edits (or, on step 1, a typed URL). They now close only on the `done` step; everywhere else the explicit × is the only way out (same policy as the lightbox).
 - **"Gallery" link no longer shown for a `Category:` sitelink** — a Wikidata item whose only Commons link is a category-namespace sitelink (e.g. Q114989690 / KW 70 H 19) was presented as having a gallery; the sitelink is now rerouted to the category slot.
 - **"Choose a manifest .json file" label text vertically centered** — the `.iiif-file-btn` display override dropped `.btn`'s flex centering.
