@@ -289,7 +289,7 @@ export async function runIiifImport(mappedItems, {
       // message instead of hundreds of identical failures. A re-run after
       // re-login skips whatever already reached the stash (sha1 dedupe).
       if (e.kind === 'auth') {
-        const msg = 'Session expired — log in and re-run. Pages already stashed are kept.';
+        const msg = 'Session expired — log in and re-run. Images already stashed are kept.';
         onUpdateItem?.(temp.id, { status: 'upload-error', errorMessage: msg, progress: 0 });
         results.push({ mapped, state: 'error', error: msg });
         failed += 1;
@@ -310,7 +310,7 @@ export async function runIiifImport(mappedItems, {
       // OI-26: give up on a run that's failing everything (dead network,
       // content blocker, quota) rather than grind through all 500 pages.
       if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-        const msg = `Import stopped after ${MAX_CONSECUTIVE_FAILURES} failures in a row — check your connection / browser extensions and re-run (stashed pages are kept).`;
+        const msg = `Import stopped after ${MAX_CONSECUTIVE_FAILURES} failures in a row — check your connection / browser extensions and re-run (stashed images are kept).`;
         markRemaining(i + 1, msg);
         aborted = true;
         break;

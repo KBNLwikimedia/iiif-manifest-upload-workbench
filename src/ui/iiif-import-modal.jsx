@@ -145,7 +145,7 @@ function CategoryCombobox({ id, value, onChange, inputClassName }) {
 const STEP_TITLES = {
   input: 'Import IIIF manifest',
   review: 'Check the manifest',
-  select: 'Select pages',
+  select: 'Select images',
   confirm: 'Ready to import',
   running: 'Importing…',
   done: 'Import finished',
@@ -514,7 +514,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     setSummary({
       ...result,
       catNote: pendingCategory
-        ? `Category “${pendingCategory}” will be created when you publish the first page.`
+        ? `Category “${pendingCategory}” will be created when you publish the first image.`
         : null,
     });
     setStep('done');
@@ -571,18 +571,18 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 step-specific info goes on a second line. */}
             <p className="modal__sub">
               {step === 'input' && 'Paste a IIIF Presentation 3.0 manifest URL, or pick a downloaded manifest .json file.'}
-              {step !== 'input' && (manifest ? `${manifest.label || 'Untitled manifest'} — ${manifest.canvasCount} pages` : 'The manifest could not be used.')}
+              {step !== 'input' && (manifest ? `${manifest.label || 'Untitled manifest'} — ${manifest.canvasCount} images` : 'The manifest could not be used.')}
             </p>
             {step !== 'input' && step !== 'review' && manifest && (
               <p className="modal__sub iiif-modal__substep">
-                {step === 'select' && `${selected.size} of ${manifest?.canvasCount ?? 0} pages selected`}
+                {step === 'select' && `${selected.size} of ${manifest?.canvasCount ?? 0} images selected`}
                 {step === 'confirm' && (
                   <>
-                    {chosen.length} pages will be downloaded from the IIIF server and stashed on Wikimedia Commons. An <strong>estimate of ~{totalMB} MB</strong> will be transferred through your browser.
+                    {chosen.length} images will be downloaded from the IIIF server and stashed on Wikimedia Commons. An <strong>estimate of ~{totalMB} MB</strong> will be transferred through your browser.
                   </>
                 )}
-                {step === 'running' && `${progress.done} / ${progress.total} pages processed — keep this tab open.`}
-                {step === 'done' && 'The imported pages are now rows in your stash — review and publish from the table.'}
+                {step === 'running' && `${progress.done} / ${progress.total} images processed — keep this tab open.`}
+                {step === 'done' && 'The imported images are now rows in your stash — review and publish from the table.'}
               </p>
             )}
           </div>
@@ -661,12 +661,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       >‹</button>
                       <div className="iiif-carousel__strip" ref={carouselRef}>
                         {manifest.canvases.map((c, i) => (
-                          <figure key={c.index} className="iiif-carousel__item" title={c.label || `page ${i + 1}`}>
+                          <figure key={c.index} className="iiif-carousel__item" title={c.label || `image ${i + 1}`}>
                             <button
                               type="button"
                               className="iiif-carousel__thumb"
                               onClick={() => setLightbox(c)}
-                              aria-label={`Enlarge page ${i + 1}${c.label ? ` (${c.label})` : ''}`}
+                              aria-label={`Enlarge image ${i + 1}${c.label ? ` (${c.label})` : ''}`}
                             >
                               <span className="iiif-carousel__num">{i + 1}</span>
                               {c.thumbUrl
@@ -850,7 +850,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                                   <span className="iiif-existing-cats__src" title={SRC[e.source]?.tip}>{SRC[e.source]?.label} ⓘ</span>
                                 </div>
                               ))}
-                              <p className="iiif-existing-cats__foot">…or keep “{cur}” — it'll be created for you when you publish the first page.</p>
+                              <p className="iiif-existing-cats__foot">…or keep “{cur}” — it'll be created for you when you publish the first image.</p>
                             </div>
                           );
                         }
@@ -1016,7 +1016,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
             <div className="iiif-step-select">
               {manifest.downscaledCount > 0 && (
                 <p className="iiif-hint iiif-downscale-note">
-                  {manifest.downscaledCount} of the {manifest.canvasCount} pages are larger than 25 megapixels — they carry a “&gt;25 MP” tag below. The KB's IIIF image server caps what it delivers at 25 MP, so those pages arrive slightly smaller than the original (but still high-res) — e.g. an 8040 × 6030 page (48 MP) downloads at ~25 MP. This is a limit of the IIIF server — not of Wikimedia Commons, which accepts much larger files.
+                  {manifest.downscaledCount} of the {manifest.canvasCount} images are larger than 25 megapixels — they carry a “&gt;25 MP” tag below. The KB's IIIF image server caps what it delivers at 25 MP, so those images arrive slightly smaller than the original (but still high-res) — e.g. an 8040 × 6030 image (48 MP) downloads at ~25 MP. This is a limit of the IIIF server — not of Wikimedia Commons, which accepts much larger files.
                 </p>
               )}
               <div className="iiif-select-bar">
@@ -1059,7 +1059,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       />
                       <img src={c.thumbUrl} alt={c.label || `canvas ${c.index + 1}`} loading="lazy" />
                       {c.downscaled && (
-                        <em className="iiif-canvas__badge" title="This page is larger than 25 megapixels, so it arrives slightly smaller (still high-res).">&gt;25 MP</em>
+                        <em className="iiif-canvas__badge" title="This image is larger than 25 megapixels, so it arrives slightly smaller (still high-res).">&gt;25 MP</em>
                       )}
                       <span className="iiif-canvas__label">
                         {c.label || `#${c.index + 1}`}
@@ -1102,7 +1102,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
 
           {step === 'confirm' && (
             <div className="iiif-step-confirm">
-              <p><strong>{chosen.length}</strong> pages → your upload stash, then review &amp; publish from the table as usual.</p>
+              <p><strong>{chosen.length}</strong> images → your upload stash, then review &amp; publish from the table as usual.</p>
               <div className="iiif-recap-files">
                 <strong>Target filenames ({chosen.length}):</strong>
                 <div className="iiif-filelist" role="list">
@@ -1132,7 +1132,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                           title="Open the parent category on Commons (new tab)"
-                        >{stripCatPrefix(parentCategory) || defaultParent} ↗</a>) when the first page is published
+                        >{stripCatPrefix(parentCategory) || defaultParent} ↗</a>) when the first image is published
                       </label>
                       {!createCat && (
                         <em className="iiif-cat-approve__warn">Without approval, publishing stays blocked until the category exists on Commons.</em>
@@ -1163,7 +1163,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               <div className="iiif-progressbar" role="progressbar" aria-valuenow={progress.done} aria-valuemax={progress.total}>
                 <div className="iiif-progressbar__fill" style={{ width: progress.total ? `${(progress.done / progress.total) * 100}%` : '0%' }} />
               </div>
-              <p className="iiif-hint">{progress.done} / {progress.total} pages</p>
+              <p className="iiif-hint">{progress.done} / {progress.total} images</p>
               {summary && (
                 <div className="iiif-summary">
                   <p>✅ Uploaded to stash: <strong>{summary.uploaded}</strong></p>
@@ -1195,7 +1195,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
             <>
               <button className="btn" onClick={() => setStep('input')}>Back</button>
               <button className="btn btn--progressive" disabled={!parsed?.ok} onClick={() => setStep('select')}>
-                Next: select pages
+                Next: select images
               </button>
             </>
           )}
@@ -1211,13 +1211,13 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
             <>
               <button className="btn" onClick={() => setStep('select')}>Back</button>
               <button className="btn btn--progressive" onClick={start}>
-                Start import ({chosen.length} pages)
+                Start import ({chosen.length} images)
               </button>
             </>
           )}
           {step === 'running' && (
             <button className="btn" onClick={() => { abortRef.current.current = true; }}>
-              Cancel after current page
+              Cancel after current image
             </button>
           )}
           {step === 'done' && (
@@ -1234,7 +1234,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               onClick={(e) => e.stopPropagation()}
               role="dialog"
               aria-modal="true"
-              aria-label={`Page ${pos + 1}`}
+              aria-label={`Image ${pos + 1}`}
             >
               <button type="button" className="iiif-lightbox__close" onClick={(e) => { e.stopPropagation(); setLightbox(null); }} aria-label="Close">×</button>
               <button
@@ -1242,7 +1242,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 className="iiif-lightbox__nav iiif-lightbox__nav--prev"
                 onClick={(e) => { e.stopPropagation(); stepLightbox(-1); }}
                 disabled={pos <= 0}
-                aria-label="Previous page"
+                aria-label="Previous image"
               >‹</button>
               <figure className="iiif-lightbox__fig" onClick={(e) => e.stopPropagation()}>
                 <div className="iiif-lightbox__imgbox">
@@ -1250,7 +1250,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   <img
                     key={lightbox.index}
                     src={lightboxUseThumb && lightbox.thumbUrl ? lightbox.thumbUrl : largeRendition(lightbox)}
-                    alt={lightbox.label || `page ${pos + 1}`}
+                    alt={lightbox.label || `image ${pos + 1}`}
                     referrerPolicy="no-referrer"
                     style={{ opacity: lightboxLoaded ? 1 : 0 }}
                     onLoad={() => setLightboxLoaded(true)}
@@ -1261,7 +1261,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   />
                 </div>
                 <figcaption>
-                  Page {pos + 1} of {canv.length}
+                  Image {pos + 1} of {canv.length}
                   {lightbox.label ? ` — ${lightbox.label}` : ''}
                   {lightbox.fullResUrl && (
                     <>{' · '}<a href={lightbox.fullResUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>full-res ↗</a></>
@@ -1273,7 +1273,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 className="iiif-lightbox__nav iiif-lightbox__nav--next"
                 onClick={(e) => { e.stopPropagation(); stepLightbox(1); }}
                 disabled={pos >= canv.length - 1}
-                aria-label="Next page"
+                aria-label="Next image"
               >›</button>
             </div>
           );
