@@ -262,9 +262,11 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     clearHoverPreview();
     return () => { if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current); };
   }, [step, clearHoverPreview]);
-  // The >25 MP note on the select step can be clicked away; a newly loaded
-  // manifest brings it back.
+  // The >25 MP note on the select step and the validation report on the
+  // review step can be clicked away; a small "There are warnings…" line
+  // remains to bring them back, and a newly loaded manifest resets both.
   const [downscaleNoteHidden, setDownscaleNoteHidden] = React.useState(false);
+  const [reportHidden, setReportHidden] = React.useState(false);
   // Lightbox: the canvas shown enlarged (or null). Click a carousel thumb.
   const [lightbox, setLightbox] = React.useState(null);
   // Raw-manifest JSON inspector overlay.
@@ -367,6 +369,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     setSelected(new Set(result.manifest.canvases.map((c) => c.index)));
     setExcludedFields(new Set());
     setDownscaleNoteHidden(false);
+    setReportHidden(false);
     setLightbox(null);
     setShowJson(false);
     setVariantCats(null);
@@ -660,8 +663,19 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               {/* validation report — only rendered when there's something to
                   show, so a manifest with no (visible) issues doesn't leave an
                   empty box at the top. */}
-              {hasReport && (
+              {hasReport && !reportHidden && (
                 <div className="iiif-report">
+                  {/* Dismissible only when a manifest actually loaded — on a
+                      failed parse the report IS the content. */}
+                  {manifest && (
+                    <button
+                      type="button"
+                      className="iiif-downscale-note__close"
+                      onClick={() => setReportHidden(true)}
+                      aria-label="Dismiss these warnings"
+                      title="Dismiss these warnings"
+                    >×</button>
+                  )}
                   {reportErrors.map((e, i) => (
                     <p key={`e${i}`} className="iiif-report__line iiif-report__line--error">⛔ {e.message}</p>
                   ))}
@@ -672,6 +686,13 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                     <p key={`i${i}`} className="iiif-report__line">ℹ️ {e.message}</p>
                   ))}
                 </div>
+              )}
+              {hasReport && reportHidden && (
+                <p className="iiif-warnings-restore">
+                  <button type="button" className="iiif-linkbtn" onClick={() => setReportHidden(false)}>
+                    ⚠️ There are warnings for this manifest — show them
+                  </button>
+                </p>
               )}
 
               {manifest && mapping && (
@@ -1061,6 +1082,13 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                     title="Dismiss this note"
                   >×</button>
                   <strong>{manifest.downscaledCount} of the {manifest.canvasCount} images are larger than 25 megapixels</strong> — they carry a “&gt;25 MP” tag below. The KB's IIIF image server caps what it delivers at 25 MP, so those images arrive slightly smaller than the original (but still high-res) — e.g. an 8040 × 6030 image (48 MP) downloads at ~25 MP. This is a limit of the IIIF server — not of Wikimedia Commons, which accepts much larger files.
+                </p>
+              )}
+              {manifest.downscaledCount > 0 && downscaleNoteHidden && (
+                <p className="iiif-warnings-restore">
+                  <button type="button" className="iiif-linkbtn" onClick={() => setDownscaleNoteHidden(false)}>
+                    ⚠️ There are warnings for this manifest — show them
+                  </button>
                 </p>
               )}
               <div className="iiif-select-bar">

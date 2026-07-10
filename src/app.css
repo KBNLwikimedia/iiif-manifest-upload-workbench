@@ -8068,10 +8068,18 @@ body.col-resizing * { cursor: col-resize !important; }
 .iiif-report {
   border: 1px solid var(--border-color-base);
   border-radius: 6px;
-  padding: 8px 12px;
+  padding: 8px 28px 8px 12px; /* room for the dismiss × */
   margin-bottom: 14px;
   background: var(--background-color-neutral-subtle, #f8f9fa);
+  position: relative;
 }
+
+/* Small restore line shown while a warnings box is dismissed. */
+.iiif-warnings-restore {
+  margin: 0 0 10px;
+  font-size: 12px;
+}
+.iiif-warnings-restore .iiif-linkbtn { font-size: 12px; }
 
 .iiif-report__line {
   margin: 4px 0;
@@ -8887,5 +8895,35 @@ body.col-resizing * { cursor: col-resize !important; }
      to its 4px of borders. */
   grid-auto-rows: max-content;
   /* keep tiles clear of the scrollbar */
-  padding-right: 4px;
+  padding-right: 6px;
+}
+
+/* A clearly visible scrollbar on the wizard's scroll surfaces — the
+   hairline default was easy to miss on a 400-tile grid. */
+.iiif-modal__body::-webkit-scrollbar,
+.iiif-step-select .iiif-gallery::-webkit-scrollbar {
+  width: 12px;
+}
+.iiif-modal__body::-webkit-scrollbar-track,
+.iiif-step-select .iiif-gallery::-webkit-scrollbar-track {
+  background: var(--background-color-neutral-subtle, #f0f1f3);
+  border-radius: 6px;
+}
+.iiif-modal__body::-webkit-scrollbar-thumb,
+.iiif-step-select .iiif-gallery::-webkit-scrollbar-thumb {
+  background: #9aa0a6;
+  border-radius: 6px;
+  border: 2px solid var(--background-color-neutral-subtle, #f0f1f3);
+}
+.iiif-modal__body::-webkit-scrollbar-thumb:hover,
+.iiif-step-select .iiif-gallery::-webkit-scrollbar-thumb:hover {
+  background: #6b7075;
+}
+/* Firefox (no ::-webkit-scrollbar): colored standard scrollbar. */
+@supports (-moz-appearance: none) {
+  .iiif-modal__body,
+  .iiif-step-select .iiif-gallery {
+    scrollbar-width: auto;
+    scrollbar-color: #9aa0a6 var(--background-color-neutral-subtle, #f0f1f3);
+  }
 }
