@@ -409,6 +409,22 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
       .catch(() => { if (qidLookupRef.current === myLookup) setQidCandidates('error'); });
   };
 
+  // Record a successfully-parsed manifest in the recent list when it has a
+  // REUSABLE url: the URL the user typed (URL route), or — for a dropped/
+  // chosen file — the manifest's own `id` when that is an http(s) URL
+  // (route C). KB manifests always carry a live `id`; a file whose id is not
+  // a fetchable URL simply isn't recorded (there'd be nothing to reload).
+  // Stores the derived signature + title; persisted to Preferences.json.
+  const recordRecent = (result, urlOverride) => {
+    if (!result?.manifest) return;
+    const idUrl = /^https?:\/\//i.test(String(result.manifest.id || '')) ? String(result.manifest.id).trim() : '';
+    const u = String(urlOverride || '').trim() || idUrl;
+    if (!u) return;
+    const { manuscript } = mapManifest(result.manifest);
+    addRecentManifest({ url: u, signature: manuscript.signature, title: manuscript.title });
+    setRecent(getRecentManifests());
+  };
+
   const loadUrl = async (overrideUrl) => {
     // Only treat a STRING arg as an override — passing loadUrl straight to
     // onClick would otherwise hand us the click event (→ "[object Object]").
@@ -419,15 +435,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     setBusy(true); setError(null);
     try {
       const result = await fetchManifest(u);
-      // Remember a successfully-loaded URL for quick reloading (the file
-      // route has no reusable URL, so it's not recorded). Store the derived
-      // signature + title (the raw label is sometimes just the shelfmark).
-      // Persisted to Preferences.json so the list follows across devices.
-      if (result?.manifest) {
-        const { manuscript } = mapManifest(result.manifest);
-        addRecentManifest({ url: u, signature: manuscript.signature, title: manuscript.title });
-        setRecent(getRecentManifests());
-      }
+      recordRecent(result, u);
       acceptParse(result);
     } catch (e) {
       setError(e.message || String(e));
@@ -440,7 +448,11 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     if (!file) return;
     setBusy(true); setError(null);
     try {
-      acceptParse(await parseManifestFile(file));
+      const result = await parseManifestFile(file);
+      // Route C: a dropped file has no typed URL, but KB manifests self-
+      // identify with a fetchable `id` — record that so the drop is reloadable.
+      recordRecent(result);
+      acceptParse(result);
     } catch (e) {
       setError(e.message || String(e));
     } finally {

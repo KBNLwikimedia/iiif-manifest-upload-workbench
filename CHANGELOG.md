@@ -23,7 +23,7 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Added
 
-- **Recent manifests on the import step** — the "Import IIIF manifest" step 1 now lists the last 10 successfully-loaded manifest URLs; one click reloads any of them, and a "Clear" link empties the list. The list is persisted in your `Preferences.json` on Commons, so it follows you across devices.
+- **Recent manifests on the import step** — the "Import IIIF manifest" step 1 now lists the last 10 loaded manifests (signature + title); one click reloads any of them, and a "Clear" link empties the list. URL loads are recorded directly; a **dropped/chosen `.json` file** is recorded too when its manifest `id` is a fetchable URL (KB manifests always carry one), so it's reloadable across sessions. The list is persisted in your `Preferences.json` on Commons, so it follows you across devices.
 
 ### Changed
 
