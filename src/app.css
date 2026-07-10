@@ -8074,10 +8074,12 @@ body.col-resizing * { cursor: col-resize !important; }
   position: relative;
 }
 
-/* Small restore line shown while a warnings box is dismissed. */
+/* Small restore line shown while a warnings box is dismissed —
+   right-aligned, where the box's dismiss × sat. */
 .iiif-warnings-restore {
   margin: 0 0 10px;
   font-size: 12px;
+  text-align: right;
 }
 .iiif-warnings-restore .iiif-linkbtn { font-size: 12px; }
 
