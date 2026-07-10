@@ -16,6 +16,8 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Changed
 
+- **Select step: pinned header, scrolling grid** — the >25 MP note and the Select all/none/invert toolbar stay put; only the thumbnail grid scrolls. The note is now dismissible (small ×, returns on the next manifest load) and its lead clause ("N of M images are larger than 25 megapixels") is bold. Step title: "Select images for importing into Wikimedia Commons".
+- **Ready-to-import header restructured** — identity line, blank line, then "**N images** will be downloaded…" and "An **estimate of ~X MB** will be transferred." each on their own line; header identity line reads "… — N images in this manifest".
 - **Wizard: the "N of M images selected" counter moved into the select-step toolbar**, right-aligned next to Select all / Select none / Invert selection; the header stays identity-only there.
 - **Wizard: hoverable ⓘ on the "Aantal folia" row** explaining folium (physical leaf, recto + verso) vs the manifest's image count (covers/flyleaves photographed too; some manuscripts digitized as two-page spreads).
 - **Wizard input step now states that only IIIF Presentation 3.0 is supported for now** — 2.x support will be added in the future (OI-07 #7).
