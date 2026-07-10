@@ -4354,6 +4354,9 @@ body.col-resizing * { cursor: col-resize !important; }
 /* Second header line in the IIIF wizard: step-specific info under the
    constant manuscript-identity line. */
 .iiif-modal__substep { margin-top: 2px; font-size: 12.5px; }
+/* The confirm step gets a blank line between identity and the
+   download/transfer sentences (maintainer request 2026-07-10). */
+.iiif-modal__substep--confirm { margin-top: 12px; }
 .modal__body {
   flex: 1;
   overflow-y: auto;

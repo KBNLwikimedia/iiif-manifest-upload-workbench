@@ -578,10 +578,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
             {/* The selection count lives in the select-step toolbar (next to
                 Select all/none), not here — the header stays identity-only. */}
             {step !== 'input' && step !== 'review' && step !== 'select' && manifest && (
-              <p className="modal__sub iiif-modal__substep">
+              <p className={`modal__sub iiif-modal__substep${step === 'confirm' ? ' iiif-modal__substep--confirm' : ''}`}>
                 {step === 'confirm' && (
                   <>
-                    {chosen.length} images will be downloaded from the IIIF server and stashed on Wikimedia Commons. An <strong>estimate of ~{totalMB} MB</strong> will be transferred through your browser.
+                    {chosen.length} images will be downloaded from the IIIF server and stashed on Wikimedia Commons.
+                    <br />
+                    An <strong>estimate of ~{totalMB} MB</strong> will be transferred.
                   </>
                 )}
                 {step === 'running' && `${progress.done} / ${progress.total} images processed — keep this tab open.`}
