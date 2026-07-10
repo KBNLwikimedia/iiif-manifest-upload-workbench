@@ -28,7 +28,10 @@ const Icon = window.Icon;
 // Public-facing version of the acknowledgment text. Bump this if the modal's
 // scope or claims change in a way that warrants re-asking previously-suppressed
 // users. App's render guard checks `version === CC0_ACK_VERSION`.
-export const CC0_ACK_VERSION = 1;
+// v2 (2026-07-10): rebranded to IIIF Manifest Upload Workbench + corrected the
+// user-subpage path (the store moved to /IIIFManifestUploadWorkbench/). Bumping
+// re-prompts users who suppressed the v1 (upstream-branded) notice once.
+export const CC0_ACK_VERSION = 2;
 
 // Helper used by App so the version number lives in one place.
 export function shouldShowCc0Modal(ack) {
@@ -54,8 +57,8 @@ export function Cc0Modal({ username, onAcknowledge, onDismiss }) {
   // The user's own subpage tree — opens in a new tab so they can verify what's
   // stored without losing their workbench session.
   const userPageUrl = username
-    ? `https://commons.wikimedia.org/wiki/User:${encodeURIComponent(username)}/UploadWorkbench`
-    : 'https://commons.wikimedia.org/wiki/User:You/UploadWorkbench';
+    ? `https://commons.wikimedia.org/wiki/User:${encodeURIComponent(username)}/IIIFManifestUploadWorkbench`
+    : 'https://commons.wikimedia.org/wiki/User:You/IIIFManifestUploadWorkbench';
 
   return (
     <div className="modal-backdrop" onClick={onDismiss}>
@@ -87,8 +90,8 @@ export function Cc0Modal({ username, onAcknowledge, onDismiss }) {
 
         <div className="modal__body cc0-modal__body">
           <p>
-            Upload Workbench saves your drafts, column preferences, hidden-file list, and
-            related state to two pages in your own Wikimedia Commons user namespace:
+            IIIF Manifest Upload Workbench saves your drafts, column preferences, hidden-file
+            list, and related state to two pages in your own Wikimedia Commons user namespace:
           </p>
           <ul className="cc0-modal__pages">
             <li><code>User:{username || 'You'}/IIIFManifestUploadWorkbench/Preferences.json</code></li>
@@ -96,9 +99,9 @@ export function Cc0Modal({ username, onAcknowledge, onDismiss }) {
           </ul>
           <p>
             These pages are <strong>public</strong>, just like every page on Commons — anyone
-            can read, copy, mirror, or archive them. By using Upload Workbench, you agree
-            that the contents of these workbench pages are dedicated to the public domain
-            under{' '}
+            can read, copy, mirror, or archive them. By using IIIF Manifest Upload Workbench,
+            you agree that the contents of these workbench pages are dedicated to the public
+            domain under{' '}
             <a
               href="https://commons.wikimedia.org/wiki/Commons:CC0"
               target="_blank"

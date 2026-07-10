@@ -1,33 +1,41 @@
 // VersionChip — topbar version indicator + dropdown navigator.
 //
-// Replaces the old "· Wikimedia Commons" sub-title slot in the topbar
-// (T426443). Shows the running build's version, color-coded by
-// __DEPLOY_TARGET__ (a Vite compile-time define from .gitlab-ci.yml's
-// VITE_DEPLOY_TARGET — see vite.config.js):
+// Shows the running build's version, color-coded by __DEPLOY_TARGET__ (a Vite
+// compile-time define — see vite.config.js). For this fork the target is
+// almost always `dev` (local development only); the main/v/mr variants remain
+// for a possible future Toolforge deploy.
 //
-//   main         → green   ("you're on the live release")
-//   v<X.Y.Z>     → yellow  ("you're on an older archived release")
-//   mr-<IID>     → blue    ("you're previewing an unmerged MR")
-//   dev          → grey    (npm run dev local build)
+// Click the chip → dropdown listing the fork's own releases (parsed from
+// CHANGELOG.md on GitHub — fork releases only, v0.40.0 and up) and any open
+// pull requests. Release rows link to their GitHub release page; PR rows link
+// to the PR on GitHub. "Go to live release" points at the local app for now
+// (no Toolforge deployment yet — OI-09/OI-10).
 //
-// Click the chip → small dropdown anchored under it, listing the latest
-// 5 releases (parsed from CHANGELOG.md) and every open merge request
-// (from GitLab's MR API). Each row is a link to the corresponding
-// /v<X.Y.Z>/ or /mr-<IID>/ Toolforge URL.
-//
-// Both data sources are unauthenticated, CORS-OK, and apiCache-wrapped
-// at 5min TTL inside src/api/gitlab.js — same plumbing the About modal
-// uses, so opening the modal first warms the cache for the chip and
-// vice versa.
+// Both data sources are unauthenticated, CORS-OK, and apiCache-wrapped at
+// 5min TTL inside src/api/github.js.
 
 import React from 'react';
-import { fetchOpenMergeRequests, fetchChangelogRaw } from '../api/gitlab.js';
+import { fetchOpenPullRequests, fetchChangelogRaw, releaseUrl } from '../api/github.js';
 import { parseChangelog } from './changelog-parse.jsx';
 
 const Icon = window.Icon;
 const { useState, useEffect, useRef } = React;
 
-const DEPLOY_BASE = 'https://upload-workbench.toolforge.org';
+// First release made by this fork; everything below it in CHANGELOG.md is
+// inherited upstream (GitLab) history and is filtered out of the list.
+const FORK_MIN_VERSION = '0.40.0';
+// The local app is the only deploy target for now (dev phase).
+const LIVE_URL = window.location.origin + '/';
+
+// Numeric "X.Y.Z" >= compare so upstream releases (≤0.39) drop off the list.
+function versionGte(a, b) {
+  const pa = String(a).split('.').map(Number);
+  const pb = String(b).split('.').map(Number);
+  for (let i = 0; i < 3; i++) {
+    if ((pa[i] || 0) !== (pb[i] || 0)) return (pa[i] || 0) > (pb[i] || 0);
+  }
+  return true;
+}
 
 // Variant key consumed by `.version-chip--<variant>` CSS rules.
 function variantFor(target) {
@@ -63,8 +71,8 @@ function tooltipFor(target, version) {
 
 export default function VersionChip() {
   const [open, setOpen] = useState(false);
-  const [mrs, setMrs] = useState(null);
-  const [mrsError, setMrsError] = useState(null);
+  const [prs, setPrs] = useState(null);
+  const [prsError, setPrsError] = useState(null);
   const [versions, setVersions] = useState(null);
   const [versionsError, setVersionsError] = useState(null);
   const wrapRef = useRef(null);
@@ -80,15 +88,17 @@ export default function VersionChip() {
     if (!open) return;
     if (versions === null && versionsError === null) {
       fetchChangelogRaw()
-        .then((text) => setVersions(parseChangelog(text).filter((v) => v.version)))
+        .then((text) => setVersions(
+          parseChangelog(text).filter((v) => v.version && versionGte(v.version, FORK_MIN_VERSION)),
+        ))
         .catch((e) => setVersionsError(e?.message || String(e)));
     }
-    if (mrs === null && mrsError === null) {
-      fetchOpenMergeRequests()
-        .then(setMrs)
-        .catch((e) => setMrsError(e?.message || String(e)));
+    if (prs === null && prsError === null) {
+      fetchOpenPullRequests()
+        .then(setPrs)
+        .catch((e) => setPrsError(e?.message || String(e)));
     }
-  }, [open, versions, versionsError, mrs, mrsError]);
+  }, [open, versions, versionsError, prs, prsError]);
 
   // Click-outside / Esc to close. Only wire while open.
   useEffect(() => {
@@ -128,44 +138,46 @@ export default function VersionChip() {
             <div className="version-chip__menu-head">
               Latest releases
               {target !== 'main' && (
-                <a className="version-chip__menu-headlink" href={`${DEPLOY_BASE}/`}>
+                <a className="version-chip__menu-headlink" href={LIVE_URL}>
                   Go to live release
                 </a>
               )}
             </div>
             {top5
-              ? <ChipList
-                  items={top5.map((v) => ({
-                    key: `v${v.version}`,
-                    label: `v${v.version}`,
-                    meta: v.date,
-                    href: `${DEPLOY_BASE}/v${v.version}/`,
-                    isCurrent: target === `v${v.version}`,
-                  }))}
-                />
+              ? top5.length
+                ? <ChipList
+                    items={top5.map((v) => ({
+                      key: `v${v.version}`,
+                      label: `v${v.version}`,
+                      meta: v.date,
+                      href: releaseUrl(v.version),
+                      isCurrent: target === `v${v.version}`,
+                    }))}
+                  />
+                : <div className="version-chip__menu-empty">No releases yet.</div>
               : versionsError
                 ? <div className="version-chip__menu-error">Couldn't load releases.</div>
                 : <div className="version-chip__menu-loading">Loading releases…</div>}
           </div>
 
           <div className="version-chip__menu-section">
-            <div className="version-chip__menu-head">Open merge requests</div>
-            {mrs
-              ? mrs.length
+            <div className="version-chip__menu-head">Open pull requests</div>
+            {prs
+              ? prs.length
                 ? <ChipList
-                    items={mrs.map((mr) => ({
-                      key: `mr-${mr.iid}`,
-                      label: `!${mr.iid}`,
-                      meta: mr.title,
-                      href: `${DEPLOY_BASE}/mr-${mr.iid}/`,
-                      isCurrent: target === `mr-${mr.iid}`,
-                      draft: mr.draft,
+                    items={prs.map((pr) => ({
+                      key: `pr-${pr.number}`,
+                      label: `#${pr.number}`,
+                      meta: pr.title,
+                      href: pr.html_url,
+                      isCurrent: false,
+                      draft: pr.draft,
                     }))}
                   />
-                : <div className="version-chip__menu-empty">No open merge requests.</div>
-              : mrsError
-                ? <div className="version-chip__menu-error">Couldn't load MRs.</div>
-                : <div className="version-chip__menu-loading">Loading MRs…</div>}
+                : <div className="version-chip__menu-empty">No open pull requests.</div>
+              : prsError
+                ? <div className="version-chip__menu-error">Couldn't load pull requests.</div>
+                : <div className="version-chip__menu-loading">Loading pull requests…</div>}
           </div>
         </div>
       )}
@@ -181,7 +193,7 @@ function ChipList({ items }) {
           key={it.key}
           className={'version-chip__menu-item' + (it.isCurrent ? ' is-current' : '')}
         >
-          <a href={it.href} className="version-chip__menu-link">
+          <a href={it.href} className="version-chip__menu-link" target="_blank" rel="noopener noreferrer">
             <span className="version-chip__menu-label">
               {it.label}
               {it.draft && <span className="chip chip--info version-chip__menu-draft">Draft</span>}
