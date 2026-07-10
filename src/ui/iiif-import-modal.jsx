@@ -566,18 +566,25 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
         <header className="modal__head">
           <div>
             <h2 className="modal__title" id="iiif-modal-title">{STEP_TITLES[step]}</h2>
+            {/* The manuscript identity line stays put on every step past
+                input, so the header reads consistently through the wizard;
+                step-specific info goes on a second line. */}
             <p className="modal__sub">
               {step === 'input' && 'Paste a IIIF Presentation 3.0 manifest URL, or pick a downloaded manifest .json file.'}
-              {step === 'review' && (manifest ? `${manifest.label || 'Untitled manifest'} — ${manifest.canvasCount} pages` : 'The manifest could not be used.')}
-              {step === 'select' && `${selected.size} of ${manifest?.canvasCount ?? 0} pages selected`}
-              {step === 'confirm' && (
-                <>
-                  {chosen.length} pages will be downloaded from the IIIF server and stashed on Wikimedia Commons. An <strong>estimate of ~{totalMB} MB</strong> will be transferred through your browser.
-                </>
-              )}
-              {step === 'running' && `${progress.done} / ${progress.total} pages processed — keep this tab open.`}
-              {step === 'done' && 'The imported pages are now rows in your stash — review and publish from the table.'}
+              {step !== 'input' && (manifest ? `${manifest.label || 'Untitled manifest'} — ${manifest.canvasCount} pages` : 'The manifest could not be used.')}
             </p>
+            {step !== 'input' && step !== 'review' && manifest && (
+              <p className="modal__sub iiif-modal__substep">
+                {step === 'select' && `${selected.size} of ${manifest?.canvasCount ?? 0} pages selected`}
+                {step === 'confirm' && (
+                  <>
+                    {chosen.length} pages will be downloaded from the IIIF server and stashed on Wikimedia Commons. An <strong>estimate of ~{totalMB} MB</strong> will be transferred through your browser.
+                  </>
+                )}
+                {step === 'running' && `${progress.done} / ${progress.total} pages processed — keep this tab open.`}
+                {step === 'done' && 'The imported pages are now rows in your stash — review and publish from the table.'}
+              </p>
+            )}
           </div>
           {step !== 'running' && (
             <button className="btn btn--quiet btn--icon-only" onClick={onClose} aria-label="Close">

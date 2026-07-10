@@ -4351,6 +4351,9 @@ body.col-resizing * { cursor: col-resize !important; }
 .modal__head > div { flex: 1; min-width: 0; }
 .modal__title { font-size: 17px; font-weight: 600; margin: 0; }
 .modal__sub { margin: 4px 0 0; font-size: 13px; color: var(--color-subtle); line-height: 1.4; }
+/* Second header line in the IIIF wizard: step-specific info under the
+   constant manuscript-identity line. */
+.iiif-modal__substep { margin-top: 2px; font-size: 12.5px; }
 .modal__body {
   flex: 1;
   overflow-y: auto;
