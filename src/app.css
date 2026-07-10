@@ -8054,6 +8054,7 @@ body.col-resizing * { cursor: col-resize !important; }
   color: var(--color-subtle);
   margin-bottom: 8px;
 }
+.iiif-providers__hint { margin: -2px 0 10px; }
 .iiif-providers__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));

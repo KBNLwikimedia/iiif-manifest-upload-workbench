@@ -687,6 +687,10 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   for now; eCodices is shown disabled ("coming soon"). */}
               <div className="iiif-providers">
                 <div className="iiif-providers__label">Collection</div>
+                <p className="iiif-hint iiif-providers__hint">
+                  Only <strong>KB manifests</strong> are supported right now — eCodices NL support
+                  is coming as soon as possible (<a href="https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/issues/78" target="_blank" rel="noopener noreferrer">issue #78</a>).
+                </p>
                 <div className="iiif-providers__grid">
                   {PROVIDERS.map((p) => (
                     <button
@@ -706,7 +710,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 </div>
               </div>
 
-              <label className="iiif-label" htmlFor="iiif-url">Manifest URL</label>
+              <label className="iiif-label" htmlFor="iiif-url">Manifest URL <span className="iiif-label__note">(KB compliant)</span></label>
               <div className="iiif-url-row">
                 <input
                   id="iiif-url"
