@@ -35,6 +35,10 @@ const GITHUB_ISSUES_NEW_URL = 'https://github.com/KBNLwikimedia/iiif-manifest-up
 // GitHub show a warning). Only 'bug' and 'enhancement' exist; question /
 // praise get no label.
 const GITHUB_LABEL = { bug: 'bug', suggestion: 'enhancement' };
+// Every issue opened via this form also gets this label, so form-originated
+// reports are traceable on GitHub. (GitHub only applies URL-provided labels
+// for users with triage rights on the repo; for anyone else it is ignored.)
+const FEEDBACK_LABEL = 'user feedback';
 
 // Feedback-type definitions. The label is what we show on the chip; the
 // `prompts` are the inspirational scaffolds the user can click to seed
@@ -214,7 +218,7 @@ function buildFeedbackBody({ heading, comment, ctx }) {
 function buildGithubIssueUrl({ title, body, typeId }) {
   const params = new URLSearchParams({ title, body });
   const label = GITHUB_LABEL[typeId];
-  if (label) params.set('labels', label);
+  params.set('labels', label ? `${FEEDBACK_LABEL},${label}` : FEEDBACK_LABEL);
   return `${GITHUB_ISSUES_NEW_URL}?${params.toString()}`;
 }
 
