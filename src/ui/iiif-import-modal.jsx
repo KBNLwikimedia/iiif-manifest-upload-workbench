@@ -573,9 +573,10 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               {step === 'input' && 'Paste a IIIF Presentation 3.0 manifest URL, or pick a downloaded manifest .json file. Only Presentation 3.0 is supported for now — 2.x support will be added in the future.'}
               {step !== 'input' && (manifest ? `${manifest.label || 'Untitled manifest'} — ${manifest.canvasCount} images` : 'The manifest could not be used.')}
             </p>
-            {step !== 'input' && step !== 'review' && manifest && (
+            {/* The selection count lives in the select-step toolbar (next to
+                Select all/none), not here — the header stays identity-only. */}
+            {step !== 'input' && step !== 'review' && step !== 'select' && manifest && (
               <p className="modal__sub iiif-modal__substep">
-                {step === 'select' && `${selected.size} of ${manifest?.canvasCount ?? 0} images selected`}
                 {step === 'confirm' && (
                   <>
                     {chosen.length} images will be downloaded from the IIIF server and stashed on Wikimedia Commons. An <strong>estimate of ~{totalMB} MB</strong> will be transferred through your browser.
@@ -1033,6 +1034,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 <button className="btn btn--quiet" onClick={() => toggleAll(true)}>Select all</button>
                 <button className="btn btn--quiet" onClick={() => toggleAll(false)}>Select none</button>
                 <button className="btn btn--quiet" onClick={invertSelection}>Invert selection</button>
+                <span className="iiif-select-bar__count">
+                  {selected.size} of {manifest.canvasCount} images selected
+                </span>
               </div>
               <div className="iiif-gallery">
                 {manifest.canvases.map((c) => {

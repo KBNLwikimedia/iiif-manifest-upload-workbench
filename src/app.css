@@ -8490,6 +8490,12 @@ body.col-resizing * { cursor: col-resize !important; }
   gap: 8px;
   margin-bottom: 10px;
 }
+.iiif-select-bar__count {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--color-subtle);
+  white-space: nowrap;
+}
 
 .iiif-gallery {
   display: grid;
