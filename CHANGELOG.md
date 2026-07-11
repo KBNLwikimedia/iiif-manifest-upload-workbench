@@ -8,7 +8,7 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Security
 
-- **Review-step inputs now reject forbidden / injection characters** — the Short title, Suggested category and Parent category fields flag any Commons-illegal / wiki-structural character (`# < > [ ] { } | / \ :` or control characters) with a red border + inline error, and the Wikidata field enforces the Q-id shape (`^Q\d+$`). Any invalid field disables "Next", so a value that could break a filename, a category name, or inject a template/link can't advance through the wizard.
+- **Review-step inputs reject forbidden / injection characters as you type** — the Short title, Suggested category and Parent category fields **strip any Commons-illegal / wiki-structural character** (`# < > [ ] { } | / \ :` or control chars) the moment it's typed or pasted, so the field can never hold one, and a red "⚠️ '[' … not allowed on Wikimedia Commons — removed" line names what was dropped. The Wikidata field **auto-trims leading/trailing spaces** and enforces the Q-id shape (`^Q\d+$`) with a red ⚠️ warning + a disabled "Next" for malformed values like `AAA23`.
 - **Closed a wikitext-injection surface the Phase 5.2 `{{Artwork}}` wiring re-opened** (OI-74 #74) — manifest-verbatim `medium`, accession number, and the dimensions/date verbatim fallbacks now pass through `neutralizeWikitext`, so a hostile manifest value can't break out of the template at publish. Mapper-authored templates and the SDC P217 value stay raw.
 
 ### Fixed

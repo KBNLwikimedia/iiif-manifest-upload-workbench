@@ -95,6 +95,15 @@ function forbiddenCharsIn(s) {
   const ctrl = [...str].some((c) => c.charCodeAt(0) < 32 || c.charCodeAt(0) === 127) ? ['(control character)'] : [];
   return [...new Set([...hits, ...ctrl])];
 }
+// Strip every Commons-forbidden character out of a typed value, returning the
+// cleaned string and the distinct characters that were removed (so the field
+// can reject them on the fly and tell the user which ones).
+function stripForbidden(raw) {
+  const s = String(raw);
+  const removed = [...new Set(s.match(FORBIDDEN_TITLE_CHARS_RE) || [])];
+  return { clean: s.replace(FORBIDDEN_TITLE_CHARS_RE, ''), removed };
+}
+
 // Q-id must be a capital Q followed by digits only (empty = "no item", valid).
 function qidFormatError(s) {
   const v = String(s || '').trim();
@@ -194,6 +203,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // Provider profile (OI-78 scaffolding). Only KB is selectable for now; the
   // eCodices card is shown disabled. Doesn't gate loading yet.
   const [providerId, setProviderId] = React.useState(DEFAULT_PROVIDER_ID);
+
+  // Characters just rejected (stripped) from a review-step text field, so the
+  // red note can name them. Cleared on the next keystroke that adds none.
+  const [titleRejected, setTitleRejected] = React.useState(null);
+  const [catRejected, setCatRejected] = React.useState(null);
+  const [parentRejected, setParentRejected] = React.useState(null);
 
   // parse result
   const [parsed, setParsed] = React.useState(null); // { ok, report, manifest }
@@ -430,6 +445,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     setDupNameNoteHidden(false);
     setDupImageNoteHidden(false);
     setGalleryFilter(null);
+    setTitleRejected(null);
+    setCatRejected(null);
+    setParentRejected(null);
     setReportHidden(false);
     setLightbox(null);
     setShowJson(false);
@@ -795,6 +813,15 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   const qidErr = qidFormatError(qid);
   const reviewInputsInvalid =
     titleForbidden.length > 0 || categoryForbidden.length > 0 || parentForbidden.length > 0 || !!qidErr;
+
+  // Text-field onChange that strips Commons-forbidden characters as they're
+  // typed and records which ones were rejected (so the field can never hold an
+  // illegal char, and the note can name it).
+  const onGuardedText = (setValue, setRejected) => (raw) => {
+    const { clean, removed } = stripForbidden(raw);
+    setValue(clean);
+    setRejected(removed.length ? removed : null);
+  };
 
   const toggleAll = (on) => {
     if (!manifest) return;
@@ -1268,12 +1295,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       id="iiif-title"
                       type="text"
                       value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      onChange={(e) => onGuardedText(setTitle, setTitleRejected)(e.target.value)}
                       className={titleForbidden.length ? 'iiif-input--invalid' : undefined}
                       aria-invalid={titleForbidden.length > 0}
                     />
-                    {titleForbidden.length > 0 && (
-                      <p className="iiif-input-error" role="alert">⚠️ Remove {titleForbidden.map((c) => `“${c}”`).join(', ')} — not allowed in a Commons filename.</p>
+                    {(titleRejected || titleForbidden.length > 0) && (
+                      <p className="iiif-input-error" role="alert">⚠️ {(titleRejected || titleForbidden).map((c) => `“${c}”`).join(', ')} {(titleRejected || titleForbidden).length === 1 ? 'is' : 'are'} not allowed on Wikimedia Commons — removed from the filename.</p>
                     )}
 
                     <fieldset className="iiif-fieldset">
@@ -1285,11 +1312,11 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       <CategoryCombobox
                         id="iiif-cat"
                         value={category}
-                        onChange={setCategory}
+                        onChange={onGuardedText(setCategory, setCatRejected)}
                         inputClassName={categoryForbidden.length ? 'iiif-input--invalid' : (catExists === null && category.trim() ? 'iiif-input--checking' : '')}
                       />
-                      {categoryForbidden.length > 0 && (
-                        <p className="iiif-input-error" role="alert">⚠️ Remove {categoryForbidden.map((c) => `“${c}”`).join(', ')} — not allowed in a Commons category name.</p>
+                      {(catRejected || categoryForbidden.length > 0) && (
+                        <p className="iiif-input-error" role="alert">⚠️ {(catRejected || categoryForbidden).map((c) => `“${c}”`).join(', ')} {(catRejected || categoryForbidden).length === 1 ? 'is' : 'are'} not allowed on Wikimedia Commons — removed from the category name.</p>
                       )}
                       <p className="iiif-hint">
                         {catExists === null && category.trim() && 'Checking Commons…'}
@@ -1393,11 +1420,11 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       <CategoryCombobox
                         id="iiif-parent-cat"
                         value={parentCategory}
-                        onChange={setParentCategory}
+                        onChange={onGuardedText(setParentCategory, setParentRejected)}
                         inputClassName={parentForbidden.length ? 'iiif-input--invalid' : ''}
                       />
-                      {parentForbidden.length > 0 && (
-                        <p className="iiif-input-error" role="alert">⚠️ Remove {parentForbidden.map((c) => `“${c}”`).join(', ')} — not allowed in a Commons category name.</p>
+                      {(parentRejected || parentForbidden.length > 0) && (
+                        <p className="iiif-input-error" role="alert">⚠️ {(parentRejected || parentForbidden).map((c) => `“${c}”`).join(', ')} {(parentRejected || parentForbidden).length === 1 ? 'is' : 'are'} not allowed on Wikimedia Commons — removed from the category name.</p>
                       )}
                       <p className="iiif-hint">
                         {stripCatPrefix(parentCategory) && (
@@ -1448,7 +1475,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                         type="text"
                         placeholder="Q…"
                         value={qid}
-                        onChange={(e) => setQid(e.target.value)}
+                        onChange={(e) => setQid(e.target.value.replace(/^\s+|\s+$/g, ''))}
                         className={qidErr ? 'iiif-input--invalid' : undefined}
                         aria-invalid={!!qidErr}
                       />
