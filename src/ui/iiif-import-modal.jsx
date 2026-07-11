@@ -544,6 +544,37 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   const chosen = effectiveItems.filter((it) => selected.has(it.iiif.canvasIndex));
   const totalMB = chosen.length * 12; // rough average from the sample corpus
 
+  // OI-85: detect two kinds of collision straight from the parsed manifest —
+  // no downloads needed:
+  //   - duplicate canvas LABELS → they derive the same Commons filename
+  //     (forbidden). The mapper silently auto-suffixes " (2)"; we surface it.
+  //   - duplicate IMAGES within the manifest → two canvases point at the exact
+  //     same image URL, so their bytes (and SHA-1) are identical. URL-equality
+  //     is a zero-cost proxy for the SHA-1 the pipeline computes at download.
+  // Positions shown to the user are 1-based image numbers (canvas index + 1).
+  const collisions = React.useMemo(() => {
+    const canvases = manifest?.canvases || [];
+    const byLabel = new Map();
+    const byImage = new Map();
+    for (const c of canvases) {
+      const lab = (c.label || '').trim();
+      if (lab) { if (!byLabel.has(lab)) byLabel.set(lab, []); byLabel.get(lab).push(c.index); }
+      const img = c.fullResUrl || c.serviceId || '';
+      if (img) { if (!byImage.has(img)) byImage.set(img, []); byImage.get(img).push(c.index); }
+    }
+    const dupLabelIdx = new Set();
+    const labelGroups = [];
+    for (const [label, idxs] of byLabel) {
+      if (idxs.length > 1) { idxs.forEach((i) => dupLabelIdx.add(i)); labelGroups.push({ label, positions: idxs.map((i) => i + 1) }); }
+    }
+    const dupImageIdx = new Set();
+    const imageGroups = [];
+    for (const [, idxs] of byImage) {
+      if (idxs.length > 1) { idxs.forEach((i) => dupImageIdx.add(i)); imageGroups.push({ positions: idxs.map((i) => i + 1) }); }
+    }
+    return { dupLabelIdx, labelGroups, dupImageIdx, imageGroups };
+  }, [manifest]);
+
   // --- step 4 → 5: run ------------------------------------------------------
 
   const start = async () => {
@@ -1270,6 +1301,32 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   </button>
                 </p>
               )}
+              {(collisions.labelGroups.length > 0 || collisions.imageGroups.length > 0) && (
+                <div className="iiif-hint iiif-collision-note" role="alert">
+                  {collisions.labelGroups.length > 0 && (
+                    <div className="iiif-collision-note__block">
+                      <strong>⚠️ Duplicate filenames — {collisions.dupLabelIdx.size} images.</strong>{' '}
+                      These canvases share a label, so they would derive the <em>same</em> Commons filename, which is not allowed. They are marked with a <span className="iiif-collision-swatch iiif-collision-swatch--name" />&nbsp;red border below; you'll be able to rename them in the next step.
+                      <ul className="iiif-collision-note__list">
+                        {collisions.labelGroups.map((g) => (
+                          <li key={g.label}><code>{g.label}</code> — images {g.positions.join(', ')}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {collisions.imageGroups.length > 0 && (
+                    <div className="iiif-collision-note__block">
+                      <strong>⚠️ Duplicate images — {collisions.dupImageIdx.size} images.</strong>{' '}
+                      The exact same picture appears more than once in this manifest (identical image URL → identical SHA-1). They are marked with a <span className="iiif-collision-swatch iiif-collision-swatch--image" />&nbsp;orange dashed border. Uploading the same image twice is usually a manifest defect — consider deselecting the duplicates.
+                      <ul className="iiif-collision-note__list">
+                        {collisions.imageGroups.map((g, i) => (
+                          <li key={i}>images {g.positions.join(' = ')} are identical</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
               <div className="iiif-select-bar">
                 <button className="btn btn--quiet" onClick={() => toggleAll(true)}>Select all</button>
                 <button className="btn btn--quiet" onClick={() => toggleAll(false)}>Select none</button>
@@ -1292,7 +1349,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   return (
                     <label
                       key={c.index}
-                      className={`iiif-canvas${selected.has(c.index) ? ' iiif-canvas--on' : ''}`}
+                      className={`iiif-canvas${selected.has(c.index) ? ' iiif-canvas--on' : ''}${collisions.dupLabelIdx.has(c.index) ? ' iiif-canvas--dup-name' : ''}${collisions.dupImageIdx.has(c.index) ? ' iiif-canvas--dup-image' : ''}`}
                       title={tooltip}
                       onMouseEnter={(e) => {
                         const r = e.currentTarget.getBoundingClientRect();
@@ -1318,9 +1375,17 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                         onChange={() => toggleOne(c.index)}
                       />
                       <img src={c.thumbUrl} alt={c.label || `canvas ${c.index + 1}`} loading="lazy" />
-                      {c.downscaled && (
-                        <em className="iiif-canvas__badge" title="This image is larger than 25 megapixels, so it arrives slightly smaller (still high-res).">&gt;25 MP</em>
-                      )}
+                      <span className="iiif-canvas__badges">
+                        {c.downscaled && (
+                          <em className="iiif-canvas__badge" title="This image is larger than 25 megapixels, so it arrives slightly smaller (still high-res).">&gt;25 MP</em>
+                        )}
+                        {collisions.dupLabelIdx.has(c.index) && (
+                          <em className="iiif-canvas__badge iiif-canvas__badge--dup-name" title="Another image in this manifest has the same label — they would collide into one Commons filename. Rename in the next step.">dup. name</em>
+                        )}
+                        {collisions.dupImageIdx.has(c.index) && (
+                          <em className="iiif-canvas__badge iiif-canvas__badge--dup-image" title="The exact same picture appears more than once in this manifest (identical SHA-1).">dup. image</em>
+                        )}
+                      </span>
                       <span className="iiif-canvas__label">
                         {c.label || `#${c.index + 1}`}
                       </span>

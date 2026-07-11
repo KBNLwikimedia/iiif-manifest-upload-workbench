@@ -8942,12 +8942,19 @@ body.col-resizing * { cursor: col-resize !important; }
 }
 
 /* Overlay on the thumbnail's top-right corner (was inside the filename
-   label, where the ellipsis-truncation clipped it out of view). */
-.iiif-canvas__badge {
+   label, where the ellipsis-truncation clipped it out of view). Badges stack
+   vertically so a tile can carry >25 MP + duplicate flags at once. */
+.iiif-canvas__badges {
   position: absolute;
   top: 6px;
   right: 6px;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-end;
+}
+.iiif-canvas__badge {
   font-style: normal;
   font-weight: 600;
   font-size: 10px;
@@ -8959,6 +8966,41 @@ body.col-resizing * { cursor: col-resize !important; }
   padding: 0 4px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
+.iiif-canvas__badge--dup-name { background: #fee7e7; color: #8a0f0f; border-color: #d43a3a; }
+.iiif-canvas__badge--dup-image { background: #fff0e0; color: #7a3d00; border-color: #e07b1a; }
+
+/* OI-85 collision borders. Duplicate filename = thick solid red; duplicate
+   image = dashed orange (outline so both can show on a tile that is both). */
+.iiif-canvas--dup-name { border-color: #d43a3a !important; border-width: 3px; }
+.iiif-canvas--dup-image { outline: 3px dashed #e07b1a; outline-offset: -3px; }
+
+/* Collision warning box on the select step. */
+.iiif-collision-note {
+  border: 1px solid #d43a3a;
+  background: #fdf0f0;
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  font-size: 12.5px;
+}
+.iiif-collision-note__block + .iiif-collision-note__block { margin-top: 8px; }
+.iiif-collision-note__list { margin: 4px 0 0; padding-left: 18px; }
+.iiif-collision-note__list code {
+  background: var(--background-color-neutral-subtle, #f8f9fa);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+.iiif-collision-swatch {
+  display: inline-block;
+  width: 22px;
+  height: 0;
+  vertical-align: middle;
+  border-top-width: 3px;
+  border-top-style: solid;
+}
+.iiif-collision-swatch--name { border-top-color: #d43a3a; }
+.iiif-collision-swatch--image { border-top-style: dashed; border-top-color: #e07b1a; }
 
 .iiif-recap {
   list-style: none;
