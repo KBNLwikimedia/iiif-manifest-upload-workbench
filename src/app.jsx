@@ -7,7 +7,6 @@ import { PublishModal, cleanupAfterPublish } from './ui/publish-modal.jsx';
 import { BulkPublishModal } from './ui/bulk-publish-modal.jsx';
 import { WikitextPreviewModal } from './ui/wikitext-preview-modal.jsx';
 import InfoModal from './ui/info-modal.jsx';
-import VersionChip from './ui/version-chip.jsx';
 import PilingMode from './ui/piling-mode.jsx';
 import { Cc0Modal, CC0_ACK_VERSION, shouldShowCc0Modal } from './ui/cc0-modal.jsx';
 import { IiifImportModal } from './ui/iiif-import-modal.jsx';
@@ -1580,25 +1579,11 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
         <div className="topbar__brand">
           <img className="topbar__logo" src="/app-logo.png" alt="" width="28" height="28" />
           IIIF Manifest Upload Workbench
-          {/* Version chip replaces the old "· Wikimedia Commons" sub-title
-              (T426443). Color-coded by deploy target (green=main,
-              yellow=archived /v…, blue=MR preview, grey=dev), click to
-              switch builds. */}
-          <VersionChip />
-          {/* Beta indicator stays in the topbar to the right of the
-              version/MR selector. Tooltip is CSS-driven (::after on
-              :hover/:focus-visible) so it appears instantly, is reachable
-              for keyboard users, and styles consistently — browser-native
-              title= delays ~700ms and isn't focusable, so most users
-              never saw it. aria-label keeps the message accessible to
-              screen readers. */}
-          <span
-            className="chip chip--info topbar__beta-chip"
-            tabIndex={0}
-            data-tooltip="Beta — many things are not yet working well. All feedback is very welcome!"
-            aria-label="Beta — many things are not yet working well. All feedback is very welcome!"
-          >
-            Beta
+          {/* Static version label — just this build's number (the old
+              clickable releases/PRs dropdown and the Beta pill were dropped
+              2026-07-11; the About modal links to the full changelog). */}
+          <span className="version-chip version-chip--static" title="This build's version">
+            v{__APP_VERSION__}
           </span>
         </div>
         <div className="topbar__spacer" />

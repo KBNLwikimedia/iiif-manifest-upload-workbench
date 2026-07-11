@@ -53,7 +53,7 @@ The ingestor modules (ESM, not window-globals — all built): `src/api/iiif.js` 
 
 The app is rebranded to **IIIF Manifest Upload Workbench** across the user-facing surfaces: `index.html` `<title>` + favicon + local logo (`public/app-logo.png`), topbar brand, login screen, About modal (`info-modal.jsx`, GitHub links, GitLab/Toolforge version+MR sections removed), Feedback modal (→ GitHub issues), `src/config.js` `APP_USER_AGENT` + `attributionSuffix()` (→ plain-text GitHub URL, no Toolforge interwiki), the user-store subpages (`User:<u>/IIIFManifestUploadWorkbench/*.json`, auto-migrating from the old `UploadWorkbench/` folder), and the publish tracking category (`Category:Uploaded with IIIF Manifest Upload Workbench` — page not yet created on Commons, see open-issues). Every modal header shows the app icon via `.modal__head::before`.
 
-**Still pointing at upstream** (tracked in OI-10): `src/ui/error-report-modal.jsx` ("Report this error" flow — Phabricator/GitLab) and `docs/oauth-registration.md`. The version chip was repointed 2026-07-11 (`src/api/github.js`: fork releases ≥0.40.0 from the GitHub CHANGELOG, open PRs from the GitHub API, "Go to live release" → local origin; `src/api/gitlab.js` deleted). The CC0 "Heads up" notice was restored/rebranded the same day (ack version bumped 1→2, user-subpage paths are direct links). The OAuth consumer registration itself waits for OI-09 (Toolforge deployment).
+**Still pointing at upstream** (tracked in OI-10): `src/ui/error-report-modal.jsx` ("Report this error" flow — Phabricator/GitLab) and `docs/oauth-registration.md`. The version chip saga ended 2026-07-11: first repointed from GitLab/Toolforge to GitHub (`gitlab.js` deleted), then simplified the same day to a **static version label** in the topbar (no dropdown; `version-chip.jsx`, `changelog-parse.jsx` and `api/github.js` all deleted — the About modal links to the changelog). The topbar Beta pill was dropped too. The CC0 "Heads up" notice was restored/rebranded the same day (ack version bumped 1→2, user-subpage paths are direct links). The OAuth consumer registration itself waits for OI-09 (Toolforge deployment).
 
 ## Build & run
 
@@ -89,7 +89,7 @@ No test runner. Verification is by build (`npm run build`) + manual exercise in 
   - `local-store.js` — `localStorage` fast-path for filename cache; key `uwb.localStash.v1`
   - `autocomplete.js` — bridges live wiki vocab into the design's `window.KNOWN_*` pools
   - `normalize.js` — shapes raw API responses (allimages, stashimageinfo, SDC) into uniform item objects
-  - `sequence.js`, `title-validation.js`, `github.js` — auto-sequence titles, Commons title rules, fork releases/PRs for the version chip (GitHub raw CHANGELOG + PR API; replaced the upstream `gitlab.js` 2026-07-11)
+  - `sequence.js`, `title-validation.js` — auto-sequence titles, Commons title rules (the upstream `gitlab.js` and its short-lived `github.js` replacement are gone — the topbar shows a static version label)
   - `iiif.js` — IIIF Presentation 3.0 fetch/validate/parse (defensive; zero imports so Node runs it — `scripts/test-iiif-parser.mjs`)
   - `iiif-map.js` — manifest → workbench draft fields + `{{Artwork}}` params + SDC inputs (`scripts/test-iiif-map.mjs`)
   - `iiif-pipeline.js` — sequential download → SHA-1 → dedupe → stash, with retry/backoff, save-suspension checkpoints, shared-draft dedup

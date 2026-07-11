@@ -7413,6 +7413,9 @@ body.col-resizing * { cursor: col-resize !important; }
   transition: background 0.1s, border-color 0.1s;
 }
 .version-chip:hover { filter: brightness(0.97); }
+/* Static variant: just this build's version number — no dropdown. */
+.version-chip--static { cursor: default; margin-left: 8px; }
+.version-chip--static:hover { filter: none; }
 .version-chip:focus-visible {
   outline: 2px solid var(--color-progressive);
   outline-offset: 2px;
