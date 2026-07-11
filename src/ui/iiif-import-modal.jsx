@@ -2001,8 +2001,15 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 <figcaption>
                   {/* Manuscript title (the derived/edited short title) when the
                       manifest carries more than just the signature — so the
-                      lightbox names the manuscript, not only the image file. */}
-                  {title.trim() && <span className="iiif-lightbox__title">{title.trim()}</span>}
+                      lightbox names the manuscript, not only the image file.
+                      Capped so a title that fell back to a long summary
+                      fragment doesn't dump the whole sentence here; the full
+                      value stays in the tooltip. */}
+                  {title.trim() && (() => {
+                    const t = title.trim();
+                    const short = t.length > 50 ? t.slice(0, 50).replace(/\s+\S*$/, '') + '…' : t;
+                    return <span className="iiif-lightbox__title" title={t !== short ? t : undefined}>{short}</span>;
+                  })()}
                   <span className="iiif-lightbox__meta">
                     Image {pos + 1} of {canv.length}
                     {lightbox.label ? ` — ${lightbox.label}` : ''}

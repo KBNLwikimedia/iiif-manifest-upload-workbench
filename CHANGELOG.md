@@ -8,7 +8,7 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Changed
 
-- **Lightbox caption names the manuscript** — the review-step lightbox caption now shows the manuscript's (short) title above the per-image line, when the manifest carries more than just the signature (e.g. "Eerste Historiebijbel" above "Image 3 of 367 — KW129C3ii_0002_Front_Board.jpg · full-res ↗"). Manifests whose title/summary is only the shelfmark show just the image line, as before.
+- **Lightbox caption names the manuscript** — the review-step lightbox caption now shows the manuscript's (short) title above the per-image line, when the manifest carries more than just the signature (e.g. "Eerste Historiebijbel" above "Image 3 of 367 — KW129C3ii_0002_Front_Board.jpg · full-res ↗"). Manifests whose title/summary is only the shelfmark show just the image line, as before. The title is **capped at 50 characters** (with an ellipsis + full-text tooltip), so a short title that fell back to a long summary sentence doesn't dump the whole paragraph into the caption.
 
 ### Added
 
