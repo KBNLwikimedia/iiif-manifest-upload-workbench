@@ -14,6 +14,7 @@ globalThis.ReactDOM = ReactDOM;
 
 import './codex-tokens.css';
 import './app.css';
+import './ui/modal-drag.js'; // OI-83: drag any modal by its header (once, global)
 
 import './data.js';
 import './vocabulary.js';

@@ -6,6 +6,10 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Added
+
+- **Draggable modals (OI-83 #83)** — grab any modal by its header and drag it aside to read the greyed-out main screen behind it. One global pointer handler (`src/ui/modal-drag.js`) drives every modal that uses the shared `.modal` / `.modal__head` shell — import wizard, About, Feedback, Columns, publish, CC0 "Heads up", etc. The default position is unchanged (centred); dragging just adds a `transform` offset that resets when the modal reopens. The header shows a `move` cursor; the ×, buttons and inputs keep working (they don't start a drag), and the modal is clamped so it can't be dragged off-screen.
+
 ## [0.41.0] — 2026-07-11
 
 - **Release notes**: [v0.41.0](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/releases/tag/v0.41.0)
