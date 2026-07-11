@@ -82,6 +82,26 @@ const stripCatPrefix = (s) => String(s || '').replace(/^\s*Category\s*:\s*/i, ''
 const commonsCatUrl = (name) =>
   `https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(stripCatPrefix(name).replace(/ /g, '_'))}`;
 
+// Characters Commons forbids in a page title — also the wiki-structural set
+// that enables template/link injection ([ ] { } |). Same list the mapper's
+// sanitizer uses (src/api/iiif-map.js). Used to validate the free-text
+// title/category inputs so a bad value can't reach a filename or category.
+const FORBIDDEN_TITLE_CHARS_RE = /[#<>[\]|{}/\\:]/g;
+function forbiddenCharsIn(s) {
+  const str = String(s || '');
+  const hits = str.match(FORBIDDEN_TITLE_CHARS_RE) || [];
+  // Also flag ASCII control chars (never legitimate in a title).
+  // eslint-disable-next-line no-control-regex
+  const ctrl = [...str].some((c) => c.charCodeAt(0) < 32 || c.charCodeAt(0) === 127) ? ['(control character)'] : [];
+  return [...new Set([...hits, ...ctrl])];
+}
+// Q-id must be a capital Q followed by digits only (empty = "no item", valid).
+function qidFormatError(s) {
+  const v = String(s || '').trim();
+  if (!v) return null;
+  return /^Q\d+$/.test(v) ? null : 'Enter a Q-id like “Q42” — a capital Q followed by digits only, no other characters.';
+}
+
 // Commons-category input with typeahead suggestions, shared by the
 // per-manuscript category and the parent category so both behave identically.
 // Owns its dropdown state + debounced suggestion fetch; the caller owns the
@@ -766,6 +786,16 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   const hasReport = reportErrors.length + reportWarnings.length + reportInfos.length > 0;
   const manifest = parsed?.manifest;
 
+  // Input validation for the review-step free-text fields (OI-85 hardening):
+  // block Commons-forbidden / injection characters in the title + categories,
+  // and enforce the Q-id shape. These gate the "Next" button below.
+  const titleForbidden = forbiddenCharsIn(title);
+  const categoryForbidden = forbiddenCharsIn(category);
+  const parentForbidden = forbiddenCharsIn(parentCategory);
+  const qidErr = qidFormatError(qid);
+  const reviewInputsInvalid =
+    titleForbidden.length > 0 || categoryForbidden.length > 0 || parentForbidden.length > 0 || !!qidErr;
+
   const toggleAll = (on) => {
     if (!manifest) return;
     setSelected(on ? new Set(manifest.canvases.map((c) => c.index)) : new Set());
@@ -1234,7 +1264,17 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                     <label className="iiif-label" htmlFor="iiif-title">
                       Short title <span className="iiif-label__note">— used in filenames and the category (type to change it)</span>
                     </label>
-                    <input id="iiif-title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    <input
+                      id="iiif-title"
+                      type="text"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className={titleForbidden.length ? 'iiif-input--invalid' : undefined}
+                      aria-invalid={titleForbidden.length > 0}
+                    />
+                    {titleForbidden.length > 0 && (
+                      <p className="iiif-input-error">Remove {titleForbidden.map((c) => `“${c}”`).join(', ')} — not allowed in a Commons filename.</p>
+                    )}
 
                     <fieldset className="iiif-fieldset">
                       <legend>Categories</legend>
@@ -1246,8 +1286,11 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                         id="iiif-cat"
                         value={category}
                         onChange={setCategory}
-                        inputClassName={catExists === null && category.trim() ? 'iiif-input--checking' : ''}
+                        inputClassName={categoryForbidden.length ? 'iiif-input--invalid' : (catExists === null && category.trim() ? 'iiif-input--checking' : '')}
                       />
+                      {categoryForbidden.length > 0 && (
+                        <p className="iiif-input-error">Remove {categoryForbidden.map((c) => `“${c}”`).join(', ')} — not allowed in a Commons category name.</p>
+                      )}
                       <p className="iiif-hint">
                         {catExists === null && category.trim() && 'Checking Commons…'}
                         {catExists === true && (
@@ -1351,7 +1394,11 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                         id="iiif-parent-cat"
                         value={parentCategory}
                         onChange={setParentCategory}
+                        inputClassName={parentForbidden.length ? 'iiif-input--invalid' : ''}
                       />
+                      {parentForbidden.length > 0 && (
+                        <p className="iiif-input-error">Remove {parentForbidden.map((c) => `“${c}”`).join(', ')} — not allowed in a Commons category name.</p>
+                      )}
                       <p className="iiif-hint">
                         {stripCatPrefix(parentCategory) && (
                           <a
@@ -1396,7 +1443,16 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       <label className="iiif-label" htmlFor="iiif-qid">
                         Item of the manuscript <span className="iiif-label__note">— its Q-id on Wikidata (type to change it)</span>
                       </label>
-                      <input id="iiif-qid" type="text" placeholder="Q…" value={qid} onChange={(e) => setQid(e.target.value)} />
+                      <input
+                        id="iiif-qid"
+                        type="text"
+                        placeholder="Q…"
+                        value={qid}
+                        onChange={(e) => setQid(e.target.value)}
+                        className={qidErr ? 'iiif-input--invalid' : undefined}
+                        aria-invalid={!!qidErr}
+                      />
+                      {qidErr && <p className="iiif-input-error">{qidErr}</p>}
                       {qidNote && qidNote.qid === qid.trim().toUpperCase() && (
                         <p className="iiif-hint">ℹ️ {qidNote.text}</p>
                       )}
@@ -1838,7 +1894,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
             {step === 'review' && (
               <>
                 <button className="btn" onClick={() => setStep('input')}>Back</button>
-                <button className="btn btn--progressive" disabled={!parsed?.ok} onClick={() => setStep('select')}>
+                <button
+                  className="btn btn--progressive"
+                  disabled={!parsed?.ok || reviewInputsInvalid}
+                  title={reviewInputsInvalid ? 'Fix the highlighted fields first (forbidden characters / invalid Q-id).' : undefined}
+                  onClick={() => setStep('select')}
+                >
                   Next: select images
                 </button>
               </>
