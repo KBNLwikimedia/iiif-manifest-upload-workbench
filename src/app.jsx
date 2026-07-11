@@ -1930,7 +1930,11 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
             )}
           </section>
 
-          {/* Section 2 — Upload history (collapsible, collapsed by default) */}
+          {/* Section 2 — Upload history (collapsible). Hidden unless the
+              `showUploadHistory` preference is explicitly enabled — a future
+              settings panel (OI-79) will expose the toggle; for now it
+              defaults off. */}
+          {getPref('showUploadHistory') === true && (
           <section className={"stream" + (histCollapsed ? " stream--collapsed" : "")}>
             <div
               className="section-head section-head--clickable"
@@ -2040,6 +2044,7 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
               </div>
             )}
           </section>
+          )}
         </main>
 
         {openItem &&
