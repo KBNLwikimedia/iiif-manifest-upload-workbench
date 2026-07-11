@@ -164,12 +164,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // Recently loaded manifest URLs (persisted in Preferences.json), for
   // one-click reloading.
   const [recent, setRecent] = React.useState(getRecentManifests);
-  // Which provider tab of the recent list is active. Default to the first tab
-  // that actually has entries (KB → eCodices → Other).
+  // Which provider tab of the recent list is active. Default to the tab of
+  // the most recently loaded manifest (the list is newest-first), so the
+  // modal reopens where the user last worked; fall back to KB.
   const [recentTab, setRecentTab] = React.useState(() => {
-    const counts = { kb: 0, ecodices: 0, other: 0 };
-    for (const r of getRecentManifests()) counts[providerForUrl(r.url) || 'other'] += 1;
-    return counts.kb ? 'kb' : counts.ecodices ? 'ecodices' : 'other';
+    const last = getRecentManifests()[0];
+    return last ? (providerForUrl(last.url) || 'other') : 'kb';
   });
   // Provider profile (OI-78 scaffolding). Only KB is selectable for now; the
   // eCodices card is shown disabled. Doesn't gate loading yet.
@@ -448,6 +448,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     const thumb = result.manifest.canvases?.[0]?.thumbUrl || null;
     addRecentManifest({ url: u, signature: manuscript.signature, title: manuscript.title, thumb });
     setRecent(getRecentManifests());
+    // Keep the active tab on the collection just loaded, so going Back (and
+    // the next modal open) shows the list the user is actually working from.
+    setRecentTab(providerForUrl(u) || 'other');
   };
 
   const loadUrl = async (overrideUrl) => {
@@ -651,17 +654,34 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
       const img = c.fullResUrl || c.serviceId || '';
       if (img) { if (!byImage.has(img)) byImage.set(img, []); byImage.get(img).push(c.index); }
     }
+    // Besides the flat index sets, keep per-canvas "partners": the 1-based
+    // numbers of the OTHER images in the same collision group, so a tile's
+    // badge can say which images it collides with.
     const dupLabelIdx = new Set();
     const labelGroups = [];
+    const labelPartners = new Map();
     for (const [label, idxs] of byLabel) {
-      if (idxs.length > 1) { idxs.forEach((i) => dupLabelIdx.add(i)); labelGroups.push({ label, positions: idxs.map((i) => i + 1) }); }
+      if (idxs.length > 1) {
+        idxs.forEach((i) => {
+          dupLabelIdx.add(i);
+          labelPartners.set(i, idxs.filter((j) => j !== i).map((j) => j + 1));
+        });
+        labelGroups.push({ label, positions: idxs.map((i) => i + 1) });
+      }
     }
     const dupImageIdx = new Set();
     const imageGroups = [];
+    const imagePartners = new Map();
     for (const [, idxs] of byImage) {
-      if (idxs.length > 1) { idxs.forEach((i) => dupImageIdx.add(i)); imageGroups.push({ positions: idxs.map((i) => i + 1) }); }
+      if (idxs.length > 1) {
+        idxs.forEach((i) => {
+          dupImageIdx.add(i);
+          imagePartners.set(i, idxs.filter((j) => j !== i).map((j) => j + 1));
+        });
+        imageGroups.push({ positions: idxs.map((i) => i + 1) });
+      }
     }
-    return { dupLabelIdx, labelGroups, dupImageIdx, imageGroups };
+    return { dupLabelIdx, labelGroups, labelPartners, dupImageIdx, imageGroups, imagePartners };
   }, [parsed]);
 
   // --- step 4 → 5: run ------------------------------------------------------
@@ -1430,9 +1450,13 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   // tile, so hovering must reveal the whole story — canvas
                   // label + the Commons filename this page would get.
                   const target = effectiveItems.find((it) => it.iiif.canvasIndex === c.index);
+                  const labelPartners = collisions.labelPartners.get(c.index);
+                  const imagePartners = collisions.imagePartners.get(c.index);
                   const tooltip = [
                     c.label || `canvas ${c.index + 1}`,
                     target ? `→ File:${target.iiif.targetFilename}` : null,
+                    labelPartners ? `⚠ Same label as image${labelPartners.length === 1 ? '' : 's'} ${labelPartners.join(', ')} (filename collision)` : null,
+                    imagePartners ? `⚠ Identical picture to image${imagePartners.length === 1 ? '' : 's'} ${imagePartners.join(', ')} (same SHA-1)` : null,
                     c.downscaled ? `Delivered downscaled to ~${target?.iiif.expectedWidth || c.expectedWidth}×${target?.iiif.expectedHeight || c.expectedHeight}px (25 MP cap)` : null,
                   ].filter(Boolean).join('\n');
                   return (
@@ -1469,10 +1493,16 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                           <em className="iiif-canvas__badge" title="This image is larger than 25 megapixels, so it arrives slightly smaller (still high-res).">&gt;25 MP</em>
                         )}
                         {collisions.dupLabelIdx.has(c.index) && (
-                          <em className="iiif-canvas__badge iiif-canvas__badge--dup-name" title="Another image in this manifest has the same label — they would collide into one Commons filename. Rename in the next step.">dup. name</em>
+                          <em
+                            className="iiif-canvas__badge iiif-canvas__badge--dup-name"
+                            title={`Same label as image${(collisions.labelPartners.get(c.index) || []).length === 1 ? '' : 's'} ${(collisions.labelPartners.get(c.index) || []).join(', ')} — they would collide into one Commons filename. Rename in the next step.`}
+                          >dup. name = {(collisions.labelPartners.get(c.index) || []).join(', ')}</em>
                         )}
                         {collisions.dupImageIdx.has(c.index) && (
-                          <em className="iiif-canvas__badge iiif-canvas__badge--dup-image" title="The exact same picture appears more than once in this manifest (identical SHA-1).">dup. image</em>
+                          <em
+                            className="iiif-canvas__badge iiif-canvas__badge--dup-image"
+                            title={`The exact same picture as image${(collisions.imagePartners.get(c.index) || []).length === 1 ? '' : 's'} ${(collisions.imagePartners.get(c.index) || []).join(', ')} (identical SHA-1).`}
+                          >dup. image = {(collisions.imagePartners.get(c.index) || []).join(', ')}</em>
                         )}
                       </span>
                       <span className="iiif-canvas__label">
