@@ -6,6 +6,10 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Changed
+
+- **Lightbox caption names the manuscript** — the review-step lightbox caption now shows the manuscript's (short) title above the per-image line, when the manifest carries more than just the signature (e.g. "Eerste Historiebijbel" above "Image 3 of 367 — KW129C3ii_0002_Front_Board.jpg · full-res ↗"). Manifests whose title/summary is only the shelfmark show just the image line, as before.
+
 ### Added
 
 - **Draggable + resizable modals (OI-83 #83)** — grab any modal by its **header** to move it aside, or drag any **edge / corner** to resize it (the pointer shows the matching resize cursor near a border). The header is styled as a recognizable **title-bar** (tinted background, a drag-grip glyph, `move` cursor). The resize band spans a few px on *both* sides of the border, so an edge stays grabbable from just **outside** the modal too; and the scrollable body now carries a small **right-hand gutter** (10 px of modal-background whitespace between the scrollbar and the modal's right border) so that strip is a clean resize zone with the proper cursor — you can't re-cursor or reliably grab a native scrollbar itself. One global pointer handler (`src/ui/modal-drag.js`) drives every modal that uses the shared `.modal` / `.modal__head` shell — import wizard, About, Feedback, Columns, publish, CC0 "Heads up", etc. Default position + size are unchanged (centred at the CSS width); on the first drag/resize the modal detaches to `position: fixed` so growing it from the left/top keeps the opposite edge anchored, and everything resets when the modal reopens. The ×, buttons and inputs keep working (they don't start a drag/resize), and both move and resize are clamped to the viewport (minimum size + can't be lost off-screen).

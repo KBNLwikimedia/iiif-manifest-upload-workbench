@@ -8805,6 +8805,14 @@ body.col-resizing * { cursor: col-resize !important; }
   text-align: center;
 }
 .iiif-lightbox__fig figcaption a { color: #9cc2ff; }
+/* Manuscript title above the per-image meta line. */
+.iiif-lightbox__title {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.iiif-lightbox__meta { color: #cfcfcf; font-size: 12.5px; }
 .iiif-lightbox__nav,
 .iiif-lightbox__close {
   flex: 0 0 auto;

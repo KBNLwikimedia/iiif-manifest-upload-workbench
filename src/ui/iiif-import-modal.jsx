@@ -1999,11 +1999,17 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   />
                 </div>
                 <figcaption>
-                  Image {pos + 1} of {canv.length}
-                  {lightbox.label ? ` — ${lightbox.label}` : ''}
-                  {lightbox.fullResUrl && (
-                    <>{' · '}<a href={lightbox.fullResUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>full-res ↗</a></>
-                  )}
+                  {/* Manuscript title (the derived/edited short title) when the
+                      manifest carries more than just the signature — so the
+                      lightbox names the manuscript, not only the image file. */}
+                  {title.trim() && <span className="iiif-lightbox__title">{title.trim()}</span>}
+                  <span className="iiif-lightbox__meta">
+                    Image {pos + 1} of {canv.length}
+                    {lightbox.label ? ` — ${lightbox.label}` : ''}
+                    {lightbox.fullResUrl && (
+                      <>{' · '}<a href={lightbox.fullResUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>full-res ↗</a></>
+                    )}
+                  </span>
                 </figcaption>
               </figure>
               <button
