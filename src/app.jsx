@@ -1947,8 +1947,14 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
                 {historySyncedAt && (
                   <>
                     {" · synced "}
+                    {/* Explicit DD-MM-YYYY HH:MM — "today"-style relative
+                        stamps were too coarse to judge staleness. */}
                     <span title={new Date(historySyncedAt).toLocaleString()}>
-                      {formatRelative(historySyncedAt)}
+                      {(() => {
+                        const d = new Date(historySyncedAt);
+                        const p = (n) => String(n).padStart(2, '0');
+                        return `${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+                      })()}
                     </span>
                   </>
                 )}
