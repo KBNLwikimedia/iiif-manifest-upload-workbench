@@ -2155,10 +2155,13 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
                 <h2 className="modal__title">Clear your upload stash?</h2>
                 <p className="modal__sub">{stashItems.length} file{stashItems.length === 1 ? '' : 's'} will be hidden from the workbench.</p>
               </div>
+              <button className="btn btn--quiet btn--icon-only" onClick={() => setClearStashOpen(false)} aria-label="Close">
+                <Icon name="close" size={16} />
+              </button>
             </header>
             <div className="modal__body">
               <p>
-                The real stash lives on Wikimedia Commons. To delete all {stashItems.length} files
+                The real stash lives on Wikimedia Commons. To delete all {stashItems.length} file{stashItems.length === 1 ? '' : 's'}
                 from the server <strong>right now</strong>, open <strong>Special:UploadStash</strong> and
                 click <em>“Clear list”</em> there (you must be logged in to Commons in that browser tab —
                 MediaWiki offers no API for this, so the app can&apos;t do it for you). Afterwards, reload
