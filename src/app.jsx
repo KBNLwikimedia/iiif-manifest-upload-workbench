@@ -429,6 +429,14 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
   // `setShowHistory` writes the pref (default: shown).
   const [showHistory, setShowHistoryState] = useState(() => getPref('showUploadHistory') !== false);
   const setShowHistory = (v) => { setShowHistoryState(v); setPref('showUploadHistory', v); };
+
+  // History mini-toolbar (read-only section keeps its own controls, mirroring
+  // the stash toolbar): local search, Grid/List view, tile zoom for the grid.
+  const [histView, setHistView] = useState('list'); // 'grid' | 'list'
+  const [histQuery, setHistQuery] = useState('');
+  const HIST_TILE_SIZES = [100, 130, 160, 210, 270];
+  const [histTileIdx, setHistTileIdx] = useState(2);
+  const histTilePx = HIST_TILE_SIZES[histTileIdx];
   const [historyLoadMore, setHistoryLoadMore] = useState(false);
   const [refreshingItemId, setRefreshingItemId] = useState(null);
 
@@ -843,6 +851,13 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
     [stashItems, query, filter],
   );
   const filteredHist = useMemo(() => applyFilters(histItems, false), [histItems, query, filter]);
+  // History-section search on top of the global filters (title/filename).
+  const histShown = useMemo(() => {
+    const q = histQuery.trim().toLowerCase();
+    if (!q) return filteredHist;
+    return filteredHist.filter((it) =>
+      (it.title || '').toLowerCase().includes(q) || (it.filename || '').toLowerCase().includes(q));
+  }, [filteredHist, histQuery]);
 
   // All detected duplicates — flagged by the cross-Commons sha1 check
   // (existsOnCommons set). In-stash same-sha1 dupes are coalesced upstream
@@ -2008,17 +2023,88 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
               </div>
             )}
 
-            {!histCollapsed && (filteredHist.length === 0 ?
+            {/* History mini-toolbar: own search + tile zoom (grid only) +
+                Grid/List toggle — mirrors the stash toolbar, read-only. */}
+            {!histCollapsed && histItems.length > 0 && (
+              <div className="hist-toolbar">
+                <div className="search hist-toolbar__search">
+                  <span className="search__icon"><Icon name="search" size={14} /></span>
+                  <input
+                    className="search__input"
+                    placeholder="Search published files…"
+                    value={histQuery}
+                    onChange={(e) => setHistQuery(e.target.value)}
+                  />
+                </div>
+                {histView === 'grid' && (
+                  <div className="seg" role="group" aria-label="History tile size">
+                    <button
+                      className="seg__btn"
+                      onClick={() => setHistTileIdx((i) => Math.max(0, i - 1))}
+                      disabled={histTileIdx <= 0}
+                      aria-label="Smaller tiles"
+                      title="Smaller tiles">
+                      <Icon name="minus" size={14} />
+                    </button>
+                    <button
+                      className="seg__btn"
+                      onClick={() => setHistTileIdx((i) => Math.min(HIST_TILE_SIZES.length - 1, i + 1))}
+                      disabled={histTileIdx >= HIST_TILE_SIZES.length - 1}
+                      aria-label="Larger tiles"
+                      title="Larger tiles">
+                      <Icon name="plus" size={14} />
+                    </button>
+                  </div>
+                )}
+                <div className="seg" role="group" aria-label="History view">
+                  <button className="seg__btn" aria-pressed={histView === 'grid'} onClick={() => setHistView('grid')} title="Grid">
+                    <Icon name="grid" size={14} /> Grid
+                  </button>
+                  <button className="seg__btn" aria-pressed={histView === 'list'} onClick={() => setHistView('list')} title="List">
+                    <Icon name="list" size={14} /> List
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {!histCollapsed && (histShown.length === 0 ?
             <EmptyRow
               icon="image"
               text={histItems.length === 0 ?
               "Nothing published yet." :
-              "No published files match your filters."} /> :
+              "No published files match your search."} /> :
 
-            /* Simplified read-only history: thumbnail + title, the whole row
-               links to the file's page on Commons. No editing/columns. */
+            /* Read-only history: every tile/row links to the file's page on
+               Commons. No editing/columns/selection. */
+            histView === 'grid' ?
+            <ul className="hist-grid" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${histTilePx}px, 1fr))` }}>
+              {histShown.map((it) => (
+                <li key={it.id}>
+                  <a
+                    className="hist-grid__tile"
+                    href={it.descriptionurl || `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(it.filename || '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={`Open ${it.filename || it.title} on Wikimedia Commons`}
+                  >
+                    {it.thumburl
+                      ? <img
+                          className="hist-grid__thumb"
+                          src={it.thumburl}
+                          alt=""
+                          loading="lazy"
+                          referrerPolicy="no-referrer"
+                          onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
+                        />
+                      : <span className="hist-grid__thumb" />}
+                    <span className="hist-grid__title">{it.title || it.filename}</span>
+                  </a>
+                </li>
+              ))}
+            </ul> :
+
             <ul className="hist-simple">
-              {filteredHist.map((it) => (
+              {histShown.map((it) => (
                 <li key={it.id} className="hist-simple__item">
                   <a
                     className="hist-simple__link"

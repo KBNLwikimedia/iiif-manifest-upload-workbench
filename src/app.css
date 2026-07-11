@@ -296,6 +296,60 @@ body {
 /* Row that offers to re-show the hidden upload-history section. */
 .hist-show-row { padding: 10px 2px; }
 
+/* History mini-toolbar: own search + tile zoom + Grid/List (read-only). */
+.hist-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 10px;
+}
+.hist-toolbar__search {
+  /* narrower than the main .search (flex:1, max 420) — this is a section tool */
+  flex: 0 1 320px;
+  min-width: 180px;
+}
+.hist-toolbar .seg { margin-left: 0; }
+.hist-toolbar > .seg:last-child { margin-left: auto; }
+
+/* Read-only history grid: thumbnail tiles linking to Commons. */
+.hist-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.hist-grid__tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--border-color-muted);
+  border-radius: 6px;
+  background: var(--background-color-base);
+  color: var(--color-base);
+  text-decoration: none;
+}
+.hist-grid__tile:hover {
+  border-color: var(--border-color-interactive);
+  background: var(--background-color-neutral-subtle, #f0f1f3);
+}
+.hist-grid__tile:hover .hist-grid__title { color: var(--color-progressive); }
+.hist-grid__thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 4px;
+  background: var(--background-color-neutral-subtle, #f0f1f3);
+  display: block;
+}
+.hist-grid__title {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Simplified upload-history list: thumb + title, whole row links to Commons. */
 .hist-simple { list-style: none; margin: 0; padding: 0; }
 .hist-simple__item { border-bottom: 1px solid var(--border-color-muted); }
