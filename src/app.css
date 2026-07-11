@@ -1300,13 +1300,15 @@ hr.divider { border: 0; border-top: 1px solid var(--border-color-muted); margin:
 /* Horizontal scroll container */
 .tbl-scroll {
   overflow-x: auto;
-  /* breathing room between the last row and the horizontal scrollbar */
-  padding-bottom: 10px;
 }
 .tbl {
   min-width: 100%;
   width: max-content;
   display: block;
+  /* trailing space inside the scroll content so the horizontal scrollbar
+     doesn't hug the last row (padding on .tbl-scroll is eaten by the
+     scrollbar itself) */
+  padding-bottom: 12px;
 }
 .tbl__row {
   display: grid;
