@@ -1300,7 +1300,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       aria-invalid={titleForbidden.length > 0}
                     />
                     {(titleRejected || titleForbidden.length > 0) && (
-                      <p className="iiif-input-error" role="alert">⚠️ {(titleRejected || titleForbidden).map((c) => `“${c}”`).join(', ')} {(titleRejected || titleForbidden).length === 1 ? 'is' : 'are'} not allowed on Wikimedia Commons — removed from the filename.</p>
+                      <p className="iiif-input-error" role="alert">⚠️ {(titleRejected || titleForbidden).map((c) => `“${c}”`).join(', ')} {(titleRejected || titleForbidden).length === 1 ? 'is' : 'are'} not allowed on Wikimedia Commons — removed it from the short title.</p>
                     )}
 
                     <fieldset className="iiif-fieldset">
