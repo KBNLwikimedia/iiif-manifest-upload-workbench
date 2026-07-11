@@ -434,8 +434,21 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
   // the stash toolbar): local search, Grid/List view, tile zoom for the grid.
   const [histView, setHistView] = useState('list'); // 'grid' | 'list'
   const [histQuery, setHistQuery] = useState('');
-  const HIST_TILE_SIZES = [100, 130, 160, 210, 270];
-  const [histTileIdx, setHistTileIdx] = useState(2);
+  // List-view column sort (session-only for now; persisting to Preferences.json
+  // is tracked as a separate enhancement — OI-82 #82). Default: newest upload
+  // first, matching the section's baseline order.
+  const [histSort, setHistSort] = useState({ key: 'date', dir: 'desc' });
+  const toggleHistSort = (key) =>
+    setHistSort((s) =>
+      s.key === key
+        ? { key, dir: s.dir === 'asc' ? 'desc' : 'asc' }
+        : { key, dir: key === 'title' || key === 'license' ? 'asc' : 'desc' });
+  // Smallest tile is 200px so the thumb's hover overlay (up to a 3-line title +
+  // 7 metadata rows ≈ 170px of content) always fits without clipping — measured
+  // worst case needs a ~184px-tall thumb, i.e. a 200px tile. Zoom only goes up
+  // from this overlay-safe floor.
+  const HIST_TILE_SIZES = [200, 240, 285, 335, 390];
+  const [histTileIdx, setHistTileIdx] = useState(0);
   const histTilePx = HIST_TILE_SIZES[histTileIdx];
   const [historyLoadMore, setHistoryLoadMore] = useState(false);
   const [refreshingItemId, setRefreshingItemId] = useState(null);
@@ -858,6 +871,32 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
     return filteredHist.filter((it) =>
       (it.title || '').toLowerCase().includes(q) || (it.filename || '').toLowerCase().includes(q));
   }, [filteredHist, histQuery]);
+  // List-view sort applied on top of the search result. Grid view keeps the
+  // baseline (newest-first) order from applyFilters and ignores this.
+  const histSorted = useMemo(() => {
+    const { key, dir } = histSort;
+    const val = (it) => {
+      switch (key) {
+        case 'title': return (it.title || it.filename || '').toLowerCase();
+        case 'date': return new Date(it.uploadedAt || it.publishedAt || 0).getTime();
+        case 'size': return it.bytes || 0;
+        case 'dims': return (it.width || 0) * (it.height || 0);
+        case 'license': return (it.license || '').toLowerCase();
+        case 'cats': return (it.categories || []).length;
+        case 'depicts': return (it.depicts || []).length;
+        default: return 0;
+      }
+    };
+    const arr = [...histShown];
+    arr.sort((a, b) => {
+      const va = val(a), vb = val(b);
+      const c = typeof va === 'number' && typeof vb === 'number'
+        ? va - vb
+        : String(va).localeCompare(String(vb));
+      return dir === 'asc' ? c : -c;
+    });
+    return arr;
+  }, [histShown, histSort]);
 
   // All detected duplicates — flagged by the cross-Commons sha1 check
   // (existsOnCommons set). In-stash same-sha1 dupes are coalesced upstream
@@ -2097,48 +2136,92 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
                     rel="noopener noreferrer"
                     title={`Open ${it.filename || it.title} on Wikimedia Commons`}
                   >
-                    {it.thumburl
-                      ? <img
-                          className="hist-grid__thumb"
-                          src={it.thumburl}
-                          alt=""
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
-                        />
-                      : <span className="hist-grid__thumb" />}
-                    <span className="hist-grid__title">{it.title || it.filename}</span>
+                    <span className="hist-grid__thumbwrap">
+                      {it.thumburl
+                        ? <img
+                            className="hist-grid__thumb"
+                            src={it.thumburl}
+                            alt=""
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
+                          />
+                        : <span className="hist-grid__thumb" />}
+                      <ThumbInfoOverlay item={it} />
+                    </span>
+                    <span className="hist-grid__title">{it.filename}</span>
                   </a>
                 </li>
               ))}
             </ul> :
 
-            <ul className="hist-simple">
-              {histShown.map((it) => (
-                <li key={it.id} className="hist-simple__item">
-                  <a
-                    className="hist-simple__link"
-                    href={it.descriptionurl || `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(it.filename || '')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={`Open ${it.filename || it.title} on Wikimedia Commons`}
-                  >
-                    {it.thumburl
-                      ? <img
-                          className="hist-simple__thumb"
-                          src={it.thumburl}
-                          alt=""
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
-                        />
-                      : <span className="hist-simple__thumb hist-simple__thumb--empty" />}
-                    <span className="hist-simple__title">{it.title || it.filename}</span>
-                    <Icon name="external" size={13} />
-                  </a>
-                </li>
-              ))}
-            </ul>)
+            <div className="hist-table" role="table" aria-label="Published files">
+              <div className="hist-table__row hist-table__row--head" role="row">
+                <span className="hist-table__cell hist-table__cell--thumb" />
+                <HistSortTh label="Title / filename" col="title" sort={histSort} onSort={toggleHistSort} />
+                <HistSortTh label="Uploaded" col="date" sort={histSort} onSort={toggleHistSort} numeric />
+                <HistSortTh label="Size" col="size" sort={histSort} onSort={toggleHistSort} numeric />
+                <HistSortTh label="Dimensions" col="dims" sort={histSort} onSort={toggleHistSort} numeric />
+                <HistSortTh label="License" col="license" sort={histSort} onSort={toggleHistSort} />
+                <HistSortTh label="Categories" col="cats" sort={histSort} onSort={toggleHistSort} numeric />
+                <HistSortTh label="Depicts" col="depicts" sort={histSort} onSort={toggleHistSort} numeric />
+              </div>
+              {histSorted.map((it) => {
+                const href = it.descriptionurl || `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(it.filename || '')}`;
+                const cats = it.categories || [];
+                const depicts = it.depicts || [];
+                const dd = (it.uploadedAt || it.publishedAt) ? new Date(it.uploadedAt || it.publishedAt) : null;
+                const p2 = (n) => String(n).padStart(2, '0');
+                const dateShort = dd ? `${p2(dd.getDate())}-${p2(dd.getMonth() + 1)}-${dd.getFullYear()}` : '—';
+                const dateFull = dd ? `${dateShort} ${p2(dd.getHours())}:${p2(dd.getMinutes())}` : '';
+                const mp = it.width && it.height ? (it.width * it.height) / 1e6 : 0;
+                return (
+                  <div className="hist-table__row" role="row" key={it.id}>
+                    <span className="hist-table__cell hist-table__cell--thumb">
+                      {it.thumburl
+                        ? <img
+                            className="hist-table__thumb"
+                            src={it.thumburl}
+                            alt=""
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
+                          />
+                        : <span className="hist-table__thumb hist-table__thumb--empty" />}
+                    </span>
+                    <span className="hist-table__cell hist-table__cell--title">
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={`Open ${it.filename || it.title} on Wikimedia Commons`}
+                      >
+                        <span className="hist-table__title-main">{it.title || it.filename}</span>
+                        {it.title && it.filename && it.title !== it.filename &&
+                          <span className="hist-table__title-sub">{it.filename}</span>}
+                        <Icon name="external" size={12} />
+                      </a>
+                    </span>
+                    <span className="hist-table__cell hist-table__cell--num" title={dateFull}>{dateShort}</span>
+                    <span className="hist-table__cell hist-table__cell--num">{it.bytes ? formatBytes(it.bytes) : <span className="muted">—</span>}</span>
+                    <span className="hist-table__cell hist-table__cell--num" title={mp ? `≈ ${mp.toFixed(1)} MP` : ''}>
+                      {it.width && it.height ? `${it.width} × ${it.height}` : <span className="muted">—</span>}
+                    </span>
+                    <span className="hist-table__cell">
+                      {it.license
+                        ? <span title={window.licenseTitle?.(it.license) || it.license}>{window.licenseShortLabel?.(it.license) || it.license}</span>
+                        : <span className="muted">—</span>}
+                    </span>
+                    <span className="hist-table__cell hist-table__cell--num" title={cats.map((c) => `Category:${c}`).join('\n')}>
+                      {cats.length || <span className="muted">—</span>}
+                    </span>
+                    <span className="hist-table__cell hist-table__cell--num" title={depicts.map((d) => d.label).join('\n')}>
+                      {depicts.length || <span className="muted">—</span>}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>)
 
             }
 
@@ -2675,6 +2758,42 @@ function GroupHeader({
   );
 }
 
+// ===== Hover metadata overlay for grid thumbnails (stash + history) =====
+// Small label→value rows over the thumb, revealed on hover of the positioned
+// parent (.hist-grid__thumbwrap or .card__media). pointer-events off so the
+// tile/card stays clickable; empty facts are skipped. Shared by the history
+// grid and the stash grid so both show the same on-thumb metadata.
+function OvRow({ k, v, title }) {
+  return <span className="thumb-ov__row"><span>{k}</span><span title={title}>{v}</span></span>;
+}
+function ThumbInfoOverlay({ item }) {
+  const it = item;
+  const dd = (it.uploadedAt || it.publishedAt) ? new Date(it.uploadedAt || it.publishedAt) : null;
+  const p2 = (n) => String(n).padStart(2, '0');
+  const dateShort = dd ? `${p2(dd.getDate())}-${p2(dd.getMonth() + 1)}-${dd.getFullYear()}` : '';
+  const dims = it.width && it.height ? `${it.width} × ${it.height}` : '';
+  const mp = it.width && it.height ? `${((it.width * it.height) / 1e6).toFixed(1)} MP` : '';
+  const lic = it.license ? (window.licenseShortLabel?.(it.license) || it.license) : '';
+  const nCats = (it.categories || []).length;
+  const nDepicts = (it.depicts || []).length;
+  const published = it.status === 'published';
+  // Fall back to the filename without its extension when there's no title.
+  const titleText = it.title || (it.filename || '').replace(/\.[^.]+$/, '');
+  return (
+    <span className="thumb-ov">
+      {titleText && <span className="thumb-ov__title">{titleText}</span>}
+      {published && dateShort && <OvRow k="Uploaded" v={dateShort} />}
+      {!published && it.expiresAt && <OvRow k="Expires" v={timeUntil(it.expiresAt)} />}
+      {it.bytes ? <OvRow k="Size" v={formatBytes(it.bytes)} /> : null}
+      {dims && <OvRow k="Dimensions" v={dims} />}
+      {mp && <OvRow k="Megapixels" v={mp} />}
+      {lic && <OvRow k="License" v={lic} title={window.licenseTitle?.(it.license) || it.license} />}
+      {nCats > 0 && <OvRow k="Categories" v={nCats} title={(it.categories || []).map((c) => `Category:${c}`).join('\n')} />}
+      {nDepicts > 0 && <OvRow k="Depicts" v={nDepicts} title={(it.depicts || []).map((d) => d.label).join('\n')} />}
+    </span>
+  );
+}
+
 // ===== Grid view =====
 function GridView({ items, cardSize, selected, onToggleSelect, onOpen, showFilenames, findDuplicate }) {
   return (
@@ -2714,6 +2833,7 @@ function Card({ item, selected, onToggleSelect, onOpen, showFilename, duplicateO
     >
       <div className={mediaCls}>
         <Thumb item={item} ratio={aspect} />
+        <ThumbInfoOverlay item={item} />
 
         <div className="card__check" onClick={(e) => {e.stopPropagation();onToggleSelect(item.id);}}>
           <Icon name="check" size={14} />
@@ -2825,6 +2945,29 @@ function ListView({ items, selected, onToggleSelect, onSelectAll, onClearAll, on
       )}
     </div>);
 
+}
+
+// ===== Sortable column header for the read-only history list =====
+// A button so the whole header is keyboard-activatable; the arrow reflects the
+// active sort direction. `numeric` right-aligns the label (size/date/counts).
+function HistSortTh({ label, col, sort, onSort, numeric }) {
+  const active = sort.key === col;
+  return (
+    <button
+      type="button"
+      className={
+        'hist-table__cell hist-table__th' +
+        (numeric ? ' hist-table__cell--num' : '') +
+        (active ? ' hist-table__th--active' : '')
+      }
+      onClick={() => onSort(col)}
+      aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
+      title={`Sort by ${label.toLowerCase()}`}
+    >
+      <span>{label}</span>
+      <span className="hist-table__arrow" aria-hidden="true">{active ? (sort.dir === 'asc' ? '▲' : '▼') : ''}</span>
+    </button>
+  );
 }
 
 // ===== Empty row (in-section) =====

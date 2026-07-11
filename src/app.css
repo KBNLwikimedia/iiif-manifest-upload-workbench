@@ -349,6 +349,10 @@ body {
   background: var(--background-color-neutral-subtle, #f0f1f3);
 }
 .hist-grid__tile:hover .hist-grid__title { color: var(--color-progressive); }
+.hist-grid__thumbwrap {
+  position: relative;
+  display: block;
+}
 .hist-grid__thumb {
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -357,46 +361,138 @@ body {
   background: var(--background-color-neutral-subtle, #f0f1f3);
   display: block;
 }
-.hist-grid__title {
-  font-size: 12px;
+/* Semi-transparent info overlay on a grid thumb (stash Card + history tile),
+   revealed on hover of the positioned parent. pointer-events off so the
+   tile/card stays clickable. Shared class — used in .hist-grid__thumbwrap and
+   .card__media. */
+.thumb-ov {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px;
+  border-radius: 4px;
+  background: rgba(20, 22, 26, 0.72);
+  color: #fff;
+  font-size: 10.5px;
+  line-height: 1.3;
+  opacity: 0;
+  transition: opacity 120ms ease;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hist-grid__thumbwrap:hover .thumb-ov,
+.card__media:hover .thumb-ov { opacity: 1; }
+.thumb-ov__title {
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1.25;
+  margin-bottom: 3px;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.thumb-ov__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.thumb-ov__row > span:first-child { color: rgba(255, 255, 255, 0.62); }
+.thumb-ov__row > span:last-child {
+  font-variant-numeric: tabular-nums;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* Full, clickable title under the thumb — wraps to as many lines as needed
+   (the rest of the metadata lives in the hover overlay on the thumb). */
+.hist-grid__title {
+  font-size: 12px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
 
 /* Simplified upload-history list: thumb + title, whole row links to Commons. */
-.hist-simple { list-style: none; margin: 0; padding: 0; }
-.hist-simple__item { border-bottom: 1px solid var(--border-color-muted); }
-.hist-simple__item:last-child { border-bottom: 0; }
-.hist-simple__link {
-  display: flex;
+/* Read-only history list, rendered as a sortable CSS-grid "table".
+   Head row + body rows share the same grid-template-columns so cells align. */
+.hist-table { font-size: 13px; }
+.hist-table__row {
+  display: grid;
+  grid-template-columns: 44px minmax(150px, 2.4fr) 104px 84px 118px minmax(88px, 1.2fr) 92px 82px;
   align-items: center;
-  gap: 12px;
-  padding: 6px 10px;
-  color: var(--color-base);
-  text-decoration: none;
+  gap: 10px;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--border-color-muted);
 }
-.hist-simple__link:hover { background: var(--background-color-neutral-subtle, #f0f1f3); }
-.hist-simple__link:hover .hist-simple__title { color: var(--color-progressive); text-decoration: underline; }
-.hist-simple__thumb {
-  flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
+.hist-table__row:last-child { border-bottom: 0; }
+.hist-table__row:not(.hist-table__row--head):hover { background: var(--background-color-neutral-subtle, #f0f1f3); }
+.hist-table__row--head {
+  border-bottom: 1px solid var(--border-color-base, #c8ccd1);
+  padding-top: 2px;
+  padding-bottom: 4px;
+}
+.hist-table__cell {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-base);
+}
+.hist-table__cell--num { text-align: right; font-variant-numeric: tabular-nums; }
+.hist-table__cell--thumb { overflow: visible; }
+.hist-table__thumb {
+  width: 34px;
+  height: 34px;
   object-fit: cover;
   border-radius: 3px;
   border: 1px solid var(--border-color-muted);
   background: var(--background-color-neutral-subtle, #f0f1f3);
+  display: block;
 }
-.hist-simple__thumb--empty { display: inline-block; }
-.hist-simple__title {
-  flex: 1;
+.hist-table__thumb--empty { display: block; }
+.hist-table__cell--title a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   min-width: 0;
-  font-size: 13px;
+  color: var(--color-base);
+  text-decoration: none;
+}
+.hist-table__cell--title a:hover .hist-table__title-main { color: var(--color-progressive); text-decoration: underline; }
+.hist-table__title-main { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hist-table__title-sub {
+  flex: 0 1 auto;
+  color: var(--color-subtle);
+  font-size: 11px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.hist-simple__link .cdx-icon { flex: 0 0 auto; color: var(--color-subtle); }
+.hist-table__cell--title .cdx-icon { flex: 0 0 auto; color: var(--color-subtle); }
+/* Sortable header buttons */
+.hist-table__th {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--color-subtle);
+  cursor: pointer;
+  text-align: left;
+}
+.hist-table__th.hist-table__cell--num { justify-content: flex-end; }
+.hist-table__th:hover { color: var(--color-base); }
+.hist-table__th--active { color: var(--color-base); }
+.hist-table__arrow { font-size: 9px; line-height: 1; }
 .stream:last-child { margin-bottom: 0; }
 
 .empty-row {
