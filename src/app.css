@@ -293,6 +293,8 @@ body {
 
 /* ===== Stream sections (stash + history shown one after the other) ===== */
 .stream { margin-bottom: var(--spacing-200); }
+/* Row that offers to re-show the hidden upload-history section. */
+.hist-show-row { padding: 10px 2px; }
 
 /* Simplified upload-history list: thumb + title, whole row links to Commons. */
 .hist-simple { list-style: none; margin: 0; padding: 0; }

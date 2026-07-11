@@ -422,6 +422,13 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
   // History sync state: read from cache initially; updated by refresh actions.
   const [historySyncedAt, setHistorySyncedAt] = useState(() => getCachedHistory().lastSyncedAt);
   const [historyRefreshing, setHistoryRefreshing] = useState(false);
+
+  // Whether the (simplified) Upload-history section is shown. Persisted to
+  // Preferences.json as `showUploadHistory` (OI-79 will fold this into a full
+  // settings panel). State-backed so the toggle re-renders immediately;
+  // `setShowHistory` writes the pref (default: shown).
+  const [showHistory, setShowHistoryState] = useState(() => getPref('showUploadHistory') !== false);
+  const setShowHistory = (v) => { setShowHistoryState(v); setPref('showUploadHistory', v); };
   const [historyLoadMore, setHistoryLoadMore] = useState(false);
   const [refreshingItemId, setRefreshingItemId] = useState(null);
 
@@ -1935,7 +1942,14 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
               of the workbench editing UI. Shown by default; the
               `showUploadHistory` pref can hide it (a future settings panel,
               OI-79, exposes the toggle). */}
-          {getPref('showUploadHistory') !== false && (
+          {!showHistory && (
+            <div className="hist-show-row">
+              <button type="button" className="section-head__hidden-toggle" onClick={() => setShowHistory(true)}>
+                Show upload history
+              </button>
+            </div>
+          )}
+          {showHistory && (
           <section className={"stream" + (histCollapsed ? " stream--collapsed" : "")}>
             <div
               className="section-head section-head--clickable"
@@ -1976,6 +1990,14 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
                   title="Re-fetch history from Commons"
                 >
                   {historyRefreshing ? 'refreshing…' : 'refresh'}
+                </button>
+                {" · "}
+                <button
+                  className="section-head__hidden-toggle"
+                  onClick={(e) => { e.stopPropagation(); setShowHistory(false); }}
+                  title="Hide the upload-history section (re-enable it below)"
+                >
+                  hide
                 </button>
               </span>
             </div>
