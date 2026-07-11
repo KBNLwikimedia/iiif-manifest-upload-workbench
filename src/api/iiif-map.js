@@ -75,6 +75,28 @@ export function deriveTitle(manifest) {
   return cleanupTitle(String(manifest.fields?.inhoud || ''), label);
 }
 
+// Did the derived title fall back to the *whole* summary/Inhoud (a descriptive
+// sentence), rather than a real title? True when there's no parenthetical title
+// in the label AND no "title / subtitle"-style separator carved a head off the
+// summary — i.e. the title IS the summary. Callers can then avoid presenting a
+// long summary sentence as the title (the derivation still truncates it for
+// filename use; this only flags the provenance). A short summary that happens
+// to be a real title (e.g. "Getijdenboek") is flagged too, but that's harmless
+// since consumers only special-case *long* fallbacks.
+export function titleFromSummaryFallback(manifest) {
+  const label = String(manifest.label || '').trim();
+  if (/^(.*?)\s*\(([^)]{5,})\)\s*$/.test(label)) return false; // clean: label parenthetical
+  const summary = String(manifest.summary || '')
+    .replace(/\s+/g, ' ')
+    .replace(/^Alternati(?:ve|eve)? titel:\s*/i, '')
+    .trim();
+  if (summary) {
+    const first = summary.split('/')[0].split(' or ')[0].split(';')[0].split('|')[0].trim();
+    return first.length >= summary.length; // no separator carved a title off → the title is the whole summary
+  }
+  return !!String(manifest.fields?.inhoud || '').trim(); // inhoud fallback isn't a real title either
+}
+
 // Shared title cleanup: drop a leading repeat of the manifest label /
 // signature ("KW 129 A 10 (Lancelotcompilatie)" summaries), unwrap a title
 // that is entirely parenthesized, strip parenthesized additions ("(1363-
@@ -193,6 +215,7 @@ export function mapManuscript(manifest) {
   const f = manifest.fields || {};
   return {
     title,
+    titleFromSummaryFallback: titleFromSummaryFallback(manifest),
     signature,
     categoryName: sanitizeTitlePart(title ? `${title} - ${signature}` : signature),
     parentCategory: KB_PARENT_CATEGORY,

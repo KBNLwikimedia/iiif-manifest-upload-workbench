@@ -8,7 +8,7 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Changed
 
-- **Lightbox caption names the manuscript** — the review-step lightbox caption now shows the manuscript's (short) title above the per-image line, when the manifest carries more than just the signature (e.g. "Eerste Historiebijbel" above "Image 3 of 367 — KW129C3ii_0002_Front_Board.jpg · full-res ↗"). Manifests whose title/summary is only the shelfmark show just the image line, as before. The title is **capped at 50 characters** (with an ellipsis + full-text tooltip), so a short title that fell back to a long summary sentence doesn't dump the whole paragraph into the caption.
+- **Lightbox caption names the manuscript** — the review-step lightbox caption now shows the manuscript's (short) title above the per-image line, when the manifest carries more than just the signature (e.g. "Eerste Historiebijbel" above "Image 3 of 367 — KW129C3ii_0002_Front_Board.jpg · full-res ↗"). Manifests whose title/summary is only the shelfmark show just the image line, as before. **Real titles show in full at any length** — the cap (50 chars + ellipsis + full-text tooltip) applies *only* when the short title fell back to the whole summary sentence (no parenthetical title, no "title / subtitle" separator) and the user hasn't edited it, so a long descriptive summary isn't dumped into the caption while a genuinely long title still shows completely. New `titleFromSummaryFallback` provenance flag in the mapper drives this.
 
 ### Added
 

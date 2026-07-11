@@ -2002,12 +2002,16 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   {/* Manuscript title (the derived/edited short title) when the
                       manifest carries more than just the signature — so the
                       lightbox names the manuscript, not only the image file.
-                      Capped so a title that fell back to a long summary
-                      fragment doesn't dump the whole sentence here; the full
-                      value stays in the tooltip. */}
+                      Real titles show in full at any length; only when the title
+                      fell back to the *whole summary* (a descriptive sentence)
+                      and the user hasn't edited it do we cap it (with an
+                      ellipsis + full-text tooltip) so the caption isn't a
+                      paragraph. */}
                   {title.trim() && (() => {
                     const t = title.trim();
-                    const short = t.length > 50 ? t.slice(0, 50).replace(/\s+\S*$/, '') + '…' : t;
+                    const isFallback = mapping?.manuscript?.titleFromSummaryFallback
+                      && t === (mapping?.manuscript?.title || '').trim();
+                    const short = (isFallback && t.length > 50) ? t.slice(0, 50).replace(/\s+\S*$/, '') + '…' : t;
                     return <span className="iiif-lightbox__title" title={t !== short ? t : undefined}>{short}</span>;
                   })()}
                   <span className="iiif-lightbox__meta">
