@@ -294,6 +294,10 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // review step can be clicked away; a small "There are warnings…" line
   // remains to bring them back, and a newly loaded manifest resets both.
   const [downscaleNoteHidden, setDownscaleNoteHidden] = React.useState(false);
+  // Select-step collision warning boxes (OI-85), dismissible like the 25 MP
+  // note; each leaves a one-line restore link while hidden.
+  const [dupNameNoteHidden, setDupNameNoteHidden] = React.useState(false);
+  const [dupImageNoteHidden, setDupImageNoteHidden] = React.useState(false);
   const [reportHidden, setReportHidden] = React.useState(false);
   // Lightbox: the canvas shown enlarged (or null). Click a carousel thumb.
   const [lightbox, setLightbox] = React.useState(null);
@@ -400,6 +404,8 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     checkedNamesRef.current = new Set();
     setExcludedFields(new Set());
     setDownscaleNoteHidden(false);
+    setDupNameNoteHidden(false);
+    setDupImageNoteHidden(false);
     setReportHidden(false);
     setLightbox(null);
     setShowJson(false);
@@ -1406,35 +1412,63 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               {manifest.downscaledCount > 0 && downscaleNoteHidden && (
                 <p className="iiif-warnings-restore">
                   <button type="button" className="iiif-linkbtn" onClick={() => setDownscaleNoteHidden(false)}>
-                    ⚠️ There are warnings for this manifest — show them
+                    ⚠️ This manifest has images &gt; 25 megapixels — show the note
                   </button>
                 </p>
               )}
-              {(collisions.labelGroups.length > 0 || collisions.imageGroups.length > 0) && (
-                <div className="iiif-hint iiif-collision-note" role="alert">
-                  {collisions.labelGroups.length > 0 && (
-                    <div className="iiif-collision-note__block">
-                      <strong>⚠️ Duplicate filenames — {collisions.dupLabelIdx.size} images.</strong>{' '}
-                      These canvases share a label, so they would derive the <em>same</em> Commons filename, which is not allowed. They are marked with a <span className="iiif-collision-swatch iiif-collision-swatch--name" />&nbsp;red border below; you'll be able to rename them in the next step.
-                      <ul className="iiif-collision-note__list">
-                        {collisions.labelGroups.map((g) => (
-                          <li key={g.label}><code>{g.label}</code> — images {g.positions.join(', ')}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  {collisions.imageGroups.length > 0 && (
-                    <div className="iiif-collision-note__block">
-                      <strong>⚠️ Duplicate images — {collisions.dupImageIdx.size} images.</strong>{' '}
-                      The exact same picture appears more than once in this manifest (identical image URL → identical SHA-1). They are marked with a <span className="iiif-collision-swatch iiif-collision-swatch--image" />&nbsp;orange dashed border. Uploading the same image twice is usually a manifest defect — consider deselecting the duplicates.
-                      <ul className="iiif-collision-note__list">
-                        {collisions.imageGroups.map((g, i) => (
-                          <li key={i}>images {g.positions.join(' = ')} are identical</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+              {/* OI-85: one warning box per collision type, styled to match the
+                  border that marks the affected thumbnails (solid red = same
+                  filename, dashed orange = same picture). Both dismissible with
+                  a restore line, like the 25 MP note. */}
+              {collisions.labelGroups.length > 0 && !dupNameNoteHidden && (
+                <div className="iiif-hint iiif-collision-note iiif-collision-note--name" role="alert">
+                  <button
+                    type="button"
+                    className="iiif-downscale-note__close"
+                    onClick={() => setDupNameNoteHidden(true)}
+                    aria-label="Dismiss this warning"
+                    title="Dismiss this warning"
+                  >×</button>
+                  <strong>⚠️ Duplicate filenames — {collisions.dupLabelIdx.size} images.</strong>{' '}
+                  These canvases share a label, so they would derive the <em>same</em> Commons filename, which is not allowed. They are marked with a <span className="iiif-collision-swatch iiif-collision-swatch--name" />&nbsp;red border below; you'll be able to rename them in the next step.
+                  <ul className="iiif-collision-note__list">
+                    {collisions.labelGroups.map((g) => (
+                      <li key={g.label}><code>{g.label}</code> — images {g.positions.join(', ')}</li>
+                    ))}
+                  </ul>
                 </div>
+              )}
+              {collisions.labelGroups.length > 0 && dupNameNoteHidden && (
+                <p className="iiif-warnings-restore">
+                  <button type="button" className="iiif-linkbtn" onClick={() => setDupNameNoteHidden(false)}>
+                    ⚠️ This manifest has duplicate filenames — show the warning
+                  </button>
+                </p>
+              )}
+              {collisions.imageGroups.length > 0 && !dupImageNoteHidden && (
+                <div className="iiif-hint iiif-collision-note iiif-collision-note--image" role="alert">
+                  <button
+                    type="button"
+                    className="iiif-downscale-note__close"
+                    onClick={() => setDupImageNoteHidden(true)}
+                    aria-label="Dismiss this warning"
+                    title="Dismiss this warning"
+                  >×</button>
+                  <strong>⚠️ Duplicate images — {collisions.dupImageIdx.size} images.</strong>{' '}
+                  The exact same picture appears more than once in this manifest (identical image URL → identical SHA-1). They are marked with a <span className="iiif-collision-swatch iiif-collision-swatch--image" />&nbsp;orange dashed border. Uploading the same image twice is usually a manifest defect — consider deselecting the duplicates.
+                  <ul className="iiif-collision-note__list">
+                    {collisions.imageGroups.map((g, i) => (
+                      <li key={i}>images {g.positions.join(' = ')} are identical</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {collisions.imageGroups.length > 0 && dupImageNoteHidden && (
+                <p className="iiif-warnings-restore">
+                  <button type="button" className="iiif-linkbtn" onClick={() => setDupImageNoteHidden(false)}>
+                    ⚠️ This manifest has duplicate images — show the warning
+                  </button>
+                </p>
               )}
               <div className="iiif-select-bar">
                 <button className="btn btn--quiet" onClick={() => toggleAll(true)}>Select all</button>

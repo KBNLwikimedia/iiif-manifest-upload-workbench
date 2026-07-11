@@ -8190,9 +8190,12 @@ body.col-resizing * { cursor: col-resize !important; }
    ============================================================ */
 
 .iiif-modal {
-  /* Wide enough that the select-step gallery breathes (was 1160px — the
-     collision warnings + badges made it cramped, 2026-07-11). */
+  /* Wide enough that the select-step gallery breathes (2026-07-11). NB: the
+     base .modal rule carries max-width: 540px — without overriding max-width
+     here the width line silently does nothing (the wizard sat clamped at
+     540px all along). */
   width: min(1480px, 96vw);
+  max-width: min(1480px, 96vw);
   max-height: 92vh;
   display: flex;
   flex-direction: column;
@@ -8979,16 +8982,25 @@ body.col-resizing * { cursor: col-resize !important; }
 .iiif-canvas--dup-name { border-color: #d43a3a !important; border-width: 3px; }
 .iiif-canvas--dup-image { outline: 3px dashed #e07b1a; outline-offset: -3px; }
 
-/* Collision warning box on the select step. */
+/* Collision warning boxes on the select step — one per collision type, the
+   border mirrors the marking on the affected thumbnails (solid red = same
+   filename, dashed orange = same picture). position:relative for the reused
+   .iiif-downscale-note__close dismiss ×. */
 .iiif-collision-note {
-  border: 1px solid #d43a3a;
-  background: #fdf0f0;
+  position: relative;
   border-radius: 6px;
-  padding: 8px 10px;
+  padding: 8px 28px 8px 10px; /* room for the dismiss × */
   margin-bottom: 10px;
   font-size: 12.5px;
 }
-.iiif-collision-note__block + .iiif-collision-note__block { margin-top: 8px; }
+.iiif-collision-note--name {
+  border: 2px solid #d43a3a;
+  background: #fdf0f0;
+}
+.iiif-collision-note--image {
+  border: 2px dashed #e07b1a;
+  background: #fff7ef;
+}
 .iiif-collision-note__list { margin: 4px 0 0; padding-left: 18px; }
 .iiif-collision-note__list code {
   background: var(--background-color-neutral-subtle, #f8f9fa);
