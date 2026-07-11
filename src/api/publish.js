@@ -17,7 +17,7 @@
 import { publishFromStash, addStructuredData, createCategoryPage } from './commons.js';
 import { renderLicenseTemplate, isOwnWorkLicense } from '../licenses.js';
 import { renderTemplateBlock } from '../wikitext-templates.js';
-import { KB_PARENT_CATEGORY } from './iiif-map.js';
+import { KB_PARENT_CATEGORY, truncateBytes } from './iiif-map.js';
 
 // --- "Author = uploader" helpers (own-work uploads) ---
 //
@@ -179,7 +179,12 @@ export function makeFinalFilename(item, titleOverride = null) {
   let base = sourceTitle.trim() || original.replace(/\.[^.]+$/, '');
   base = base.replace(FORBIDDEN_TITLE_CHARS, '-').replace(/\s+/g, ' ').trim();
   if (!base) base = 'Upload';
-  return base.endsWith(ext) ? base : base + ext;
+  if (base.endsWith(ext)) base = base.slice(0, base.length - ext.length);
+  // Cap at Commons' 255-byte file-title limit (the part after "File:"),
+  // preserving the extension and never splitting a multi-byte char (OI-29).
+  const MAX_FILENAME_BYTES = 255;
+  const budget = MAX_FILENAME_BYTES - new TextEncoder().encode(ext).length;
+  return truncateBytes(base, budget).trim() + ext;
 }
 
 // --- Structured Data claims (P180 depicts, P625 coords, etc.) ---

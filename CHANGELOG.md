@@ -6,8 +6,13 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Fixed
+
+- **Commons filenames are capped by *bytes*, not characters (OI-29 #29)** — a Commons file-page title (the part after `File:`) maxes out at **255 bytes** (verified against the live API: a 256-byte title is fine, 261 is rejected as "too long"). The import now budgets the derived name — `Short title - signature - image-label` + `" (N)"` dedupe suffix + `.jpg` — by UTF-8 byte length and truncates on a whole-code-point boundary, so a title full of accented/multi-byte characters can no longer produce an over-limit name or a split surrogate. `makeFinalFilename` enforces the 255-byte ceiling at publish too (backstop for hand-edited titles). New `truncateBytes()` helper.
+
 ### Changed
 
+- **Recent-manifest list: "Clear all" and the per-item × sit nearer the content** — the list is capped at 680 px wide, so in the now-wide import modal the right-hand controls no longer fly to the far edge.
 - **Lightbox caption names the manuscript** — the review-step lightbox caption now shows the manuscript's (short) title above the per-image line, when the manifest carries more than just the signature (e.g. "Eerste Historiebijbel" above "Image 3 of 367 — KW129C3ii_0002_Front_Board.jpg · full-res ↗"). Manifests whose title/summary is only the shelfmark show just the image line, as before. **Real titles show in full at any length** — the cap (50 chars + ellipsis + full-text tooltip) applies *only* when the short title fell back to the whole summary sentence (no parenthetical title, no "title / subtitle" separator) and the user hasn't edited it, so a long descriptive summary isn't dumped into the caption while a genuinely long title still shows completely. New `titleFromSummaryFallback` provenance flag in the mapper drives this.
 
 ### Added

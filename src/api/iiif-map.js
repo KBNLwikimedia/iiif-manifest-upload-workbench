@@ -54,6 +54,25 @@ function sanitizeTitlePart(s) {
     .trim();
 }
 
+// Truncate a string so its UTF-8 byte length is ≤ maxBytes, always cutting on a
+// whole-code-point boundary so a multi-byte character (or an emoji surrogate
+// pair) is never split (OI-29). Commons/MediaWiki caps a file page title
+// (the part after "File:") at 255 bytes.
+export function truncateBytes(str, maxBytes) {
+  const s = String(str || '');
+  const enc = new TextEncoder();
+  if (enc.encode(s).length <= maxBytes) return s;
+  let out = '';
+  let bytes = 0;
+  for (const ch of s) { // for…of iterates by code point, not UTF-16 unit
+    const n = enc.encode(ch).length;
+    if (bytes + n > maxBytes) break;
+    out += ch;
+    bytes += n;
+  }
+  return out;
+}
+
 // --- Manuscript-level derivations ------------------------------------------
 
 // Short title, best-effort (always user-editable in the wizard):
@@ -275,9 +294,11 @@ export function derivePagePart(label, index, total) {
   return String(index + 1).padStart(String(Math.max(total, 1)).length, '0');
 }
 
-// Commons titles max out at 240 bytes; leave headroom for " (2)" dedupe
-// suffixes and the extension.
-const MAX_BASE_LENGTH = 220;
+// A Commons file page title (the part after "File:") maxes out at 255 bytes.
+// The final name is `<base>[ (N)].jpg`, so budget the base by BYTES (not chars,
+// so multi-byte titles are handled right — OI-29), leaving headroom for a
+// " (99)" dedupe suffix (~6 B) and the ".jpg" extension (4 B).
+const MAX_BASE_BYTES = 255 - 6 - 4; // 245
 
 // mapCanvases(manuscript, manifest) → one prefill object per canvas, with
 // unique target filenames. Re-run after the user edits the title/category/
@@ -290,7 +311,7 @@ export function mapCanvases(manuscript, manifest) {
     const stem = manuscript.title
       ? `${manuscript.title} - ${manuscript.signature}`
       : manuscript.signature;
-    const stemBase = sanitizeTitlePart(`${stem} - ${pagePart}`).slice(0, MAX_BASE_LENGTH).trim();
+    const stemBase = truncateBytes(sanitizeTitlePart(`${stem} - ${pagePart}`), MAX_BASE_BYTES).trim();
     // Ensure the FINAL name is unique: register the suffixed result, not just
     // the pre-suffix base. Keying `used` by the bare base let labels like
     // ["p1","p1","p1 (2)"] emit two identical "p1 (2)" filenames. (OI-35)

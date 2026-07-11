@@ -8413,6 +8413,9 @@ body.col-resizing * { cursor: col-resize !important; }
   margin-top: 22px;
   border-top: 1px solid var(--border-color-muted);
   padding-top: 12px;
+  /* Cap the width so the "Clear all" link and the per-item × sit near the
+     item text instead of being flung to the far right edge of a wide modal. */
+  max-width: 680px;
 }
 .iiif-recent__head {
   display: flex;
