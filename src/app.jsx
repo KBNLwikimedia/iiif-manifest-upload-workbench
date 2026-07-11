@@ -1578,13 +1578,18 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
       <header className="topbar">
         <div className="topbar__brand">
           <img className="topbar__logo" src="/app-logo.png" alt="" width="28" height="28" />
-          IIIF Manifest Upload Workbench
-          {/* Static version label — just this build's number (the old
-              clickable releases/PRs dropdown and the Beta pill were dropped
-              2026-07-11; the About modal links to the full changelog). */}
-          <span className="version-chip version-chip--static" title="This build's version">
-            v{__APP_VERSION__}
-          </span>
+          <div className="topbar__brandtext">
+            <div className="topbar__titlerow">
+              IIIF Manifest Upload Workbench
+              {/* Static version label — just this build's number (the old
+                  clickable releases/PRs dropdown and the Beta pill were dropped
+                  2026-07-11; the About modal links to the full changelog). */}
+              <span className="version-chip version-chip--static" title="This build's version">
+                v{__APP_VERSION__}
+              </span>
+            </div>
+            <div className="topbar__tagline">Turn IIIF manifests into Wikimedia Commons uploads.</div>
+          </div>
         </div>
         <div className="topbar__spacer" />
         <button
