@@ -8903,24 +8903,50 @@ body.col-resizing * { cursor: col-resize !important; }
   white-space: nowrap;
 }
 .iiif-select-bar__filtered { color: var(--color-progressive, #36c); font-weight: 600; }
-/* Collision filter toggles — active state adopts the collision colour so the
-   button matches the border it filters to. */
-.iiif-select-bar__filter { border: 1px solid transparent; }
-.iiif-select-bar__filter--name.is-active {
-  background: #fdf0f0;
-  border-color: #d43a3a;
-  color: #8a0f0f;
+.iiif-select-bar__showall { margin-left: 4px; }
+
+/* Per-box "Show only these" filter toggle (lives in each collision warning). */
+.iiif-collision-note__filter {
+  margin-top: 8px;
+  border: 1px solid currentColor;
+  font-weight: 600;
 }
-.iiif-select-bar__filter--image.is-active {
-  background: #fff7ef;
-  border-color: #e07b1a;
-  color: #7a3d00;
-}
+.iiif-collision-note--name .iiif-collision-note__filter { color: #8a0f0f; }
+.iiif-collision-note--image .iiif-collision-note__filter { color: #7a3d00; }
+.iiif-collision-note__filter.is-active { background: rgba(0, 0, 0, 0.06); }
 
 .iiif-gallery {
   display: grid;
   /* ~100px tiles → 5 columns in a narrow (~600px window) modal, more on
      wider windows. Responsive via auto-fill. */
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+}
+/* Clustered view (when a collision filter is active): stack one bordered
+   cluster per duplicate group so the groups are visually separated. */
+.iiif-gallery--clustered {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.iiif-cluster {
+  border-radius: 8px;
+  padding: 8px 10px 10px;
+  border: 1px solid var(--border-color-muted);
+}
+.iiif-cluster--name { border: 2px solid #d43a3a; background: #fdf0f0aa; }
+.iiif-cluster--image { border: 2px dashed #e07b1a; background: #fff7efaa; }
+.iiif-cluster__head {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--color-base);
+}
+.iiif-cluster--name .iiif-cluster__head { color: #8a0f0f; }
+.iiif-cluster--image .iiif-cluster__head { color: #7a3d00; }
+.iiif-cluster__head code { font-size: 11.5px; }
+.iiif-cluster__grid {
+  display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 8px;
 }

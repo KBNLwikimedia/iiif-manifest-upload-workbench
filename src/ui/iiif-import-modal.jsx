@@ -676,7 +676,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
           dupLabelIdx.add(i);
           labelPartners.set(i, idxs.filter((j) => j !== i).map((j) => j + 1));
         });
-        labelGroups.push({ label, positions: idxs.map((i) => i + 1) });
+        labelGroups.push({ label, indices: [...idxs], positions: idxs.map((i) => i + 1) });
       }
     }
     const dupImageIdx = new Set();
@@ -688,7 +688,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
           dupImageIdx.add(i);
           imagePartners.set(i, idxs.filter((j) => j !== i).map((j) => j + 1));
         });
-        imageGroups.push({ positions: idxs.map((i) => i + 1) });
+        imageGroups.push({ indices: [...idxs], positions: idxs.map((i) => i + 1) });
       }
     }
     return { dupLabelIdx, labelGroups, labelPartners, dupImageIdx, imageGroups, imagePartners };
@@ -784,6 +784,95 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
       for (const c of manifest.canvases) if (!prev.has(c.index)) next.add(c.index);
       return next;
     });
+  };
+
+  // Index → parsed canvas, so the clustered (filtered) view can look up a
+  // group's members by their canvas index (skipped canvases leave gaps, so a
+  // positional lookup would be wrong).
+  const canvasByIndex = React.useMemo(
+    () => new Map((manifest?.canvases || []).map((c) => [c.index, c])),
+    [manifest],
+  );
+
+  // One select-step thumbnail tile. Extracted so both the flat grid and the
+  // clustered (filtered) view render identical tiles.
+  const renderCanvasTile = (c) => {
+    if (!c) return null;
+    const target = effectiveItems.find((it) => it.iiif.canvasIndex === c.index);
+    const labelPartners = collisions.labelPartners.get(c.index);
+    const imagePartners = collisions.imagePartners.get(c.index);
+    const tooltip = [
+      c.label || `canvas ${c.index + 1}`,
+      target ? `→ File:${target.iiif.targetFilename}` : null,
+      labelPartners ? `⚠ Same label as image${labelPartners.length === 1 ? '' : 's'} ${labelPartners.join(', ')} (filename collision)` : null,
+      imagePartners ? `⚠ Identical picture to image${imagePartners.length === 1 ? '' : 's'} ${imagePartners.join(', ')} (same SHA-1)` : null,
+      c.downscaled ? `Delivered downscaled to ~${target?.iiif.expectedWidth || c.expectedWidth}×${target?.iiif.expectedHeight || c.expectedHeight}px (25 MP cap)` : null,
+    ].filter(Boolean).join('\n');
+    return (
+      <label
+        key={c.index}
+        className={`iiif-canvas${selected.has(c.index) ? ' iiif-canvas--on' : ''}${collisions.dupLabelIdx.has(c.index) ? ' iiif-canvas--dup-name' : ''}${collisions.dupImageIdx.has(c.index) ? ' iiif-canvas--dup-image' : ''}`}
+        title={tooltip}
+        onMouseEnter={(e) => {
+          const r = e.currentTarget.getBoundingClientRect();
+          const panelW = 440;
+          const left = r.right + panelW + 20 < window.innerWidth ? r.right + 12 : Math.max(8, r.left - panelW - 12);
+          const top = Math.max(8, Math.min(r.top, window.innerHeight - Math.min(window.innerHeight * 0.7, 640) - 8));
+          if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+          hoverTimerRef.current = setTimeout(() => {
+            hoverTimerRef.current = null;
+            setHoverPreview({ canvas: c, left, top });
+          }, 250);
+        }}
+        onMouseLeave={clearHoverPreview}
+      >
+        <span className="iiif-canvas__num" aria-hidden="true">{c.index + 1}</span>
+        <input
+          type="checkbox"
+          className="iiif-canvas__check"
+          checked={selected.has(c.index)}
+          onChange={() => toggleOne(c.index)}
+        />
+        <img src={c.thumbUrl} alt={c.label || `canvas ${c.index + 1}`} loading="lazy" />
+        <span className="iiif-canvas__badges">
+          {c.downscaled && (
+            <em className="iiif-canvas__badge" title="This image is larger than 25 megapixels, so it arrives slightly smaller (still high-res).">&gt;25 MP</em>
+          )}
+          {collisions.dupLabelIdx.has(c.index) && (
+            <em
+              className="iiif-canvas__badge iiif-canvas__badge--dup-name"
+              title={`Same label as image${(collisions.labelPartners.get(c.index) || []).length === 1 ? '' : 's'} ${(collisions.labelPartners.get(c.index) || []).join(', ')} — they would collide into one Commons filename. Rename in the next step.`}
+            >dup. name = {(collisions.labelPartners.get(c.index) || []).join(', ')}</em>
+          )}
+          {collisions.dupImageIdx.has(c.index) && (
+            <em
+              className="iiif-canvas__badge iiif-canvas__badge--dup-image"
+              title={`The exact same picture as image${(collisions.imagePartners.get(c.index) || []).length === 1 ? '' : 's'} ${(collisions.imagePartners.get(c.index) || []).join(', ')} (identical SHA-1).`}
+            >dup. image = {(collisions.imagePartners.get(c.index) || []).join(', ')}</em>
+          )}
+        </span>
+        <span className="iiif-canvas__label">
+          {c.label || `#${c.index + 1}`}
+        </span>
+        <span className="iiif-canvas__meta">
+          {c.width > 0 && c.height > 0 && (
+            <span className="iiif-canvas__dims" title="Native resolution of the source image on the IIIF server">
+              {c.width} × {c.height} px
+            </span>
+          )}
+          {c.fullResUrl && (
+            <a
+              className="iiif-canvas__fullres"
+              href={c.fullResUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              title="Open the full-resolution image on the IIIF server (new tab)"
+            >full-res ↗</a>
+          )}
+        </span>
+      </label>
+    );
   };
 
   return (
@@ -1429,7 +1518,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   <button
                     type="button"
                     className="iiif-downscale-note__close"
-                    onClick={() => setDupNameNoteHidden(true)}
+                    onClick={() => { setDupNameNoteHidden(true); if (galleryFilter === 'dup-name') setGalleryFilter(null); }}
                     aria-label="Dismiss this warning"
                     title="Dismiss this warning"
                   >×</button>
@@ -1440,6 +1529,14 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       <li key={g.label}><code>{g.label}</code> — images {g.positions.join(', ')}</li>
                     ))}
                   </ul>
+                  <button
+                    type="button"
+                    className={'btn btn--quiet iiif-collision-note__filter' + (galleryFilter === 'dup-name' ? ' is-active' : '')}
+                    aria-pressed={galleryFilter === 'dup-name'}
+                    onClick={() => setGalleryFilter((f) => (f === 'dup-name' ? null : 'dup-name'))}
+                  >
+                    {galleryFilter === 'dup-name' ? '↩ Show all images' : `Show only these ${collisions.dupLabelIdx.size} images`}
+                  </button>
                 </div>
               )}
               {collisions.labelGroups.length > 0 && dupNameNoteHidden && (
@@ -1454,7 +1551,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   <button
                     type="button"
                     className="iiif-downscale-note__close"
-                    onClick={() => setDupImageNoteHidden(true)}
+                    onClick={() => { setDupImageNoteHidden(true); if (galleryFilter === 'dup-image') setGalleryFilter(null); }}
                     aria-label="Dismiss this warning"
                     title="Dismiss this warning"
                   >×</button>
@@ -1465,6 +1562,14 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       <li key={i}>images {g.positions.join(' = ')} are identical</li>
                     ))}
                   </ul>
+                  <button
+                    type="button"
+                    className={'btn btn--quiet iiif-collision-note__filter' + (galleryFilter === 'dup-image' ? ' is-active' : '')}
+                    aria-pressed={galleryFilter === 'dup-image'}
+                    onClick={() => setGalleryFilter((f) => (f === 'dup-image' ? null : 'dup-image'))}
+                  >
+                    {galleryFilter === 'dup-image' ? '↩ Show all images' : `Show only these ${collisions.dupImageIdx.size} images`}
+                  </button>
                 </div>
               )}
               {collisions.imageGroups.length > 0 && dupImageNoteHidden && (
@@ -1478,31 +1583,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 <button className="btn btn--quiet" onClick={() => toggleAll(true)}>Select all</button>
                 <button className="btn btn--quiet" onClick={() => toggleAll(false)}>Select none</button>
                 <button className="btn btn--quiet" onClick={invertSelection}>Invert selection</button>
-                {/* OI-85: filter the grid down to just the colliding images.
-                    Toggle off (or a new manifest) shows everything again. */}
-                {collisions.dupLabelIdx.size > 0 && (
-                  <button
-                    className={'btn btn--quiet iiif-select-bar__filter iiif-select-bar__filter--name' + (galleryFilter === 'dup-name' ? ' is-active' : '')}
-                    aria-pressed={galleryFilter === 'dup-name'}
-                    onClick={() => setGalleryFilter((f) => (f === 'dup-name' ? null : 'dup-name'))}
-                    title="Show only images whose filename collides"
-                  >
-                    Duplicate names ({collisions.dupLabelIdx.size})
-                  </button>
-                )}
-                {collisions.dupImageIdx.size > 0 && (
-                  <button
-                    className={'btn btn--quiet iiif-select-bar__filter iiif-select-bar__filter--image' + (galleryFilter === 'dup-image' ? ' is-active' : '')}
-                    aria-pressed={galleryFilter === 'dup-image'}
-                    onClick={() => setGalleryFilter((f) => (f === 'dup-image' ? null : 'dup-image'))}
-                    title="Show only images that are duplicated (identical picture)"
-                  >
-                    Duplicate images ({collisions.dupImageIdx.size})
-                  </button>
-                )}
                 {galleryFilter && (
-                  <button className="btn btn--quiet iiif-linkbtn" onClick={() => setGalleryFilter(null)} title="Clear the filter — show all images">
-                    Show all
+                  <button className="btn btn--quiet iiif-select-bar__showall" onClick={() => setGalleryFilter(null)} title="Clear the filter — show all images">
+                    ↩ Show all images
                   </button>
                 )}
                 <span className="iiif-select-bar__count">
@@ -1510,96 +1593,24 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   <strong>{selected.size}</strong> of {manifest.canvasCount} images selected
                 </span>
               </div>
-              <div className="iiif-gallery" onScroll={clearHoverPreview}>
-                {manifest.canvases.filter((c) =>
-                  galleryFilter === 'dup-name' ? collisions.dupLabelIdx.has(c.index)
-                    : galleryFilter === 'dup-image' ? collisions.dupImageIdx.has(c.index)
-                    : true,
-                ).map((c) => {
-                  // Full-detail native tooltip: labels are ellipsized in the
-                  // tile, so hovering must reveal the whole story — canvas
-                  // label + the Commons filename this page would get.
-                  const target = effectiveItems.find((it) => it.iiif.canvasIndex === c.index);
-                  const labelPartners = collisions.labelPartners.get(c.index);
-                  const imagePartners = collisions.imagePartners.get(c.index);
-                  const tooltip = [
-                    c.label || `canvas ${c.index + 1}`,
-                    target ? `→ File:${target.iiif.targetFilename}` : null,
-                    labelPartners ? `⚠ Same label as image${labelPartners.length === 1 ? '' : 's'} ${labelPartners.join(', ')} (filename collision)` : null,
-                    imagePartners ? `⚠ Identical picture to image${imagePartners.length === 1 ? '' : 's'} ${imagePartners.join(', ')} (same SHA-1)` : null,
-                    c.downscaled ? `Delivered downscaled to ~${target?.iiif.expectedWidth || c.expectedWidth}×${target?.iiif.expectedHeight || c.expectedHeight}px (25 MP cap)` : null,
-                  ].filter(Boolean).join('\n');
-                  return (
-                    <label
-                      key={c.index}
-                      className={`iiif-canvas${selected.has(c.index) ? ' iiif-canvas--on' : ''}${collisions.dupLabelIdx.has(c.index) ? ' iiif-canvas--dup-name' : ''}${collisions.dupImageIdx.has(c.index) ? ' iiif-canvas--dup-image' : ''}`}
-                      title={tooltip}
-                      onMouseEnter={(e) => {
-                        const r = e.currentTarget.getBoundingClientRect();
-                        // Place the zoom panel beside the tile — right of it
-                        // when there's room, else left. Vertically clamped so
-                        // tall pages stay inside the viewport.
-                        const panelW = 440;
-                        const left = r.right + panelW + 20 < window.innerWidth ? r.right + 12 : Math.max(8, r.left - panelW - 12);
-                        const top = Math.max(8, Math.min(r.top, window.innerHeight - Math.min(window.innerHeight * 0.7, 640) - 8));
-                        // Intent delay (OI-47): only show — and thus request —
-                        // the 700px rendition when the pointer actually rests.
-                        if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
-                        hoverTimerRef.current = setTimeout(() => {
-                          hoverTimerRef.current = null;
-                          setHoverPreview({ canvas: c, left, top });
-                        }, 250);
-                      }}
-                      onMouseLeave={clearHoverPreview}
-                    >
-                      <span className="iiif-canvas__num" aria-hidden="true">{c.index + 1}</span>
-                      <input
-                        type="checkbox"
-                        className="iiif-canvas__check"
-                        checked={selected.has(c.index)}
-                        onChange={() => toggleOne(c.index)}
-                      />
-                      <img src={c.thumbUrl} alt={c.label || `canvas ${c.index + 1}`} loading="lazy" />
-                      <span className="iiif-canvas__badges">
-                        {c.downscaled && (
-                          <em className="iiif-canvas__badge" title="This image is larger than 25 megapixels, so it arrives slightly smaller (still high-res).">&gt;25 MP</em>
-                        )}
-                        {collisions.dupLabelIdx.has(c.index) && (
-                          <em
-                            className="iiif-canvas__badge iiif-canvas__badge--dup-name"
-                            title={`Same label as image${(collisions.labelPartners.get(c.index) || []).length === 1 ? '' : 's'} ${(collisions.labelPartners.get(c.index) || []).join(', ')} — they would collide into one Commons filename. Rename in the next step.`}
-                          >dup. name = {(collisions.labelPartners.get(c.index) || []).join(', ')}</em>
-                        )}
-                        {collisions.dupImageIdx.has(c.index) && (
-                          <em
-                            className="iiif-canvas__badge iiif-canvas__badge--dup-image"
-                            title={`The exact same picture as image${(collisions.imagePartners.get(c.index) || []).length === 1 ? '' : 's'} ${(collisions.imagePartners.get(c.index) || []).join(', ')} (identical SHA-1).`}
-                          >dup. image = {(collisions.imagePartners.get(c.index) || []).join(', ')}</em>
-                        )}
-                      </span>
-                      <span className="iiif-canvas__label">
-                        {c.label || `#${c.index + 1}`}
-                      </span>
-                      <span className="iiif-canvas__meta">
-                        {c.width > 0 && c.height > 0 && (
-                          <span className="iiif-canvas__dims" title="Native resolution of the source image on the IIIF server">
-                            {c.width} × {c.height} px
-                          </span>
-                        )}
-                        {c.fullResUrl && (
-                          <a
-                            className="iiif-canvas__fullres"
-                            href={c.fullResUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            title="Open the full-resolution image on the IIIF server (new tab)"
-                          >full-res ↗</a>
-                        )}
-                      </span>
-                    </label>
-                  );
-                })}
+              <div
+                className={'iiif-gallery' + (galleryFilter ? ' iiif-gallery--clustered' : '')}
+                onScroll={clearHoverPreview}
+              >
+                {galleryFilter
+                  ? (galleryFilter === 'dup-name' ? collisions.labelGroups : collisions.imageGroups).map((g, gi) => (
+                      <div className={'iiif-cluster iiif-cluster--' + (galleryFilter === 'dup-name' ? 'name' : 'image')} key={gi}>
+                        <div className="iiif-cluster__head">
+                          {galleryFilter === 'dup-name'
+                            ? <>Same filename <code>{g.label}</code> — images {g.positions.join(', ')}</>
+                            : <>Identical image — images {g.positions.join(' = ')}</>}
+                        </div>
+                        <div className="iiif-cluster__grid">
+                          {g.indices.map((idx) => renderCanvasTile(canvasByIndex.get(idx))).filter(Boolean)}
+                        </div>
+                      </div>
+                    ))
+                  : manifest.canvases.map((c) => renderCanvasTile(c))}
               </div>
               {hoverPreview && (
                 <div className="iiif-hover-preview" style={{ left: hoverPreview.left, top: hoverPreview.top }} aria-hidden="true">
