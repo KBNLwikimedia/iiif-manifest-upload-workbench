@@ -5138,12 +5138,15 @@ body.col-resizing * { cursor: col-resize !important; }
   flex-wrap: wrap;
   gap: var(--spacing-75);
 }
+/* House footer convention: actions bottom-left, white Cancel pushed to the
+   bottom-right (same as the Feedback modal). */
 .error-report-modal__actions {
   display: flex;
   gap: var(--spacing-50);
   flex-wrap: wrap;
-  justify-content: flex-end;
+  flex: 1;
 }
+.error-report-modal__cancel { margin-left: auto; }
 
 .spinner {
   width: 28px;

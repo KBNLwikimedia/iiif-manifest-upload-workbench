@@ -2,30 +2,26 @@
 // boot-error / ErrorBoundary panels (see src/main.jsx).
 //
 // Captures the error context automatically, lets the user add a free-text
-// comment, and offers two submission paths:
-//   1. Open a pre-filled Phabricator task (project: tool-upload-workbench)
-//   2. Open the user-talk-page edit form on Commons (User talk:Daanvr),
-//      with section title pre-filled. Body is copied to clipboard separately
-//      because MediaWiki's URL pre-fill for the body uses `preload=<wiki
-//      template page>`, not a literal string — so we can't reliably stuff
-//      a multi-line report through the URL.
+// comment, and submits via a pre-filled GitHub issue on the fork repo
+// (label: `user feedback,bug` — same convention as the Feedback modal).
+// The upstream Phabricator/User-talk routes were removed with the fork
+// rebrand (OI-10).
 //
-// Both routes do `window.open(...)` — no API calls, no new OAuth scopes,
-// and the user reviews the body before clicking either button.
+// Submission does `window.open(...)` — no API calls, no new OAuth scopes,
+// and the user reviews the body before clicking the button.
 
 import React from 'react';
 
 const Icon = window.Icon;
 const { useState, useEffect, useMemo, useRef } = React;
 
-const PHAB_CREATE_URL = 'https://phabricator.wikimedia.org/maniphest/task/edit/form/default/';
-const COMMONS_TALK_URL = 'https://commons.wikimedia.org/w/index.php';
-const TALK_TARGET = 'User talk:Daanvr';
+const GITHUB_ISSUES_NEW_URL = 'https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/issues/new';
+// Labels only stick when the reporter has triage rights (OI-73) — harmless
+// otherwise, GitHub silently drops them.
+const REPORT_LABELS = 'user feedback,bug';
 
-// Build the body text the user submits. The grammar is shared between the
-// Phabricator description and the talk-page section body — Phabricator's
-// Remarkup and MediaWiki's wikitext both render a `==` heading and a code
-// block, so a single string works for both.
+// Build the body text the user submits — GitHub-flavored markdown for the
+// pre-filled issue body.
 function buildReportBody({ comment, timestamp, version, deployTarget, errorMessage, errorStack, userAgent, url }) {
   const lines = [];
   lines.push('## What happened');
@@ -55,27 +51,17 @@ function buildReportBody({ comment, timestamp, version, deployTarget, errorMessa
     lines.push('```');
   }
   lines.push('');
-  lines.push('_Reported from the Upload Workbench error panel._');
+  lines.push('_Reported from the IIIF Manifest Upload Workbench error panel._');
   return lines.join('\n');
 }
 
-function buildPhabUrl({ title, body }) {
+function buildGithubUrl({ title, body }) {
   const params = new URLSearchParams({
-    projects: 'tool-upload-workbench',
     title,
-    description: body,
+    body,
+    labels: REPORT_LABELS,
   });
-  return `${PHAB_CREATE_URL}?${params.toString()}`;
-}
-
-function buildTalkUrl({ sectionTitle }) {
-  const params = new URLSearchParams({
-    title: TALK_TARGET,
-    action: 'edit',
-    section: 'new',
-    preloadtitle: sectionTitle,
-  });
-  return `${COMMONS_TALK_URL}?${params.toString()}`;
+  return `${GITHUB_ISSUES_NEW_URL}?${params.toString()}`;
 }
 
 export default function ErrorReportModal({ error, onClose }) {
@@ -118,26 +104,21 @@ export default function ErrorReportModal({ error, onClose }) {
   const title = useMemo(() => {
     const msg = (ctx.errorMessage || 'Unknown error').replace(/\s+/g, ' ').trim();
     const truncated = msg.length > 80 ? msg.slice(0, 77) + '…' : msg;
-    return `Error in Upload Workbench v${ctx.version}: ${truncated}`;
+    return `Error in IIIF Manifest Upload Workbench v${ctx.version}: ${truncated}`;
   }, [ctx]);
 
-  // Esc closes; body scroll locked while open.
+  // Body scroll locked while open. Esc/backdrop deliberately do NOT dismiss —
+  // the modal holds a half-typed comment / hand-edited report (same policy as
+  // the Feedback and Columns modals); the × and Cancel are the ways out.
   useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
-      document.removeEventListener('keydown', onKey);
       document.body.style.overflow = prevOverflow;
     };
-  }, [onClose]);
+  }, []);
 
-  const phabUrl = useMemo(() => buildPhabUrl({ title, body }), [title, body]);
-  const talkUrl = useMemo(
-    () => buildTalkUrl({ sectionTitle: title }),
-    [title],
-  );
+  const githubUrl = useMemo(() => buildGithubUrl({ title, body }), [title, body]);
 
   const copyToClipboard = async () => {
     try {
@@ -160,21 +141,12 @@ export default function ErrorReportModal({ error, onClose }) {
     }
   };
 
-  const openPhab = () => {
-    window.open(phabUrl, '_blank', 'noopener,noreferrer');
-  };
-
-  const openTalk = () => {
-    // Copy first so the body is on the clipboard when the edit form loads —
-    // saves the user a second click. Best-effort: if the clipboard write
-    // fails (e.g. user denied permission), we still open the tab.
-    copyToClipboard().finally(() => {
-      window.open(talkUrl, '_blank', 'noopener,noreferrer');
-    });
+  const openGithub = () => {
+    window.open(githubUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className="modal-backdrop">
       <div
         className="modal error-report-modal"
         onClick={(e) => e.stopPropagation()}
@@ -262,7 +234,6 @@ export default function ErrorReportModal({ error, onClose }) {
             {copyState === 'idle' && 'No data is sent anywhere until you click one of the buttons.'}
           </span>
           <div className="error-report-modal__actions">
-            <button className="btn btn--quiet" onClick={onClose}>Cancel</button>
             <button
               className="btn"
               onClick={copyToClipboard}
@@ -271,19 +242,13 @@ export default function ErrorReportModal({ error, onClose }) {
               <Icon name="copy" size={14} /> Copy text
             </button>
             <button
-              className="btn"
-              onClick={openTalk}
-              title="Opens User talk:Daanvr on Commons — body is copied to your clipboard, paste it into the new section."
-            >
-              <Icon name="external" size={14} /> Post to User talk:Daanvr
-            </button>
-            <button
               className="btn btn--progressive"
-              onClick={openPhab}
-              title="Opens a pre-filled new task on Phabricator (#tool-upload-workbench). Requires a Wikimedia developer account."
+              onClick={openGithub}
+              title="Opens a pre-filled new issue on the tool's GitHub repository. Requires a GitHub account."
             >
-              <Icon name="external" size={14} /> Open Phabricator task
+              <Icon name="external" size={14} /> Open GitHub issue
             </button>
+            <button className="btn error-report-modal__cancel" onClick={onClose}>Cancel</button>
           </div>
         </footer>
       </div>

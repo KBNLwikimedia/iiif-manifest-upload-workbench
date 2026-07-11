@@ -12,6 +12,8 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Fixed
 
+- **Opening the import wizard crashed with "can't access lexical declaration 'manifest' before initialization"** — the new collision detection read a `const` declared further down the component (TDZ). Hotfix same day; the modal mount-test now guards this path.
+- **"Report this error" modal rebranded to the fork (OI-10 #10)** — the error panel's report flow now opens a pre-filled **GitHub issue** on the fork repo (labels `user feedback,bug`) instead of upstream's Phabricator task; the "Post to User talk:Daanvr" route is gone; the report body signs off as *IIIF Manifest Upload Workbench*. Footer follows the house convention (actions bottom-left, white Cancel bottom-right) and Esc/backdrop no longer discard a half-typed report. OI-10's only remainder is `docs/oauth-registration.md` (waits for OI-09).
 - **Import retry now recognizes real MediaWiki DB errors** (OI-75 #75) — `internal_api_error_*` codes (e.g. `internal_api_error_DBQueryError`) classify as transient and retry instead of failing fatally.
 - **A failed CSRF-token refresh mid-import aborts cleanly** (OI-76 #76) — when a `badtoken` refresh fails because the session died, the batch now aborts with the session-expired message instead of grinding through more failures.
 - **The import wizard can no longer wedge on the running step** (OI-77 #77) — an unexpected error during the import lands on the finished step with a clear message and a reachable "Go to the table", instead of a stuck modal.
