@@ -1,7 +1,7 @@
 {
   "name": "iiif-manifest-upload-workbench",
   "private": true,
-  "version": "0.40.0",
+  "version": "0.41.0",
   "type": "module",
   "description": "Ingest IIIF manifests and publish them to Wikimedia Commons with prefilled wikitext and structured data — a fork of upload-workbench with a IIIF ingestion funnel",
   "scripts": {

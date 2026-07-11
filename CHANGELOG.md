@@ -6,6 +6,10 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [0.41.0] — 2026-07-11
+
+The **duplicate-detection & input-hardening** milestone. The import wizard now surfaces every kind of collision (duplicate filenames, duplicate images within a manifest, and files already on Commons), lets you correct duplicate filenames and proactively checks names against Commons, and hardens the review-step inputs against forbidden/injection characters. Plus a large select-step UX pass (per-collision warning boxes with in-box filters, side-by-side clustering, sequence numbers, wider modal) and the error-report modal rebrand.
+
 ### Security
 
 - **Review-step inputs reject forbidden / injection characters as you type** — the Short title, Suggested category and Parent category fields **strip any Commons-illegal / wiki-structural character** (`# < > [ ] { } | / \ :` or control chars) the moment it's typed or pasted, so the field can never hold one, and a red "⚠️ '[' … not allowed on Wikimedia Commons — removed" line names what was dropped. The Wikidata field **auto-trims leading/trailing spaces** and enforces the Q-id shape (`^Q\d+$`) with a red ⚠️ warning + a disabled "Next" for malformed values like `AAA23`.
