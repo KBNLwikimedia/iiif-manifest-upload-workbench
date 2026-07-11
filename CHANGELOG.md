@@ -88,11 +88,11 @@ The **duplicate-detection & input-hardening** milestone. The import wizard now s
 - [`fb3790f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/fb3790f1bbdba61840863b3682b8e5177419a582) feat: strip forbidden chars on input; trim Q-id spaces; + OI-86 security-triage issue
 - [`c4a28dc`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c4a28dcf622ae081bfac49161535b2386c4e8343) feat: ⚠️ icon on the review-step input validation warnings
 - [`cba86dd`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cba86dde383f92b40dd712a5f257cfc344fbbb07) feat: validate review-step inputs (forbidden chars + Q-id shape); numbers to top:0
-- [`6caecd5`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6caecd51777356816c1d0c3a823f3eec518e5a1f) feat: ⚠️ + reworded >25 MP heading; nudge sequence numbers up again
+- [`6caecd5`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6caecd51777356816c1d0c3a823f3eec518e5a1f) feat: ⚠️ + reworded &gt;25 MP heading; nudge sequence numbers up again
 - [`86ff83e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/86ff83e888264a7ebb8ae523305d9c24fe172b78) Fix: sequence number hugs the tile top (drop vertical padding + tighten line-height)
 - [`50cb70f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/50cb70f61b2d168ef45802705a146fe94a379665) Fix: nudge the select-step sequence number up to match the carousel
 - [`baafa69`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/baafa69df8efd16811f199d8a6c15e8b01af4afe) Fix: kill the whitespace under note headings; restyle cluster headers
-- [`414a4ed`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/414a4ed973a904ed145c2ab021131dd189f9f8b5) feat: >25MP filter button; note buttons inline top-right; dark cluster frames
+- [`414a4ed`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/414a4ed973a904ed145c2ab021131dd189f9f8b5) feat: &gt;25MP filter button; note buttons inline top-right; dark cluster frames
 - [`9b5bf6c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9b5bf6cf099b9071016a5254bebffa49f699544d) Fix: duplicate clusters flow side by side (snug frame each), not full-width stacks
 - [`e54c1af`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e54c1af1692feea8738eb175355fa99d90c7371b) feat: move dup filters into their warning boxes; cluster duplicates by group
 - [`57ac71d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/57ac71de3700c083df983d9c85bb2fb0bca59b1b) feat: select-step filter toggles — show only duplicate names / duplicate images
@@ -151,7 +151,7 @@ The **duplicate-detection & input-hardening** milestone. The import wizard now s
 - [`114f07a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/114f07a1d812805e9966db1fb9db5362ddcb0bad) feat: show signature + title in the recent-manifests list
 - [`6e2ed90`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6e2ed900c4aa7adc8fd4bd169baf88d7fa4f3b64) feat: persist recent manifests in Preferences.json (cross-device)
 - [`f779912`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f779912286bb730051fb92859e5874152eb81a1e) Fix: Load button passed the click event to loadUrl → "[object Object]" + 404
-- [`e16ce64`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e16ce6494fed7bc457a4f5c0ff414e73ffe6d0b8) feat: recent-manifests quick-load, blue file button, linked CC0 paths, CHANGELOG <Template> fix
+- [`e16ce64`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e16ce6494fed7bc457a4f5c0ff414e73ffe6d0b8) feat: recent-manifests quick-load, blue file button, linked CC0 paths, CHANGELOG &lt;Template&gt; fix
 - [`08cdbc6`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/08cdbc645a5f766d18be9ebed4ab5b97870f491a) docs: changelog for the version-chip repoint + CC0 notice restore
 - [`9dffbc8`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9dffbc8404f75222450c70557194d2d70cabe2cc) feat: repoint version chip at GitHub + localhost; restore/rebrand the CC0 notice (OI-10)
 - [`b6db153`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b6db153e308117c21a77208dd112a557f2f0f062) docs: changelog reflects Cancel-button footer refinement
@@ -343,11 +343,11 @@ The IIIF-ingestor milestone: the import funnel is complete and hardened end-to-e
 - [`edbd193`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/edbd1932e1c5b50129a0b230af70fac0d474a5be) docs: mark OI-40 + OI-51 fixed (commit 5ffe043)
 - [`5ffe043`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/5ffe04340e9295b0b99128467d631e37e2d05898) Fix: snappier + non-hanging category check (OI-40, OI-51)
 - [`1ea507e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/1ea507e1635a6e77ee07e16dbcd402882bbe3063) Fix: stack tile dimensions + full-res link vertically
-- [`aafe673`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/aafe6732e606da81c6384872f57358e9ea88458e) feat: fuller >25 MP explanation in the manifest validation report
-- [`e1e1d95`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e1e1d95ef5451f030903a196f984bed887cb243b) feat: move the >25 MP note above the selection controls, full width
-- [`853f2ea`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/853f2ea1e91b0ef6d69ba7fe93db74d132d358bc) Fix: add a concrete example to the >25 MP hint
-- [`a4e6621`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a4e6621551226150e1dec27ed2ce6418e57dad48) Fix: clearer >25 MP explanation — cap is the IIIF server, not Commons
-- [`8162a46`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8162a46f451e66f3fb3c52c8768e6b67b6672bac) Fix: rename the "25 MP" tag to ">25 MP"
+- [`aafe673`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/aafe6732e606da81c6384872f57358e9ea88458e) feat: fuller &gt;25 MP explanation in the manifest validation report
+- [`e1e1d95`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e1e1d95ef5451f030903a196f984bed887cb243b) feat: move the &gt;25 MP note above the selection controls, full width
+- [`853f2ea`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/853f2ea1e91b0ef6d69ba7fe93db74d132d358bc) Fix: add a concrete example to the &gt;25 MP hint
+- [`a4e6621`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a4e6621551226150e1dec27ed2ce6418e57dad48) Fix: clearer &gt;25 MP explanation — cap is the IIIF server, not Commons
+- [`8162a46`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8162a46f451e66f3fb3c52c8768e6b67b6672bac) Fix: rename the "25 MP" tag to "&gt;25 MP"
 - [`f2ab84c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f2ab84c0178202eb088712dc3f5e68f5f3d2ec05) feat: per-tile native dimensions + full-res link in the canvas gallery
 - [`3965268`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3965268d75339eff58193f81aa113688ef004d34) Fix: clearer confirm-step subtitle wording
 - [`adb4e36`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/adb4e360727a8b2306c262e9a5a46bf7ae99fbdc) Fix: "25 MP" badge was clipped by the label truncation — now a thumb overlay
@@ -356,7 +356,7 @@ The IIIF-ingestor milestone: the import funnel is complete and hardened end-to-e
 - [`bb3235f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bb3235f9dc5f17b3cbb2d570688e8768b49a07eb) docs: OI-63 — implement chunked uploading (investigated, queued)
 - [`a091d73`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a091d73a7831c19dbf299aa87c009d0f3b97fca2) feat: category-missing notice is bold and red
 - [`997b89b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/997b89bb17105e81b5416737d5852d9b4f8d04f1) Fix: friendlier wording for the downscale notice
-- [`8283b6a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8283b6a8a33ca77c1ad5469e3eab3afb288034b4) feat: move user-store to User:<u>/IIIFManifestUploadWorkbench/ (auto-migrate)
+- [`8283b6a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8283b6a8a33ca77c1ad5469e3eab3afb288034b4) feat: move user-store to User:&lt;u&gt;/IIIFManifestUploadWorkbench/ (auto-migrate)
 - [`3707aab`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3707aabac3244292dede1f9f40a61237a887234d) feat: repoint edit-summary attribution + Feedback button to GitHub
 - [`491b4ee`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/491b4ee4a6d714cfd18e904a50a75fc1a6099166) docs: OI-62 — Institution field/column for {{Artwork}} (queued)
 - [`489128d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/489128d0a67aad945765ffa32613a501c3e82aa2) feat: update login screen branding + links to the fork
