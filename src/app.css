@@ -7416,7 +7416,14 @@ body.col-resizing * { cursor: col-resize !important; }
 /* Static variant: just this build's version number — no dropdown. The
    brand container's own gap provides the spacing (no extra margin), and
    the font sits a step larger than the old menu chip. */
-.version-chip--static { cursor: default; margin-left: -2px; font-size: 13.5px; }
+.version-chip--static {
+  cursor: default;
+  margin-left: -2px;
+  font-size: 13.5px;
+  /* drop it so its baseline sits toward the bottom of the title text */
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
 .version-chip--static:hover { filter: none; }
 .version-chip:focus-visible {
   outline: 2px solid var(--color-progressive);
