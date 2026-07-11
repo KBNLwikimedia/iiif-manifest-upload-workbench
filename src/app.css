@@ -9131,6 +9131,47 @@ body.col-resizing * { cursor: col-resize !important; }
   white-space: nowrap;
 }
 
+/* OI-85 stage 2+3: confirm-step name-check status lines + editable rows. */
+.iiif-namecheck {
+  display: block;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.iiif-namecheck--busy { color: var(--color-subtle); }
+.iiif-namecheck--error { color: #8a0f0f; font-weight: 600; }
+.iiif-namecheck--warn { color: #654b00; }
+.iiif-filelist__row--edit {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0;
+}
+.iiif-filelist__prefix, .iiif-filelist__ext { color: var(--color-subtle); flex: 0 0 auto; }
+.iiif-filelist__input {
+  flex: 1 1 auto;
+  min-width: 120px;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 1px 6px;
+  border: 1px solid var(--border-color-base);
+  border-radius: 3px;
+}
+.iiif-filelist__row--dup .iiif-filelist__input { border-color: #d43a3a; background: #fdf0f0; }
+.iiif-filelist__row--taken .iiif-filelist__input { border-color: #edab00; background: #fef6e7; }
+.iiif-filelist__flag {
+  flex: 0 0 auto;
+  font-family: var(--font-family-base, sans-serif);
+  font-size: 10.5px;
+  font-weight: 600;
+  border-radius: 3px;
+  padding: 0 5px;
+  line-height: 1.6;
+}
+.iiif-filelist__flag--dup { background: #fee7e7; color: #8a0f0f; border: 1px solid #d43a3a; }
+.iiif-filelist__flag--taken { background: #fef6e7; color: #654b00; border: 1px solid #edab00; text-decoration: none; }
+.iiif-filelist__flag--taken:hover { text-decoration: underline; }
+.iiif-filelist__flag--info { background: var(--background-color-neutral-subtle, #f0f1f3); color: var(--color-subtle); border: 1px solid var(--border-color-muted); }
+
 /* Stash section head: counter + Clear button sit next to the title
    (left-aligned) instead of being pushed to the far right. */
 .section-head--inline {

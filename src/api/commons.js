@@ -12,6 +12,7 @@ import { fetchJSON, fetchWithAuth } from '../utils.js';
 import { getAccessToken } from './oauth.js';
 import { normalizeStashItem, normalizePublishedItem } from './normalize.js';
 import { getStashedFilename as getCachedFilenameLocal } from './local-store.js';
+import { validateTitleLocal } from './title-validation.js';
 import { getStashedFilename as getCachedFilenameWiki } from './user-store.js';
 
 // --- Stash (authenticated) ---
@@ -155,6 +156,74 @@ export async function findCommonsFileBySha1(sha1, { noCache = false } = {}) {
     size: hit.size,
     mime: hit.mime,
   };
+}
+
+// --- Proactive filename-availability check (OI-85) ---
+//
+// Given candidate filenames (without the "File:" prefix), ask Commons which
+// ones are already taken by an existing file page. Batched ≤50 titles per
+// query (API limit), unauthenticated read. Returns a Map keyed by the
+// *requested* name → { exists, title?, url? }; requested names are mapped
+// back through the API's `normalized` list so underscore/first-letter
+// normalisation can't cause a miss. Invalid titles (illegal chars, too long)
+// come back as `invalid` — surface those too, they'd fail at publish anyway.
+
+export async function checkFilenamesExist(names, { noCache = false } = {}) {
+  const out = new Map();
+  const dedup = [...new Set((names || []).filter(Boolean))];
+  if (!dedup.length || DEMO_MODE) return out;
+
+  // Pre-screen locally with the shared Commons title rules. Names with
+  // forbidden characters can't even be transported through the API's
+  // pipe-separated `titles` parameter (a `|` in a name would split into two
+  // bogus titles and silently read back as "free"), so they never reach the
+  // network — they're flagged invalid right here.
+  const list = [];
+  for (const name of dedup) {
+    const verdict = validateTitleLocal(name);
+    if (verdict && verdict.severity === 'error') {
+      out.set(name, { exists: false, invalid: true, reason: verdict.message || 'invalid title' });
+    } else {
+      list.push(name);
+    }
+  }
+
+  const BATCH = 50;
+  for (let i = 0; i < list.length; i += BATCH) {
+    const slice = list.slice(i, i + BATCH);
+    const params = new URLSearchParams({
+      action: 'query',
+      titles: slice.map((n) => `File:${n}`).join('|'),
+      prop: 'info',
+      inprop: 'url',
+      format: 'json',
+      formatversion: '2',
+      origin: '*',
+    });
+    try {
+      const data = await fetchJSON(`${COMMONS_API}?${params}`, { noCache });
+      // requested title → normalized title (the API echoes the mapping)
+      const norm = new Map();
+      for (const n of data.query?.normalized || []) norm.set(n.from, n.to);
+      const byTitle = new Map();
+      for (const p of data.query?.pages || []) byTitle.set(p.title, p);
+      for (const name of slice) {
+        const requested = `File:${name}`;
+        const resolved = norm.get(requested) || requested;
+        const page = byTitle.get(resolved);
+        if (!page) { out.set(name, { exists: false }); continue; }
+        if (page.invalid) { out.set(name, { exists: false, invalid: true, reason: page.invalidreason || 'invalid title' }); continue; }
+        out.set(name, page.missing
+          ? { exists: false }
+          : { exists: true, title: page.title, url: page.fullurl || null });
+      }
+    } catch (e) {
+      console.warn('checkFilenamesExist batch failed:', e.message);
+      // Leave this slice's names out of the map — caller treats "unknown" as
+      // unchecked, not as free.
+    }
+  }
+  return out;
 }
 
 // --- CSRF + Publish ---

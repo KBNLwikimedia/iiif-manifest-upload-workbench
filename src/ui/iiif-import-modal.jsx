@@ -22,7 +22,7 @@ import { fetchManifest, parseManifestFile } from '../api/iiif.js';
 import { mapManifest } from '../api/iiif-map.js';
 import { findManuscriptItems, resolveQid } from '../api/wikidata.js';
 import { runIiifImport } from '../api/iiif-pipeline.js';
-import { categoryExists, searchCategories, findManuscriptCategoryVariants } from '../api/commons.js';
+import { categoryExists, searchCategories, findManuscriptCategoryVariants, checkFilenamesExist } from '../api/commons.js';
 import { KB_PARENT_CATEGORY, KB_LICENSE_WIKITEXT } from '../api/iiif-map.js';
 import { DEMO_MODE } from '../config.js';
 import { getRecentManifests, addRecentManifest, removeRecentManifest, clearRecentManifests } from '../api/user-store.js';
@@ -263,6 +263,16 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
 
   // selection (step 3)
   const [selected, setSelected] = React.useState(() => new Set());
+  // OI-85 stage 2/3: per-canvas filename overrides typed on the confirm step
+  // ({ canvasIndex: newBaseName }), and the Commons availability results
+  // (Map: filename → { exists, url?, invalid? } from checkFilenamesExist).
+  const [renames, setRenames] = React.useState({});
+  const [commonsTaken, setCommonsTaken] = React.useState(() => new Map());
+  const [checkingNames, setCheckingNames] = React.useState(false);
+  // Names already sent to checkFilenamesExist — guards the availability
+  // effect against refetch loops (a failed batch stays un-marked, so a
+  // step re-entry retries it).
+  const checkedNamesRef = React.useRef(new Set());
   // hover zoom in the gallery: { canvas, left, top } or null. The preview
   // requests a larger IIIF rendition (700px) than the 400px tile thumbs.
   const [hoverPreview, setHoverPreview] = React.useState(null);
@@ -385,6 +395,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     catImmediateRef.current = true; // check the derived category without debounce
     setCategory(manuscript.categoryName);
     setSelected(new Set(result.manifest.canvases.map((c) => c.index)));
+    setRenames({});
+    setCommonsTaken(new Map());
+    checkedNamesRef.current = new Set();
     setExcludedFields(new Set());
     setDownscaleNoteHidden(false);
     setReportHidden(false);
@@ -531,6 +544,10 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
       if (t && t !== mapping.manuscript.title) {
         base = it.title.replace(mapping.manuscript.title, t);
       }
+      // OI-85 stage 2: a filename typed on the confirm step overrides the
+      // derived name (verbatim — the user is deliberately fixing a collision).
+      const rn = renames[it.iiif.canvasIndex];
+      if (typeof rn === 'string' && rn.trim()) base = rn.trim();
       return {
         ...it,
         title: base,
@@ -539,10 +556,79 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
         iiif: { ...it.iiif, targetFilename: `${base}.jpg` },
       };
     });
-  }, [mapping, title, category]);
+  }, [mapping, title, category, renames]);
 
   const chosen = effectiveItems.filter((it) => selected.has(it.iiif.canvasIndex));
   const totalMB = chosen.length * 12; // rough average from the sample corpus
+
+  // OI-85 stage 2: batch-uniqueness of the FINAL names (after renames). The
+  // mapper's auto-suffix guarantees the defaults are unique, so only a user
+  // edit can create an in-batch collision — that's a hard error (two files
+  // can't publish under one name), and it blocks Start import below.
+  // Commons compares titles case-insensitively on the first letter and
+  // treats _ as space; lowercase-whole-name is a safe over-approximation.
+  const batchDupIdx = React.useMemo(() => {
+    const byName = new Map();
+    for (const it of chosen) {
+      const k = it.iiif.targetFilename.toLowerCase().replace(/_/g, ' ');
+      if (!byName.has(k)) byName.set(k, []);
+      byName.get(k).push(it.iiif.canvasIndex);
+    }
+    const dup = new Set();
+    for (const idxs of byName.values()) {
+      if (idxs.length > 1) idxs.forEach((i) => dup.add(i));
+    }
+    return dup;
+  }, [chosen]);
+
+  // OI-85 stage 3: proactive Commons availability check for ALL candidate
+  // filenames, on the confirm step. Debounced (renames retype the name on
+  // every keystroke); only names not yet checked are fetched (batched ≤50 in
+  // checkFilenamesExist). `chosen` is a fresh array every render, so the
+  // effect keys on the joined name list instead.
+  const chosenNamesKey = React.useMemo(
+    () => chosen.map((it) => it.iiif.targetFilename).join('\n'),
+    [effectiveItems, selected],
+  );
+  React.useEffect(() => {
+    if (step !== 'confirm') return undefined;
+    const names = chosenNamesKey ? chosenNamesKey.split('\n').filter(Boolean) : [];
+    const unknown = names.filter((n) => !checkedNamesRef.current.has(n));
+    if (!unknown.length) return undefined;
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      setCheckingNames(true);
+      try {
+        const res = await checkFilenamesExist(unknown);
+        if (cancelled) return;
+        unknown.forEach((n) => { if (res.has(n)) checkedNamesRef.current.add(n); });
+        if (res.size) {
+          setCommonsTaken((prev) => {
+            const next = new Map(prev);
+            for (const [k, v] of res) next.set(k, v);
+            return next;
+          });
+        }
+      } finally {
+        if (!cancelled) setCheckingNames(false);
+      }
+    }, 400);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [step, chosenNamesKey]);
+
+  // Confirm-step row flags derived from the three sources: label-duplicates
+  // from the manifest (renameable), user-made batch collisions (hard error),
+  // and Commons-taken / invalid names (stage 3).
+  const nameIssueCounts = React.useMemo(() => {
+    let taken = 0;
+    let invalid = 0;
+    for (const it of chosen) {
+      const hit = commonsTaken.get(it.iiif.targetFilename);
+      if (hit?.exists) taken += 1;
+      else if (hit?.invalid) invalid += 1;
+    }
+    return { taken, invalid, batchDups: batchDupIdx.size };
+  }, [chosen, commonsTaken, batchDupIdx]);
 
   // OI-85: detect two kinds of collision straight from the parsed manifest —
   // no downloads needed:
@@ -1433,10 +1519,77 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               <p><strong>{chosen.length}</strong> images → your upload stash, then review &amp; publish from the table as usual.</p>
               <div className="iiif-recap-files">
                 <strong>Target filenames ({chosen.length}):</strong>
+                {/* OI-85 stage 2+3 status line: batch collisions are a hard
+                    error (blocks Start import); Commons-taken names a strong
+                    warning (they'd bounce at publish as fileexists). */}
+                {checkingNames && (
+                  <span className="iiif-namecheck iiif-namecheck--busy">Checking name availability on Commons…</span>
+                )}
+                {nameIssueCounts.batchDups > 0 && (
+                  <span className="iiif-namecheck iiif-namecheck--error">
+                    ⛔ {nameIssueCounts.batchDups} images share the same filename — every name must be unique before the import can start.
+                  </span>
+                )}
+                {nameIssueCounts.taken > 0 && (
+                  <span className="iiif-namecheck iiif-namecheck--warn">
+                    ⚠️ {nameIssueCounts.taken} filename{nameIssueCounts.taken === 1 ? ' is' : 's are'} already used by an existing file on Commons — rename below, or publishing will refuse them.
+                  </span>
+                )}
+                {nameIssueCounts.invalid > 0 && (
+                  <span className="iiif-namecheck iiif-namecheck--warn">
+                    ⚠️ {nameIssueCounts.invalid} filename{nameIssueCounts.invalid === 1 ? ' is' : 's are'} not a valid Commons title.
+                  </span>
+                )}
                 <div className="iiif-filelist" role="list">
-                  {chosen.map((it) => (
-                    <div key={it.iiif.canvasIndex} role="listitem">File:{it.iiif.targetFilename}</div>
-                  ))}
+                  {chosen.map((it) => {
+                    const idx = it.iiif.canvasIndex;
+                    const name = it.iiif.targetFilename;
+                    const hit = commonsTaken.get(name);
+                    const isBatchDup = batchDupIdx.has(idx);
+                    const isTaken = !!hit?.exists;
+                    const isInvalid = !!hit?.invalid;
+                    const fromDupLabel = collisions.dupLabelIdx.has(idx);
+                    const editable = fromDupLabel || isBatchDup || isTaken || isInvalid || renames[idx] !== undefined;
+                    if (!editable) {
+                      return <div key={idx} role="listitem">File:{name}</div>;
+                    }
+                    return (
+                      <div
+                        key={idx}
+                        role="listitem"
+                        className={
+                          'iiif-filelist__row--edit' +
+                          (isBatchDup ? ' iiif-filelist__row--dup' : '') +
+                          ((isTaken || isInvalid) ? ' iiif-filelist__row--taken' : '')
+                        }
+                      >
+                        <span className="iiif-filelist__prefix">File:</span>
+                        <input
+                          type="text"
+                          className="iiif-filelist__input"
+                          value={renames[idx] !== undefined ? renames[idx] : it.title}
+                          onChange={(e) => setRenames((prev) => ({ ...prev, [idx]: e.target.value }))}
+                          spellCheck={false}
+                          aria-label={`Filename for image ${idx + 1}`}
+                        />
+                        <span className="iiif-filelist__ext">.jpg</span>
+                        {isBatchDup && <span className="iiif-filelist__flag iiif-filelist__flag--dup" title="Another image in this batch has this exact filename.">duplicate in batch</span>}
+                        {isTaken && (
+                          <a
+                            className="iiif-filelist__flag iiif-filelist__flag--taken"
+                            href={hit.url || `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(name)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="A different file already uses this name on Commons — open it in a new tab. Rename to avoid a publish conflict."
+                          >already on Commons ↗</a>
+                        )}
+                        {isInvalid && <span className="iiif-filelist__flag iiif-filelist__flag--dup" title={hit.reason || 'Not a valid Commons title.'}>invalid title</span>}
+                        {!isBatchDup && !isTaken && !isInvalid && fromDupLabel && (
+                          <span className="iiif-filelist__flag iiif-filelist__flag--info" title="This image's canvas label was not unique in the manifest; the tool auto-suffixed the name. Edit it to something meaningful if you like.">auto-renamed</span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
               <ul className="iiif-recap">
@@ -1545,7 +1698,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
             {step === 'confirm' && (
               <>
                 <button className="btn" onClick={() => setStep('select')}>Back</button>
-                <button className="btn btn--progressive" onClick={start}>
+                <button
+                  className="btn btn--progressive"
+                  onClick={start}
+                  disabled={batchDupIdx.size > 0}
+                  title={batchDupIdx.size > 0 ? 'Two or more images share the same filename — make them unique first.' : undefined}
+                >
                   Start import ({chosen.length} images)
                 </button>
               </>
