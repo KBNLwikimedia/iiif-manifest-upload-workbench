@@ -8,6 +8,8 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ## [0.41.0] — 2026-07-11
 
+- **Release notes**: [v0.41.0](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/releases/tag/v0.41.0)
+
 The **duplicate-detection & input-hardening** milestone. The import wizard now surfaces every kind of collision (duplicate filenames, duplicate images within a manifest, and files already on Commons), lets you correct duplicate filenames and proactively checks names against Commons, and hardens the review-step inputs against forbidden/injection characters. Plus a large select-step UX pass (per-collision warning boxes with in-box filters, side-by-side clustering, sequence numbers, wider modal) and the error-report modal rebrand.
 
 ### Security
@@ -209,6 +211,8 @@ The **duplicate-detection & input-hardening** milestone. The import wizard now s
 ---
 
 ## [0.40.0] — 2026-07-10
+
+- **Release notes**: [v0.40.0](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/releases/tag/v0.40.0)
 
 The IIIF-ingestor milestone: the import funnel is complete and hardened end-to-end (design Phases 0–5.2), the wizard's review step got a full UX overhaul, and the backlog moved to GitHub Issues. Everything below is fork work on top of upstream v0.39.0.
 
