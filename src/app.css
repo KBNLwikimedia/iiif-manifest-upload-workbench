@@ -8850,6 +8850,22 @@ body.col-resizing * { cursor: col-resize !important; }
   background: #fff;
   transition: opacity 0.15s ease;
 }
+/* Position badge in the image's top-left, same look as the carousel thumbs. */
+.iiif-lightbox__num {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 1;
+  min-width: 18px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
 .iiif-lightbox__spinner {
   position: absolute;
   width: 40px;

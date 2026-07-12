@@ -2086,6 +2086,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               <figure className="iiif-lightbox__fig" onClick={(e) => e.stopPropagation()}>
                 <div className="iiif-lightbox__imgbox">
                   {!lightboxLoaded && <span className="iiif-lightbox__spinner" role="status" aria-label="Loading image…" />}
+                  {/* Position badge (top-left), same black/white style as the
+                      carousel thumbs — "5/31" = 5th of 31 images. */}
+                  <span className="iiif-lightbox__num" aria-hidden="true">{pos + 1}/{canv.length}</span>
                   <img
                     key={lightbox.index}
                     src={lightboxUseThumb && lightbox.thumbUrl ? lightbox.thumbUrl : largeRendition(lightbox)}
