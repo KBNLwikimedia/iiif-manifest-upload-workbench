@@ -1036,6 +1036,14 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                     {identity}
                     <span className="iiif-modal__idcount"> · {manifest.canvasCount} images in this manifest</span>
                   </p>
+                  {/* Flag a manifest known to need work (duplicate filenames /
+                      images) right in the header, on every step past input. */}
+                  {hasDuplicates && (
+                    <span
+                      className="iiif-modal__needswork"
+                      title={`This manifest needs checking — ${[collisions.dupLabelIdx.size ? `${collisions.dupLabelIdx.size} duplicate filenames` : '', collisions.dupImageIdx.size ? `${collisions.dupImageIdx.size} duplicate images` : ''].filter(Boolean).join(', ')}. See the Select step warnings.`}
+                    >⚠ needs work</span>
+                  )}
                 </div>
               );
             })() : (

@@ -12,6 +12,10 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Changed
 
+- **Modal headers are selectable again** — you can now select/copy header text (e.g. the manuscript title + signature) even though the header is a drag handle: the drag module skips a drag when the press lands on header text, so pressing the title selects it while pressing the header padding / grip / thumbnail still moves the modal.
+- **Wizard header flags a manifest that needs work** — on every step past input, a red **⚠ needs work** badge appears in the header when the loaded manifest has duplicate filenames and/or duplicate images.
+- **Select step: the Select-all/none/Invert toolbar sticks below the header** — with the whole-body scroll, the toolbar now pins just under the header (warnings scroll away above it) and the thumbnail gallery scrolls beneath it.
+- **Modal button order** — the CC0 and 48-hour-waiver dialogs lead with the primary/affirmative button (waiver: "I understand…" first, centered; CC0: "don't remind me again" first).
 - **Sign-in screen lede** — "Turn IIIF manifests into Wikimedia Commons uploads" is now bold, and the "(starting with the KB's medieval manuscripts)" aside is dropped.
 - **Report modal issue field is digits-only** — the "Save issue #" input strips every non-digit as you type or paste (letters, spaces, `#`, URL punctuation), so it can only ever hold a plain issue number; leading/trailing spaces are removed by the same rule.
 - **Consistent "Short title — signature" identity across the wizard** — the manuscript identity now reads the same way everywhere it appears: the **header** on steps 2–4 (Check the manifest / Select images / Ready to import) shows it as a prominent line (bigger, darker) with the image count demoted to a muted suffix; the **select-step hover-zoom popup** shows the image filename on top with `Short title — signature` beneath it; and the **review-step lightbox caption** appends the signature to the title line (e.g. "De navolging van Christus — KW 70 H 36"). All three fall back gracefully when only a title or only a signature is present.

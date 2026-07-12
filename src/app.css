@@ -4597,6 +4597,13 @@ body.col-resizing * { cursor: col-resize !important; }
   touch-action: auto;
 }
 .modal__head button { cursor: pointer; }
+/* Header text stays selectable (so the manuscript title / signature can be
+   copied) even though the header is a drag handle — the drag module skips a
+   drag when the press lands on these text elements. */
+.modal__head :is(h1, h2, h3, h4, h5, h6, p, span, code, strong, em, b, i) {
+  user-select: text;
+  cursor: text;
+}
 /* While dragging: no text selection anywhere, and drop the open/close
    transition so the modal tracks the pointer 1:1. */
 .modal--dragging { user-select: none; transition: none; }
@@ -4618,6 +4625,19 @@ body.col-resizing * { cursor: col-resize !important; }
   margin-top: 5px;
 }
 .iiif-modal__idrow .iiif-modal__identity { margin: 0; }
+/* "needs work" flag in the header when the manifest has duplicates. */
+.iiif-modal__idrow .iiif-modal__needswork {
+  flex: 0 0 auto;
+  align-self: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 2px 8px;
+  border-radius: 10px;
+  color: #fff;
+  background: var(--color-destructive, #b32424);
+  cursor: help;
+}
 .iiif-modal__thumb {
   flex: 0 0 auto;
   width: 40px;
@@ -4758,7 +4778,7 @@ body.col-resizing * { cursor: col-resize !important; }
   margin-top: 2px;
 }
 .waiver-modal__foot { flex-direction: column; align-items: stretch; gap: 10px; }
-.waiver-modal__buttons { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+.waiver-modal__buttons { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 @media (max-width: 520px) {
   .waiver-modal__buttons { flex-direction: column-reverse; }
   .waiver-modal__buttons .btn { width: 100%; }
@@ -9168,6 +9188,18 @@ body.col-resizing * { cursor: col-resize !important; }
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
+}
+/* On the select step the whole body scrolls; the Select-all/none/Invert bar
+   sticks just below the header so the warnings scroll away above it and the
+   thumbnail gallery scrolls beneath it (maintainer request 2026-07-12). */
+.iiif-step-select .iiif-select-bar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  margin-bottom: 0;
+  padding: 6px 0 10px;
+  background: var(--background-color-base, #fff);
+  box-shadow: 0 1px 0 var(--border-color-muted, #e0e0e0);
 }
 .iiif-select-bar__count {
   margin-left: auto;

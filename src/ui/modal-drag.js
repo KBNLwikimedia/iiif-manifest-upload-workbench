@@ -21,6 +21,10 @@
 // Loaded once as a side-effect import from main.jsx; no per-modal wiring.
 
 const INTERACTIVE = 'button, a, input, select, textarea, label, [role="button"], [contenteditable="true"]';
+// Text elements in the header: pressing these should SELECT text, not start a
+// drag (so a user can copy the manuscript title / signature). Dragging still
+// works from the header's padding, grip, and thumbnail (non-text targets).
+const HEADER_TEXT = 'h1, h2, h3, h4, h5, h6, p, span, code, strong, em, b, i';
 
 const EDGE = 9;        // px band on each side of the border that starts a resize
 const MIN_W = 320;
@@ -158,7 +162,8 @@ function onPointerDown(e) {
   }
   if (!res.outside) {
     const head = e.target.closest('.modal__head');
-    if (head) startDrag(e, res.modal);
+    // Don't start a drag when pressing header text — let the browser select it.
+    if (head && !e.target.closest(HEADER_TEXT)) startDrag(e, res.modal);
   }
 }
 

@@ -134,17 +134,17 @@ export function Cc0Modal({ username, onAcknowledge, onDismiss }) {
           <div className="cc0-modal__buttons">
             <button
               type="button"
-              className="btn"
-              onClick={() => onAcknowledge({ suppressFurther: false })}
-            >
-              I agree — remind me next session
-            </button>
-            <button
-              type="button"
               className="btn btn--progressive"
               onClick={() => onAcknowledge({ suppressFurther: true })}
             >
               I agree — don't remind me again
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => onAcknowledge({ suppressFurther: false })}
+            >
+              I agree — remind me next session
             </button>
           </div>
         </footer>

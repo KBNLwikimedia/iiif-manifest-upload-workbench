@@ -94,17 +94,17 @@ export function WaiverModal({ onAccept, onDecline }) {
           <div className="waiver-modal__buttons">
             <button
               type="button"
-              className="btn"
-              onClick={() => onDecline({ suppressFurther: suppress })}
-            >
-              I don&apos;t accept — proceed at my own risk
-            </button>
-            <button
-              type="button"
               className="btn btn--progressive"
               onClick={() => onAccept({ suppressFurther: suppress })}
             >
               I understand — I&apos;ll upload within 48&nbsp;hours
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => onDecline({ suppressFurther: suppress })}
+            >
+              I don&apos;t accept — proceed at my own risk
             </button>
           </div>
         </footer>
