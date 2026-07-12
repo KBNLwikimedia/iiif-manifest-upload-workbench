@@ -187,129 +187,129 @@ The **duplicate-detection & input-hardening** milestone. The import wizard now s
 ---
 
 <details>
-<summary><strong>Commits in this release (121)</strong> — v0.40.0…v0.41.0</summary>
+<summary><strong>Commits in this release (121)</strong> — v0.40.0…v0.41.0 (newest first, with commit timestamps)</summary>
 
-- [`55e0cfe`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/55e0cfe3508864bb633fb3aa43a562cd498f38d3) release: v0.41.0 — duplicate-detection & input-hardening milestone
-- [`1f4a1da`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/1f4a1da4fc998ade1c84370d64d960b83dcf7f8e) Fix: test-manifest previews for canvases 11 & 12 (Commons-file thumbnails 404'd)
-- [`09f3e63`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/09f3e6339ea8273d4d9693ac217a53039c2c5b3e) Fix: short-title reject note says "removed it from the short title"
-- [`fb3790f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/fb3790f1bbdba61840863b3682b8e5177419a582) feat: strip forbidden chars on input; trim Q-id spaces; + OI-86 security-triage issue
-- [`c4a28dc`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c4a28dcf622ae081bfac49161535b2386c4e8343) feat: ⚠️ icon on the review-step input validation warnings
-- [`cba86dd`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cba86dde383f92b40dd712a5f257cfc344fbbb07) feat: validate review-step inputs (forbidden chars + Q-id shape); numbers to top:0
-- [`6caecd5`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6caecd51777356816c1d0c3a823f3eec518e5a1f) feat: ⚠️ + reworded &gt;25 MP heading; nudge sequence numbers up again
-- [`86ff83e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/86ff83e888264a7ebb8ae523305d9c24fe172b78) Fix: sequence number hugs the tile top (drop vertical padding + tighten line-height)
-- [`50cb70f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/50cb70f61b2d168ef45802705a146fe94a379665) Fix: nudge the select-step sequence number up to match the carousel
-- [`baafa69`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/baafa69df8efd16811f199d8a6c15e8b01af4afe) Fix: kill the whitespace under note headings; restyle cluster headers
-- [`414a4ed`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/414a4ed973a904ed145c2ab021131dd189f9f8b5) feat: &gt;25MP filter button; note buttons inline top-right; dark cluster frames
-- [`9b5bf6c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9b5bf6cf099b9071016a5254bebffa49f699544d) Fix: duplicate clusters flow side by side (snug frame each), not full-width stacks
-- [`e54c1af`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e54c1af1692feea8738eb175355fa99d90c7371b) feat: move dup filters into their warning boxes; cluster duplicates by group
-- [`57ac71d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/57ac71de3700c083df983d9c85bb2fb0bca59b1b) feat: select-step filter toggles — show only duplicate names / duplicate images
-- [`f7e229c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f7e229cc8f21e9f21daa55678bb36f1ceb6233d7) feat: select-step tiles get a top-left sequence number; checkbox to bottom-centre
-- [`23a4bff`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/23a4bfff8783fe28aaad3dfc061c165c1d27a805) Fix: wizard width really applies now; split collision warnings into dismissible per-type boxes
-- [`fb28482`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/fb28482c390f311b7c2dfb370c4dbb95a109b586) feat: dup badges name their partner images; recent-tab follows last-loaded manifest
-- [`3b793c0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3b793c023f2b79d9d79e9c85516742fe9e140e80) docs: fixture v3 (all double scenarios) + wider wizard in changelog/archive
-- [`3ace64f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3ace64f9e3353d66d0cb2ecd6d8b5cbb071dde9b) test: fixture covers every double scenario incl. Commons filename collision; wider wizard
-- [`e8868b4`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e8868b426becb54680a99acc1640830f3328ad15) feat(OI-85): inline rename of duplicate filenames + proactive Commons name check (stages 2+3)
-- [`769585e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/769585ed3e2c9d779972cd7d5976601244e374a0) feat: rebrand the "Report this error" modal to the fork (OI-10)
-- [`efb293c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/efb293c7aa8b51339f6cd74f4933d26962bbb496) Fix: TDZ crash on opening the import wizard (collisions memo read 'manifest' too early)
-- [`cfe7b8a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cfe7b8af6bdb74d896c5e0b7fd85a79688f65713) docs: OI-85 row — stage-1 shipped, 12-canvas fixture, scenario matrix in #85
-- [`bc4e664`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bc4e6641d2579ee3e0d7c998df77e8d87059d569) test: add already-on-Commons canvases (11+12) to the collision fixture
-- [`ceec84c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/ceec84c01d2d272410755a1f8aa3e43e05169774) feat(OI-85): select-step warning + red/orange borders for duplicate labels & images
-- [`aee8538`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/aee8538e016cd912185d20d8bc613508898d156d) feat: per-provider tabs in the recent-manifest list; richer collision test fixture
-- [`00a48fe`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/00a48fe485e58adc062c814677d007df64270f9e) docs: record OI-85 (non-unique canvas-label warning + filename check) in the archive
-- [`2383d66`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2383d66d281b462287677a4597a13348a5b82865) test: add IIIF test manifest with duplicate canvas labels
-- [`c27dbd2`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c27dbd277e9c50e72e4a346a1e1a2a2f3811b3fb) feat: show recent-manifest count behind the "Recent manifests" heading
-- [`7457404`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/74574045ebd49061ee64bf1cff40a98007c3209c) Merge pull request #84 from KBNLwikimedia/dependabot/npm_and_yarn/multi-d17762413a
-- [`bcbe5c0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bcbe5c09ea9528c59d783f610613357e7bc8854b) chore(deps-dev): bump vite and @vitejs/plugin-react
-- [`ec1f20b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/ec1f20b53be980897b36ac086523c8b1d97a9c1a) feat: sortable history List columns + shared grid hover overlay (stash & history)
-- [`9bcae10`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9bcae1073c54441d45f8a7b431c81d614b1acceb) docs: sweep — per-section toolbars, placeholder/zoom polish, OI-81 in status/archive
-- [`f3cd092`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f3cd092ca18af43900579a76a73240e0a74f5b75) docs: record OI-81 (re-enable full workbench on history) in the archive
-- [`318ce72`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/318ce72dd6cdfda86d9cbec7802a2c48f30bc592) feat: clearer search placeholders — "stashed files" vs "published files on Commons"
-- [`09be53d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/09be53ddf075f66f131a15c325c5d75d46e14e3f) Fix: tile-zoom buttons sit directly next to the Grid/List toggle in both toolbars
-- [`8064402`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8064402841b4dc12f93e1be0f05d636bb98344b8) feat: stash controls move into the Upload-stash section
-- [`8307bfb`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8307bfbfa51cbd095bbcf986af350e987e048001) docs: cross-link OI-80 defaults as the KB provider-profile preset (OI-78)
-- [`fbf4c18`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/fbf4c1861130d089275d98438039bca8ab8379e8) docs: sweep — changelog, CLAUDE.md status, archive rows current (pre-compact)
-- [`d683c41`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d683c41482760a50b9b68abe37c7734171a71871) feat: history mini-toolbar — own search, Grid/List view, tile zoom (read-only)
-- [`6aa85a4`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6aa85a42abadf58acdc9d82a72d4b14f48e93e80) docs: record OI-80 (KB-optimized defaults) + OI-79 basic-toggle progress
-- [`8350c0e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8350c0e9da5e0cdfd094dcb305c58dbfaf08d06d) feat: basic showUploadHistory toggle — hide/show writes the pref (OI-79 seed)
-- [`6bd3e2d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6bd3e2d3901aa82a852b4987a7b9fa4857eb0f66) feat: simplified read-only Upload history (thumb + title + link to Commons)
-- [`a36aeab`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a36aeab04a500126620db9ad101b51a66a36c72c) docs: record OI-79 (user-settings panel) in the archive
-- [`d59ee21`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d59ee218060184f2145900d698957073ce41c261) feat: hide Upload history behind a showUploadHistory preference (default off)
-- [`69e013e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/69e013e5fea4643f0bcaaf3f9d62be4763bfe769) feat: small tagline under the app title in the topbar
-- [`2fa6bac`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2fa6baca45eecca5453e1bf6dafb7d3c49799dc7) Fix: move scrollbar gap into .tbl content (padding on scroll box was eaten)
-- [`50ff773`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/50ff773b281a0848ce29ef4eb4d162cbcc9373c7) Fix: space between the last table row and the horizontal scrollbar
-- [`25a1540`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/25a15409fa9e57e33bfc99a0c13395b083ed62cc) Fix: add the missing close X to the clear-stash modal; fix "1 files" plural
-- [`809251c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/809251c02d6c1988e066d04fd9bb2b08a001c345) Fix: align version label to the bottom of the title
-- [`2dc08c4`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2dc08c49d8ccd00155f7109e24862198c58400f4) Fix: history sync stamp shows explicit DD-MM-YYYY HH:MM instead of "today"
-- [`696da4d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/696da4db1caa46d273bda0caf23a25ac874443e9) Fix: version label — larger font, tighter spacing next to the brand
-- [`a29f62e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a29f62eef11604ac1a8fda6e6e3629bd5c77f6ed) feat: static version label in the topbar; drop the releases dropdown + Beta pill
-- [`ce4beae`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/ce4beae7ae6de1b3997322e4bd0432d292af1c5e) feat: Import IIIF manifest button leads the toolbar; search moves right
-- [`2d3e4e0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2d3e4e006174baab77c69bbb900c53b1bd910539) feat: center the "Choose a manifest .json file" button
-- [`76ba931`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/76ba931196ca925f76e3df6215a3c6745c8b839c) feat: KB-only hint moves below the provider cards; drop the issue link
-- [`0088f74`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/0088f748643d4cbae726007e62e9c5e16879c29b) docs: sweep — CLAUDE.md status/modules/identity current, archive header, changelog polish
-- [`485062a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/485062a98597e915a2bc84dcd83671ed5130e915) feat: KB-only explanation on the provider picker; "Manifest URL (KB compliant)" label
-- [`c363058`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c3630589c6a7c7ad0a82fcc51b079592de1738e9) feat: provider-profile picker scaffolding — KB active, eCodices coming soon (OI-78)
-- [`6369977`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/63699779dbaa9d096ed12e2febd8c16384d91d9e) docs: use the full eCodices search URL in the OI-78 archive row
-- [`45c1f18`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/45c1f185f1af4bfa37c4de8db65e32f3db0d08cc) docs: record OI-78 (eCodices-compliance analysis) in the archive
-- [`71ce4e2`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/71ce4e2ec8989b37302723b1cae3567c2cddc4d8) feat: clear-stash modal — actions bottom-left, Cancel right, Hide-all a proper button
-- [`44c7286`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/44c728608442b12765f4330a914265ab96f8e770) feat: small first-image thumbnail on each recent-manifest row
-- [`290e4eb`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/290e4eb24421393e6f68d715f6895660b8d4af4a) feat: per-item remove (×) in the recent-manifests list; rename Clear → Clear all
-- [`44f5d93`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/44f5d93550d712cca5a16aa1ce532742d6a169e8) feat: record dropped/chosen manifests in the recent list via their id URL (route C)
-- [`c0dafb0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c0dafb074d9740a7af51987dbda9ed6a4b019e4b) docs: CC0 notice lists recently loaded manifests (now persisted too)
-- [`114f07a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/114f07a1d812805e9966db1fb9db5362ddcb0bad) feat: show signature + title in the recent-manifests list
-- [`6e2ed90`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6e2ed900c4aa7adc8fd4bd169baf88d7fa4f3b64) feat: persist recent manifests in Preferences.json (cross-device)
-- [`f779912`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f779912286bb730051fb92859e5874152eb81a1e) Fix: Load button passed the click event to loadUrl → "[object Object]" + 404
-- [`e16ce64`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e16ce6494fed7bc457a4f5c0ff414e73ffe6d0b8) feat: recent-manifests quick-load, blue file button, linked CC0 paths, CHANGELOG &lt;Template&gt; fix
-- [`08cdbc6`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/08cdbc645a5f766d18be9ebed4ab5b97870f491a) docs: changelog for the version-chip repoint + CC0 notice restore
-- [`9dffbc8`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9dffbc8404f75222450c70557194d2d70cabe2cc) feat: repoint version chip at GitHub + localhost; restore/rebrand the CC0 notice (OI-10)
-- [`b6db153`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b6db153e308117c21a77208dd112a557f2f0f062) docs: changelog reflects Cancel-button footer refinement
-- [`c5b8718`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c5b87184ac3d04eefa74575ec9a582fb659f3034) feat: wizard Close→Cancel (white); feedback GitHub blue + Cancel white bottom-right
-- [`62911fd`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/62911fd356a378fcdb4e897710a451e49f8cd2b2) docs: changelog for the consistent modal footers
-- [`e5e0e87`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e5e0e873224db2e33ecd2caa8e5819ce1376b6f4) feat: consistent modal footers — blue Close bottom-right; no stray-dismiss on feedback/columns
-- [`8a78b15`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8a78b15d32f4dc43b8dafd5503b3c6311a7bffb1) docs: close OI-75/76/77 in the archive + changelog entries
-- [`a996891`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a9968910f5b3a9ad24a9c684ae795a1023d9e02e) Fix: retry classification prefix + tagged badtoken-refresh failure + un-wedge start() (OI-75/76/77)
-- [`3242c1f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3242c1ff5295721b48da21fba48f0c8a869b26a7) docs: close OI-74 in the archive + changelog security entry
-- [`b68e2bc`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b68e2bc8bf88872e70c864ebc17f7b5bba9a377a) Fix: neutralize manifest-verbatim text on the Phase 5.2 {{Artwork}} params (OI-74)
-- [`f7a517c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f7a517cb57fa4a6b34f44c180de526c6bdb72f9e) docs: refresh open-issues.md rows with the 2026-07-10 deep-review anchors
-- [`d714546`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d7145464319dfe90b19d4d93da5b7765daa5dfb8) docs: 2026-07-10 deep-review results — section G, OI-04/OI-58 closed, comment fix
-- [`cc9d688`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cc9d68882c838d30bde128909ae21787fccfa2a2) feat: right-align the warnings-restore line (where the dismiss x sat)
-- [`82c5df6`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/82c5df6d94beab1bb840c899d6b448a52f3e4c46) feat: "(type to change it)" hint on all four editable review-step fields
-- [`3ebc188`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3ebc188dcece6fa7f2fa3c2590398a5487842fc7) docs: changelog for restorable warnings + visible scrollbar
-- [`aa63870`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/aa63870d76b2e6db1e4b125303b71aa6decb01b9) feat: restorable warning boxes + a clearly visible wizard scrollbar
-- [`6816ecd`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6816ecdf4c133d92a8e8e0b25d08f8581b3d383f) docs: sweep — changelog for the select-step round, CLAUDE.md post-v0.40.0 status, OI-72/73 archive rows
-- [`e79b43b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e79b43bea8e5ca78ba0dced7514902e07f1cb921) feat: pinned select-step header, dismissible 25 MP note, title + bold tweaks
-- [`d8b5f59`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d8b5f59ccdc459827e93cb4ed4c6f7058d42c7da) docs: close OI-47 in the archive; changelog for the hover-zoom fix + select-title
-- [`e819916`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e819916154848cdf36a582b5b7e7c19b9b4fe029) Fix: hover-zoom intent delay + scroll dismissal (OI-47)
-- [`dfda6cc`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/dfda6cc5d4d71d154115c4e46c6d3fb29c52766b) feat: bold "N images" (not just the number) in the download sentence
-- [`068b024`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/068b0249dc88bc0d0b0f0c6ac398124bb8683cc3) feat: bold the selected count in the select-step toolbar
-- [`392c7fc`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/392c7fc1e8f1d3030d02fe8809582c26f6808e39) feat: bold the download count, unbold the header image count
-- [`2d553e1`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2d553e1d1238393e5dcd7572b1cee8ca44c5a0f1) feat: restructure the Ready-to-import header into three clear lines
-- [`53c7cca`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/53c7ccac56d82c823d6a5aa46afee4f9ec655e2a) feat: bold the image count in the wizard header line
-- [`c8c1264`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c8c126448ed4d65bb59176346d4c1b7eb75e341a) feat: header line reads "N images in this manifest"
-- [`be8d849`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/be8d84991bb20525245f471f190a6cd7e5b9dc7c) docs: changelog for the selection-counter move
-- [`5f1b240`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/5f1b24049deb2ce65cc8d51961f77b44c3a49697) feat: move the selection counter into the select-step toolbar
-- [`355a96a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/355a96a714ddfdba3335bb0e8bbaebbacbade61f) docs: move OI-61 to the Closed table
-- [`99087a5`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/99087a5b3f7a710a339b735fe3a86488a38b28ed) docs: changelog for OI-61 + the folia info-icon + the 3.0-only note
-- [`e9edd29`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e9edd29f04220969fed8d50034ea6f8102aac400) Fix: stale header comment in iiif-map.js (OI-61) + two wizard clarifications
-- [`dd84a7c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/dd84a7c4583ac911f8b47970e2d125482de360df) docs: changelog for the pages-to-images rename
-- [`880c7dd`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/880c7ddecf43a5dba97781a92ffb8ce67956ac5e) feat: rename "pages" to "images" across the wizard UI
-- [`1472ae2`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/1472ae2a30a9916a1cbb71083c00c688d1dcf069) docs: changelog for the feedback label + passport title row
-- [`9ca3bb9`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9ca3bb917c76bda811271227fed4b6a1ed152b77) feat: label feedback-form issues "user feedback" for traceability
-- [`8139015`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/813901530f3be06efb82329f7dc87ee086013145) feat: show the manifest title as the first row of the metadata passport
-- [`4a4996e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/4a4996e205dce5a86b0a89b2ed900df57c5ebb49) docs: screenshot gallery in the README (expandable, walkthrough-ordered)
-- [`b85db65`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b85db6533e395b1aba266d601f401446e00faffd) docs: changelog for the persistent wizard-header identity line
-- [`c7af870`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c7af870d6e6a3ee80490db72bd52fc66ca8e1405) feat: keep the manuscript identity line in the header on every wizard step
-- [`27c1460`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/27c1460718793f8c8c31aea2f6a35d9bd7a1c4d3) docs: record OI-71 (per-manifest metadata-quality survey) in the archive
-- [`b11dc3f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b11dc3fa0bca0f924a5b16d7491246f03d5625a8) docs: OI-70 follow-up — dismissal policy tightened to done-step only
-- [`845c69c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/845c69c37242dba060b1d96d8a5dc38ea3a6e436) Fix: backdrop/Esc also inert on the input step — a typed URL is state too (OI-70)
-- [`c347355`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c34735578704dcc7c224cf9f2531d65ae9d209ba) docs: close OI-31 + OI-70 in the archive; changelog for the recent fixes
-- [`6188555`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6188555f55aeff3d6838b8be11bf7997e63d1c8f) Fix: Esc and backdrop clicks no longer destroy a loaded import wizard (OI-31, OI-70)
-- [`9a1c3d8`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9a1c3d89be0ae82542fe8150d6c0897fa6c0f153) docs: record OI-69 (paste manifest JSON into the import modal) in the archive
-- [`5170ce8`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/5170ce89add3235e0528c058d87d1136105a0e7b) Fix: a Category: sitelink is not a gallery — reroute it to the category slot
-- [`e226670`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e226670f47e291ed24864d79ce309b817a95f7ba) Fix: vertically center the "Choose a manifest .json file" label text
-- [`da65292`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/da6529293e34ab7843cb4c2518158df08dcb15e4) docs: changelog for the Wikidata match-panel redesign
-- [`e7c4775`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e7c4775807eea9e4aa012f7a4a1cacb47fb8f5cb) feat: redesign the Wikidata block as a structured match panel
-- [`769dda2`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/769dda254315756af68cd08f7fba72b14715c8c0) docs: changelog for the P6243/P180 hint removal
-- [`f0392e0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f0392e0c24030743272fc5cdf2c0d37652ba2ef0) Fix: drop the "Feeds P6243 + P180" hint from the Wikidata fieldset
+- `2026-07-11 23:09` [`55e0cfe`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/55e0cfe3508864bb633fb3aa43a562cd498f38d3) release: v0.41.0 — duplicate-detection & input-hardening milestone
+- `2026-07-11 22:56` [`1f4a1da`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/1f4a1da4fc998ade1c84370d64d960b83dcf7f8e) Fix: test-manifest previews for canvases 11 & 12 (Commons-file thumbnails 404'd)
+- `2026-07-11 22:52` [`09f3e63`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/09f3e6339ea8273d4d9693ac217a53039c2c5b3e) Fix: short-title reject note says "removed it from the short title"
+- `2026-07-11 22:51` [`fb3790f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/fb3790f1bbdba61840863b3682b8e5177419a582) feat: strip forbidden chars on input; trim Q-id spaces; + OI-86 security-triage issue
+- `2026-07-11 22:42` [`c4a28dc`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c4a28dcf622ae081bfac49161535b2386c4e8343) feat: ⚠️ icon on the review-step input validation warnings
+- `2026-07-11 22:37` [`cba86dd`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cba86dde383f92b40dd712a5f257cfc344fbbb07) feat: validate review-step inputs (forbidden chars + Q-id shape); numbers to top:0
+- `2026-07-11 22:24` [`6caecd5`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6caecd51777356816c1d0c3a823f3eec518e5a1f) feat: ⚠️ + reworded &gt;25 MP heading; nudge sequence numbers up again
+- `2026-07-11 22:21` [`86ff83e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/86ff83e888264a7ebb8ae523305d9c24fe172b78) Fix: sequence number hugs the tile top (drop vertical padding + tighten line-height)
+- `2026-07-11 22:15` [`50cb70f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/50cb70f61b2d168ef45802705a146fe94a379665) Fix: nudge the select-step sequence number up to match the carousel
+- `2026-07-11 22:11` [`baafa69`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/baafa69df8efd16811f199d8a6c15e8b01af4afe) Fix: kill the whitespace under note headings; restyle cluster headers
+- `2026-07-11 22:06` [`414a4ed`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/414a4ed973a904ed145c2ab021131dd189f9f8b5) feat: &gt;25MP filter button; note buttons inline top-right; dark cluster frames
+- `2026-07-11 21:14` [`9b5bf6c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9b5bf6cf099b9071016a5254bebffa49f699544d) Fix: duplicate clusters flow side by side (snug frame each), not full-width stacks
+- `2026-07-11 21:09` [`e54c1af`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e54c1af1692feea8738eb175355fa99d90c7371b) feat: move dup filters into their warning boxes; cluster duplicates by group
+- `2026-07-11 20:29` [`57ac71d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/57ac71de3700c083df983d9c85bb2fb0bca59b1b) feat: select-step filter toggles — show only duplicate names / duplicate images
+- `2026-07-11 20:23` [`f7e229c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f7e229cc8f21e9f21daa55678bb36f1ceb6233d7) feat: select-step tiles get a top-left sequence number; checkbox to bottom-centre
+- `2026-07-11 19:36` [`23a4bff`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/23a4bfff8783fe28aaad3dfc061c165c1d27a805) Fix: wizard width really applies now; split collision warnings into dismissible per-type boxes
+- `2026-07-11 19:28` [`fb28482`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/fb28482c390f311b7c2dfb370c4dbb95a109b586) feat: dup badges name their partner images; recent-tab follows last-loaded manifest
+- `2026-07-11 19:21` [`3b793c0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3b793c023f2b79d9d79e9c85516742fe9e140e80) docs: fixture v3 (all double scenarios) + wider wizard in changelog/archive
+- `2026-07-11 19:16` [`3ace64f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3ace64f9e3353d66d0cb2ecd6d8b5cbb071dde9b) test: fixture covers every double scenario incl. Commons filename collision; wider wizard
+- `2026-07-11 17:52` [`e8868b4`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e8868b426becb54680a99acc1640830f3328ad15) feat(OI-85): inline rename of duplicate filenames + proactive Commons name check (stages 2+3)
+- `2026-07-11 17:35` [`769585e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/769585ed3e2c9d779972cd7d5976601244e374a0) feat: rebrand the "Report this error" modal to the fork (OI-10)
+- `2026-07-11 17:30` [`efb293c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/efb293c7aa8b51339f6cd74f4933d26962bbb496) Fix: TDZ crash on opening the import wizard (collisions memo read 'manifest' too early)
+- `2026-07-11 17:27` [`cfe7b8a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cfe7b8af6bdb74d896c5e0b7fd85a79688f65713) docs: OI-85 row — stage-1 shipped, 12-canvas fixture, scenario matrix in #85
+- `2026-07-11 17:25` [`bc4e664`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bc4e6641d2579ee3e0d7c998df77e8d87059d569) test: add already-on-Commons canvases (11+12) to the collision fixture
+- `2026-07-11 17:21` [`ceec84c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/ceec84c01d2d272410755a1f8aa3e43e05169774) feat(OI-85): select-step warning + red/orange borders for duplicate labels & images
+- `2026-07-11 17:10` [`aee8538`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/aee8538e016cd912185d20d8bc613508898d156d) feat: per-provider tabs in the recent-manifest list; richer collision test fixture
+- `2026-07-11 17:01` [`00a48fe`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/00a48fe485e58adc062c814677d007df64270f9e) docs: record OI-85 (non-unique canvas-label warning + filename check) in the archive
+- `2026-07-11 16:57` [`2383d66`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2383d66d281b462287677a4597a13348a5b82865) test: add IIIF test manifest with duplicate canvas labels
+- `2026-07-11 16:57` [`c27dbd2`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c27dbd277e9c50e72e4a346a1e1a2a2f3811b3fb) feat: show recent-manifest count behind the "Recent manifests" heading
+- `2026-07-11 14:26` [`7457404`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/74574045ebd49061ee64bf1cff40a98007c3209c) Merge pull request #84 from KBNLwikimedia/dependabot/npm_and_yarn/multi-d17762413a
+- `2026-07-11 12:26` [`bcbe5c0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bcbe5c09ea9528c59d783f610613357e7bc8854b) chore(deps-dev): bump vite and @vitejs/plugin-react
+- `2026-07-11 13:53` [`ec1f20b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/ec1f20b53be980897b36ac086523c8b1d97a9c1a) feat: sortable history List columns + shared grid hover overlay (stash & history)
+- `2026-07-11 12:40` [`9bcae10`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9bcae1073c54441d45f8a7b431c81d614b1acceb) docs: sweep — per-section toolbars, placeholder/zoom polish, OI-81 in status/archive
+- `2026-07-11 12:37` [`f3cd092`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f3cd092ca18af43900579a76a73240e0a74f5b75) docs: record OI-81 (re-enable full workbench on history) in the archive
+- `2026-07-11 12:29` [`318ce72`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/318ce72dd6cdfda86d9cbec7802a2c48f30bc592) feat: clearer search placeholders — "stashed files" vs "published files on Commons"
+- `2026-07-11 12:26` [`09be53d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/09be53ddf075f66f131a15c325c5d75d46e14e3f) Fix: tile-zoom buttons sit directly next to the Grid/List toggle in both toolbars
+- `2026-07-11 12:22` [`8064402`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8064402841b4dc12f93e1be0f05d636bb98344b8) feat: stash controls move into the Upload-stash section
+- `2026-07-11 12:17` [`8307bfb`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8307bfbfa51cbd095bbcf986af350e987e048001) docs: cross-link OI-80 defaults as the KB provider-profile preset (OI-78)
+- `2026-07-11 12:14` [`fbf4c18`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/fbf4c1861130d089275d98438039bca8ab8379e8) docs: sweep — changelog, CLAUDE.md status, archive rows current (pre-compact)
+- `2026-07-11 12:06` [`d683c41`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d683c41482760a50b9b68abe37c7734171a71871) feat: history mini-toolbar — own search, Grid/List view, tile zoom (read-only)
+- `2026-07-11 12:00` [`6aa85a4`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6aa85a42abadf58acdc9d82a72d4b14f48e93e80) docs: record OI-80 (KB-optimized defaults) + OI-79 basic-toggle progress
+- `2026-07-11 12:00` [`8350c0e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8350c0e9da5e0cdfd094dcb305c58dbfaf08d06d) feat: basic showUploadHistory toggle — hide/show writes the pref (OI-79 seed)
+- `2026-07-11 11:54` [`6bd3e2d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6bd3e2d3901aa82a852b4987a7b9fa4857eb0f66) feat: simplified read-only Upload history (thumb + title + link to Commons)
+- `2026-07-11 11:46` [`a36aeab`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a36aeab04a500126620db9ad101b51a66a36c72c) docs: record OI-79 (user-settings panel) in the archive
+- `2026-07-11 11:45` [`d59ee21`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d59ee218060184f2145900d698957073ce41c261) feat: hide Upload history behind a showUploadHistory preference (default off)
+- `2026-07-11 11:41` [`69e013e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/69e013e5fea4643f0bcaaf3f9d62be4763bfe769) feat: small tagline under the app title in the topbar
+- `2026-07-11 04:01` [`2fa6bac`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2fa6baca45eecca5453e1bf6dafb7d3c49799dc7) Fix: move scrollbar gap into .tbl content (padding on scroll box was eaten)
+- `2026-07-11 03:59` [`50ff773`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/50ff773b281a0848ce29ef4eb4d162cbcc9373c7) Fix: space between the last table row and the horizontal scrollbar
+- `2026-07-11 03:49` [`25a1540`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/25a15409fa9e57e33bfc99a0c13395b083ed62cc) Fix: add the missing close X to the clear-stash modal; fix "1 files" plural
+- `2026-07-11 03:41` [`809251c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/809251c02d6c1988e066d04fd9bb2b08a001c345) Fix: align version label to the bottom of the title
+- `2026-07-11 03:40` [`2dc08c4`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2dc08c49d8ccd00155f7109e24862198c58400f4) Fix: history sync stamp shows explicit DD-MM-YYYY HH:MM instead of "today"
+- `2026-07-11 03:37` [`696da4d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/696da4db1caa46d273bda0caf23a25ac874443e9) Fix: version label — larger font, tighter spacing next to the brand
+- `2026-07-11 03:34` [`a29f62e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a29f62eef11604ac1a8fda6e6e3629bd5c77f6ed) feat: static version label in the topbar; drop the releases dropdown + Beta pill
+- `2026-07-11 03:22` [`ce4beae`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/ce4beae7ae6de1b3997322e4bd0432d292af1c5e) feat: Import IIIF manifest button leads the toolbar; search moves right
+- `2026-07-11 01:16` [`2d3e4e0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2d3e4e006174baab77c69bbb900c53b1bd910539) feat: center the "Choose a manifest .json file" button
+- `2026-07-11 01:15` [`76ba931`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/76ba931196ca925f76e3df6215a3c6745c8b839c) feat: KB-only hint moves below the provider cards; drop the issue link
+- `2026-07-11 01:10` [`0088f74`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/0088f748643d4cbae726007e62e9c5e16879c29b) docs: sweep — CLAUDE.md status/modules/identity current, archive header, changelog polish
+- `2026-07-11 01:05` [`485062a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/485062a98597e915a2bc84dcd83671ed5130e915) feat: KB-only explanation on the provider picker; "Manifest URL (KB compliant)" label
+- `2026-07-11 00:53` [`c363058`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c3630589c6a7c7ad0a82fcc51b079592de1738e9) feat: provider-profile picker scaffolding — KB active, eCodices coming soon (OI-78)
+- `2026-07-11 00:41` [`6369977`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/63699779dbaa9d096ed12e2febd8c16384d91d9e) docs: use the full eCodices search URL in the OI-78 archive row
+- `2026-07-11 00:39` [`45c1f18`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/45c1f185f1af4bfa37c4de8db65e32f3db0d08cc) docs: record OI-78 (eCodices-compliance analysis) in the archive
+- `2026-07-11 00:14` [`71ce4e2`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/71ce4e2ec8989b37302723b1cae3567c2cddc4d8) feat: clear-stash modal — actions bottom-left, Cancel right, Hide-all a proper button
+- `2026-07-11 00:09` [`44c7286`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/44c728608442b12765f4330a914265ab96f8e770) feat: small first-image thumbnail on each recent-manifest row
+- `2026-07-11 00:02` [`290e4eb`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/290e4eb24421393e6f68d715f6895660b8d4af4a) feat: per-item remove (×) in the recent-manifests list; rename Clear → Clear all
+- `2026-07-10 23:58` [`44f5d93`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/44f5d93550d712cca5a16aa1ce532742d6a169e8) feat: record dropped/chosen manifests in the recent list via their id URL (route C)
+- `2026-07-10 23:50` [`c0dafb0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c0dafb074d9740a7af51987dbda9ed6a4b019e4b) docs: CC0 notice lists recently loaded manifests (now persisted too)
+- `2026-07-10 23:47` [`114f07a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/114f07a1d812805e9966db1fb9db5362ddcb0bad) feat: show signature + title in the recent-manifests list
+- `2026-07-10 23:43` [`6e2ed90`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6e2ed900c4aa7adc8fd4bd169baf88d7fa4f3b64) feat: persist recent manifests in Preferences.json (cross-device)
+- `2026-07-10 23:35` [`f779912`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f779912286bb730051fb92859e5874152eb81a1e) Fix: Load button passed the click event to loadUrl → "[object Object]" + 404
+- `2026-07-10 22:57` [`e16ce64`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e16ce6494fed7bc457a4f5c0ff414e73ffe6d0b8) feat: recent-manifests quick-load, blue file button, linked CC0 paths, CHANGELOG &lt;Template&gt; fix
+- `2026-07-10 22:49` [`08cdbc6`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/08cdbc645a5f766d18be9ebed4ab5b97870f491a) docs: changelog for the version-chip repoint + CC0 notice restore
+- `2026-07-10 22:48` [`9dffbc8`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9dffbc8404f75222450c70557194d2d70cabe2cc) feat: repoint version chip at GitHub + localhost; restore/rebrand the CC0 notice (OI-10)
+- `2026-07-10 18:59` [`b6db153`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b6db153e308117c21a77208dd112a557f2f0f062) docs: changelog reflects Cancel-button footer refinement
+- `2026-07-10 18:58` [`c5b8718`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c5b87184ac3d04eefa74575ec9a582fb659f3034) feat: wizard Close→Cancel (white); feedback GitHub blue + Cancel white bottom-right
+- `2026-07-10 18:54` [`62911fd`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/62911fd356a378fcdb4e897710a451e49f8cd2b2) docs: changelog for the consistent modal footers
+- `2026-07-10 18:54` [`e5e0e87`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e5e0e873224db2e33ecd2caa8e5819ce1376b6f4) feat: consistent modal footers — blue Close bottom-right; no stray-dismiss on feedback/columns
+- `2026-07-10 18:33` [`8a78b15`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8a78b15d32f4dc43b8dafd5503b3c6311a7bffb1) docs: close OI-75/76/77 in the archive + changelog entries
+- `2026-07-10 18:29` [`a996891`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a9968910f5b3a9ad24a9c684ae795a1023d9e02e) Fix: retry classification prefix + tagged badtoken-refresh failure + un-wedge start() (OI-75/76/77)
+- `2026-07-10 18:19` [`3242c1f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3242c1ff5295721b48da21fba48f0c8a869b26a7) docs: close OI-74 in the archive + changelog security entry
+- `2026-07-10 18:17` [`b68e2bc`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b68e2bc8bf88872e70c864ebc17f7b5bba9a377a) Fix: neutralize manifest-verbatim text on the Phase 5.2 {{Artwork}} params (OI-74)
+- `2026-07-10 17:58` [`f7a517c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f7a517cb57fa4a6b34f44c180de526c6bdb72f9e) docs: refresh open-issues.md rows with the 2026-07-10 deep-review anchors
+- `2026-07-10 17:53` [`d714546`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d7145464319dfe90b19d4d93da5b7765daa5dfb8) docs: 2026-07-10 deep-review results — section G, OI-04/OI-58 closed, comment fix
+- `2026-07-10 15:13` [`cc9d688`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cc9d68882c838d30bde128909ae21787fccfa2a2) feat: right-align the warnings-restore line (where the dismiss x sat)
+- `2026-07-10 15:11` [`82c5df6`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/82c5df6d94beab1bb840c899d6b448a52f3e4c46) feat: "(type to change it)" hint on all four editable review-step fields
+- `2026-07-10 15:07` [`3ebc188`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3ebc188dcece6fa7f2fa3c2590398a5487842fc7) docs: changelog for restorable warnings + visible scrollbar
+- `2026-07-10 15:06` [`aa63870`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/aa63870d76b2e6db1e4b125303b71aa6decb01b9) feat: restorable warning boxes + a clearly visible wizard scrollbar
+- `2026-07-10 14:58` [`6816ecd`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6816ecdf4c133d92a8e8e0b25d08f8581b3d383f) docs: sweep — changelog for the select-step round, CLAUDE.md post-v0.40.0 status, OI-72/73 archive rows
+- `2026-07-10 14:56` [`e79b43b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e79b43bea8e5ca78ba0dced7514902e07f1cb921) feat: pinned select-step header, dismissible 25 MP note, title + bold tweaks
+- `2026-07-10 14:43` [`d8b5f59`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d8b5f59ccdc459827e93cb4ed4c6f7058d42c7da) docs: close OI-47 in the archive; changelog for the hover-zoom fix + select-title
+- `2026-07-10 14:42` [`e819916`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e819916154848cdf36a582b5b7e7c19b9b4fe029) Fix: hover-zoom intent delay + scroll dismissal (OI-47)
+- `2026-07-10 14:34` [`dfda6cc`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/dfda6cc5d4d71d154115c4e46c6d3fb29c52766b) feat: bold "N images" (not just the number) in the download sentence
+- `2026-07-10 14:33` [`068b024`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/068b0249dc88bc0d0b0f0c6ac398124bb8683cc3) feat: bold the selected count in the select-step toolbar
+- `2026-07-10 14:31` [`392c7fc`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/392c7fc1e8f1d3030d02fe8809582c26f6808e39) feat: bold the download count, unbold the header image count
+- `2026-07-10 14:29` [`2d553e1`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2d553e1d1238393e5dcd7572b1cee8ca44c5a0f1) feat: restructure the Ready-to-import header into three clear lines
+- `2026-07-10 14:26` [`53c7cca`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/53c7ccac56d82c823d6a5aa46afee4f9ec655e2a) feat: bold the image count in the wizard header line
+- `2026-07-10 14:25` [`c8c1264`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c8c126448ed4d65bb59176346d4c1b7eb75e341a) feat: header line reads "N images in this manifest"
+- `2026-07-10 14:18` [`be8d849`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/be8d84991bb20525245f471f190a6cd7e5b9dc7c) docs: changelog for the selection-counter move
+- `2026-07-10 14:18` [`5f1b240`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/5f1b24049deb2ce65cc8d51961f77b44c3a49697) feat: move the selection counter into the select-step toolbar
+- `2026-07-10 14:14` [`355a96a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/355a96a714ddfdba3335bb0e8bbaebbacbade61f) docs: move OI-61 to the Closed table
+- `2026-07-10 14:13` [`99087a5`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/99087a5b3f7a710a339b735fe3a86488a38b28ed) docs: changelog for OI-61 + the folia info-icon + the 3.0-only note
+- `2026-07-10 14:11` [`e9edd29`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e9edd29f04220969fed8d50034ea6f8102aac400) Fix: stale header comment in iiif-map.js (OI-61) + two wizard clarifications
+- `2026-07-10 14:05` [`dd84a7c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/dd84a7c4583ac911f8b47970e2d125482de360df) docs: changelog for the pages-to-images rename
+- `2026-07-10 14:03` [`880c7dd`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/880c7ddecf43a5dba97781a92ffb8ce67956ac5e) feat: rename "pages" to "images" across the wizard UI
+- `2026-07-10 13:49` [`1472ae2`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/1472ae2a30a9916a1cbb71083c00c688d1dcf069) docs: changelog for the feedback label + passport title row
+- `2026-07-10 13:48` [`9ca3bb9`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9ca3bb917c76bda811271227fed4b6a1ed152b77) feat: label feedback-form issues "user feedback" for traceability
+- `2026-07-10 13:40` [`8139015`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/813901530f3be06efb82329f7dc87ee086013145) feat: show the manifest title as the first row of the metadata passport
+- `2026-07-10 13:24` [`4a4996e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/4a4996e205dce5a86b0a89b2ed900df57c5ebb49) docs: screenshot gallery in the README (expandable, walkthrough-ordered)
+- `2026-07-10 13:19` [`b85db65`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b85db6533e395b1aba266d601f401446e00faffd) docs: changelog for the persistent wizard-header identity line
+- `2026-07-10 13:18` [`c7af870`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c7af870d6e6a3ee80490db72bd52fc66ca8e1405) feat: keep the manuscript identity line in the header on every wizard step
+- `2026-07-10 12:41` [`27c1460`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/27c1460718793f8c8c31aea2f6a35d9bd7a1c4d3) docs: record OI-71 (per-manifest metadata-quality survey) in the archive
+- `2026-07-10 02:13` [`b11dc3f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b11dc3fa0bca0f924a5b16d7491246f03d5625a8) docs: OI-70 follow-up — dismissal policy tightened to done-step only
+- `2026-07-10 02:12` [`845c69c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/845c69c37242dba060b1d96d8a5dc38ea3a6e436) Fix: backdrop/Esc also inert on the input step — a typed URL is state too (OI-70)
+- `2026-07-10 02:10` [`c347355`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c34735578704dcc7c224cf9f2531d65ae9d209ba) docs: close OI-31 + OI-70 in the archive; changelog for the recent fixes
+- `2026-07-10 02:09` [`6188555`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6188555f55aeff3d6838b8be11bf7997e63d1c8f) Fix: Esc and backdrop clicks no longer destroy a loaded import wizard (OI-31, OI-70)
+- `2026-07-10 02:01` [`9a1c3d8`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9a1c3d89be0ae82542fe8150d6c0897fa6c0f153) docs: record OI-69 (paste manifest JSON into the import modal) in the archive
+- `2026-07-10 01:19` [`5170ce8`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/5170ce89add3235e0528c058d87d1136105a0e7b) Fix: a Category: sitelink is not a gallery — reroute it to the category slot
+- `2026-07-10 01:16` [`e226670`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e226670f47e291ed24864d79ce309b817a95f7ba) Fix: vertically center the "Choose a manifest .json file" label text
+- `2026-07-10 01:14` [`da65292`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/da6529293e34ab7843cb4c2518158df08dcb15e4) docs: changelog for the Wikidata match-panel redesign
+- `2026-07-10 01:14` [`e7c4775`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e7c4775807eea9e4aa012f7a4a1cacb47fb8f5cb) feat: redesign the Wikidata block as a structured match panel
+- `2026-07-10 01:08` [`769dda2`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/769dda254315756af68cd08f7fba72b14715c8c0) docs: changelog for the P6243/P180 hint removal
+- `2026-07-10 01:08` [`f0392e0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f0392e0c24030743272fc5cdf2c0d37652ba2ef0) Fix: drop the "Feeds P6243 + P180" hint from the Wikidata fieldset
 
 </details>
 
@@ -378,137 +378,137 @@ The IIIF-ingestor milestone: the import funnel is complete and hardened end-to-e
 ---
 
 <details>
-<summary><strong>Commits in this release (129)</strong> — fork start…v0.40.0</summary>
+<summary><strong>Commits in this release (129)</strong> — fork start…v0.40.0 (newest first, with commit timestamps)</summary>
 
-- [`7759d0d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7759d0d406049a9fe4749efda1371bd4b34ff97e) chore: release v0.40.0 — the IIIF-ingestor milestone
-- [`7bc1373`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7bc13736fc5d120d9e8ddf0d07ad3b060fd30396) Fix: don't repeat the category name next to the button (single variant)
-- [`f11ea6f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f11ea6f08ec63443edc41b1689976f81376be03c) feat: discoverable + fuller explanations for all source badges
-- [`6ec93c9`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6ec93c94f40950829305640d106a3c8f21aa9273) feat: name the found category in the panel head + explain source badges
-- [`f12c1ff`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f12c1ffbf63fda7cfe24522452949527f576b3ef) feat: clearer existing-category UX — no contradiction, real button
-- [`bfb5239`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bfb5239fca91f8e631ecfab56a0a262dc15d2a69) docs: close OI-68 (existing-category discovery shipped)
-- [`d9a221f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d9a221ff7a7f8b879af0947d1847fa69355ba31b) feat: source the Commons gallery from P935 (dedicated property)
-- [`74c7f84`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/74c7f84d37986fe4d939465c0142421f292411fa) feat: link the Wikidata item's Commons category too (not just the gallery)
-- [`a312feb`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a312feb7e7c17f06d009feeda314e5ca91c05a5d) Fix: TDZ crash — move variant-discovery effect below `mapping`
-- [`105e210`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/105e2108da251b86f56898dbde74ebcc2246c6cc) docs: changelog OI-68 B/C (existing-category discovery)
-- [`b75820b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b75820bd5c9700b362c899c42a3100e35f5962d6) feat: discover existing category variants — naming + verified fuzzy search (OI-68 B/C)
-- [`a2ea785`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a2ea785ed23de5442431c345bf84d810f3f676c5) feat: resolve merged/redirected Wikidata Q-ids to the canonical item
-- [`7a1101e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7a1101e4858585f4917fd2465e1583bb14091b83) Fix: Wikidata lookup failure is retry-able, not a false "no item found"
-- [`cfa0fe9`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cfa0fe96fe4a170ee85b05253f81e49c2b964a6c) docs: changelog OI-68 Phase A
-- [`7377fb7`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7377fb79bf0412b8b836702ee57d818045400966) feat: offer the manuscript's existing Commons category from Wikidata (OI-68 A)
-- [`98c877c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/98c877cfd9fc0ee3f6ac7028df18cafd9fb8fa44) docs: OI-68 — decide single category per manuscript (never multiple)
-- [`08c871f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/08c871fbcc37f1f0dafdfe24c28eacc4f4e8fac6) docs: OI-68 — find existing Commons category-variant discovery (issue #68)
-- [`d08361d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d08361dbac35f0622eaa144277123fba52a02799) feat: label "Suggested category for this manuscript"
-- [`0045125`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/0045125703de9407964e727751d75e00885985df) feat: "View manifest (JSON)" inspector in the review step
-- [`ea70179`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/ea70179095b1909a6a8485432bc47b4d7edfda91) feat: lightbox closes only via the × button (not a backdrop click)
-- [`fdf870b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/fdf870b960820f7ab04207c2f0b3aeddf5c3af01) feat: loading spinner in the lightbox while an image loads
-- [`e9029ed`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e9029edbeeba7dc4609e81bf7e44ca33aacbc220) perf: preload lightbox neighbours so ‹ / › feels instant
-- [`9c13478`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9c1347861baa08b9e9af863872bc0e622aff69ae) feat: carousel page numbers + lightbox; smaller nav buttons
-- [`70d5bcb`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/70d5bcb1684d129676b7d6fcb568595d2ca12f5f) feat: review-step thumbnail carousel over all canvases
-- [`bc79be0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bc79be083f413fbb902dced39603ea82cee2b7ed) Fix: hide the report box when there's nothing (visible) to report
-- [`f8de365`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f8de36597ca0ed242343981344fc883a78f7784d) feat: group the Wikidata block in a legended section like Categories
-- [`c61457a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c61457ae4a97b5103540971916117d2c5da1b2c0) feat: parent-category autosuggest + Set/Reset default; move P6243/P180 note
-- [`a8f115f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a8f115fa593605426336f2e082c409f7dfd6e570) feat: dedicated Categories section with an editable, resettable parent
-- [`7fa3e47`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7fa3e47973b33018f73ec030cb31a988661e4303) feat: surface the parent category in the review step (+ link it)
-- [`818d014`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/818d0147ccbb9ac5a259a279c63ddefc3b718bd0) docs: close OI-01 + OI-02 (Phase 5.2 Artwork wiring, commit 635658a)
-- [`635658a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/635658aba9d3763f46b5445fecd8989b4726fbdc) Fix: wire {{Artwork}} medium/dimensions/accession/date (OI-01, OI-02)
-- [`4bdafc0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/4bdafc09aff7bf9ac2ad2631dcadf52dbe7d3d1f) feat: link the "category already exists" hint to the Commons category
-- [`6e07746`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6e077462b2657e72316bf2944fb9fe42b60872a9) feat: four preview thumbs in the review step (first page + three random)
-- [`11e0638`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/11e0638dbd34f1c60f1dda6aadd23692d1f4b921) feat: three preview thumbs in the review step (first page + two random)
-- [`74a8662`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/74a866239e80ffd8d8d98d65d9b3d731032dfafa) Fix: state the 25 MP note once — counts move to the select step
-- [`61d9b7f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/61d9b7fbf587c6cccdd11cee8c655acc71f6ca4e) docs: move fully-fixed items to the Closed table (own convention)
-- [`05cccee`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/05cccee79e8b6d83a692cfc66f68516e27f3417e) docs: OI-67 — KB-catalogue (GGC) enrichment design, recorded as issue #67
-- [`ff22889`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/ff22889d73e98988614de5a9e380215e7ca80dc0) Merge: placeholder-field review + first-page preview thumbnail (OI-66)
-- [`36a7486`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/36a7486c9571e8d0e5fc48857844d13c7f36c4ba) feat: drop the review thumbnail caption (raw canvas label read poorly)
-- [`842d7d1`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/842d7d10d6df2bbf253e2f7a56437331a549364f) docs: changelog placeholder-field review + preview thumb
-- [`2e779de`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2e779de2d31d8bae3e7feee75372d0a261edd846) feat: review placeholder metadata fields instead of silently dropping them
-- [`9cd9849`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9cd9849d04fd52676cafe6dde07faab938c470ee) docs: changelog OI-26 import-path retry/backoff
-- [`1ffe04a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/1ffe04ae50c39ff332635d364d17885407655657) Fix: retry/backoff/maxlag/badtoken for the IIIF import pipeline (OI-26)
-- [`2259c4b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2259c4b4af9286d7de9b0d76787523c07ac4076e) Fix: OI-65 — always warn on leave instead of a silent Back trap
-- [`2ca0e01`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2ca0e0147a4c4e370e6c6037fafc74a2c5280b2b) docs: changelog OI-65 (Back-button OAuth trap)
-- [`8fcfc73`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8fcfc7381d6b115481a98b4c6a6a334f2d1482c2) Fix: trap Back at the app root so it can't land on the OAuth screen (OI-65)
-- [`06f1a6d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/06f1a6d9754d027f299f9bcdd832c9b46a34d57e) docs: migrate open-issues backlog to GitHub Issues + annotate
-- [`e006019`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e0060194ccf2dad39a5e20759da4f3af9d358349) docs: close OI-27 + OI-30, log OI-25 production confirmation
-- [`49d794d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/49d794dd06841f7f9cd026bbafa2fff050c4191e) Fix: guard the Q-id auto-lookup against stale results (OI-30)
-- [`14085e3`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/14085e311207f75df71d641f230c26abc5e46680) Fix: neutralize wiki metacharacters in manifest-derived text (OI-27)
-- [`3cd6df9`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3cd6df91568ad6afd0eda3bd01d7e4437e6b2965) docs: close OI-34 + OI-35 (parser correctness, commit 97cd20a)
-- [`97cd20a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/97cd20a68ad2722ac634b323a5a0d45ee95b05ac) Fix: unwrap Choice image bodies + collision-safe filenames (OI-34, OI-35)
-- [`fc2f335`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/fc2f33594d8a7b986d769dd0824b7d8a09cc7c77) docs: link commit hashes in open-issues to GitHub
-- [`054d39b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/054d39b3372a2542fea21b81579287e95089ac0a) docs: close OI-38 (Metadata.json dedup + 2 MB guard, commit d785948)
-- [`d785948`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d785948d3cf32e5d94f4b9b7f28eadd752926f3e) Fix: dedupe batch drafts via shared records + 2 MB store guard (OI-38)
-- [`55cd754`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/55cd75490d51e3375f28a30805823dd84d2ecb7c) docs: close OI-25 + changelog the IIIF-only entry and import-write fix
-- [`c455893`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c4558935720b4ec551c56bc17536dad9e614b420) Fix: coalesce IIIF import draft writes into ~1 edit per 25 canvases (OI-25)
-- [`9cba9d6`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9cba9d6bc1ac8047f684e7eaa188ade5b7eea11f) feat: IIIF-only entry — drop "Browse files", make Import the primary action
-- [`21f5920`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/21f59201d4c1f4c56a0d5301885c2bce9e3279c6) chore: rename repo slug to iiif-manifest-upload-workbench
-- [`5273d45`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/5273d450630352336a5a9f6f659ce205716255cb) feat: About links as a sentence (docs + uploaded files) + record Commons pages
-- [`5921173`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/59211734a8776e5edd60cf6ae78ab3ef842e36d8) feat: wire the Commons homepage + project pages (now created)
-- [`cc1c3f3`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cc1c3f3f648398c743f102cb9eefed9d92840e1e) feat: About "Files uploaded" link points to the project category
-- [`6b4f747`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6b4f747e443c0b991b8100ffc316222fe5ebf909) docs: bring CLAUDE.md, design doc, open-issues, CHANGELOG up to date
-- [`7f60350`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7f6035029313dcafbafafcf751e57300c8bdc279) feat: IIIF app icon in every modal header + drop upstream link from About
-- [`74b8459`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/74b8459d6eecba9afb063547849db1c3fb453aa4) feat: rename the tracking category to "Uploaded with IIIF Manifest Upload Workbench"
-- [`789693e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/789693e8adaf51fee32563780d9d9ea8e910858d) feat: rewrite the About modal for the fork (GitHub links, no GitLab)
-- [`569ba1f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/569ba1ff37bc73771ad5d559193110897fa456af) feat: link the {{Artwork}} template in the confirm recap
-- [`39c9305`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/39c930599d3cc0501fc7263a345d6634eea0acef) feat: link the Wikidata property IDs in the manuscript-item label
-- [`c3add98`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c3add989b7d8f6e6aa786a608d5aa3dbdc909602) feat: empty-hero drop hint lists accepted formats
-- [`edbd193`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/edbd1932e1c5b50129a0b230af70fac0d474a5be) docs: mark OI-40 + OI-51 fixed (commit 5ffe043)
-- [`5ffe043`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/5ffe04340e9295b0b99128467d631e37e2d05898) Fix: snappier + non-hanging category check (OI-40, OI-51)
-- [`1ea507e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/1ea507e1635a6e77ee07e16dbcd402882bbe3063) Fix: stack tile dimensions + full-res link vertically
-- [`aafe673`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/aafe6732e606da81c6384872f57358e9ea88458e) feat: fuller &gt;25 MP explanation in the manifest validation report
-- [`e1e1d95`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e1e1d95ef5451f030903a196f984bed887cb243b) feat: move the &gt;25 MP note above the selection controls, full width
-- [`853f2ea`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/853f2ea1e91b0ef6d69ba7fe93db74d132d358bc) Fix: add a concrete example to the &gt;25 MP hint
-- [`a4e6621`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a4e6621551226150e1dec27ed2ce6418e57dad48) Fix: clearer &gt;25 MP explanation — cap is the IIIF server, not Commons
-- [`8162a46`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8162a46f451e66f3fb3c52c8768e6b67b6672bac) Fix: rename the "25 MP" tag to "&gt;25 MP"
-- [`f2ab84c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f2ab84c0178202eb088712dc3f5e68f5f3d2ec05) feat: per-tile native dimensions + full-res link in the canvas gallery
-- [`3965268`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3965268d75339eff58193f81aa113688ef004d34) Fix: clearer confirm-step subtitle wording
-- [`adb4e36`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/adb4e360727a8b2306c262e9a5a46bf7ae99fbdc) Fix: "25 MP" badge was clipped by the label truncation — now a thumb overlay
-- [`08973ff`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/08973ff0a7aba71e8f9aec0f4916c5a8f6d9c784) Fix: denser canvas gallery (~5 columns in a narrow modal)
-- [`98075ab`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/98075ab9a59dc3e350d8341daf3db8220ade0135) feat: wider import wizard, Invert selection, roomier confirm step
-- [`bb3235f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bb3235f9dc5f17b3cbb2d570688e8768b49a07eb) docs: OI-63 — implement chunked uploading (investigated, queued)
-- [`a091d73`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a091d73a7831c19dbf299aa87c009d0f3b97fca2) feat: category-missing notice is bold and red
-- [`997b89b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/997b89bb17105e81b5416737d5852d9b4f8d04f1) Fix: friendlier wording for the downscale notice
-- [`8283b6a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8283b6a8a33ca77c1ad5469e3eab3afb288034b4) feat: move user-store to User:&lt;u&gt;/IIIFManifestUploadWorkbench/ (auto-migrate)
-- [`3707aab`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3707aabac3244292dede1f9f40a61237a887234d) feat: repoint edit-summary attribution + Feedback button to GitHub
-- [`491b4ee`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/491b4ee4a6d714cfd18e904a50a75fc1a6099166) docs: OI-62 — Institution field/column for {{Artwork}} (queued)
-- [`489128d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/489128d0a67aad945765ffa32613a501c3e82aa2) feat: update login screen branding + links to the fork
-- [`839fde8`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/839fde88cedb23cafaa8932fc7c53230c695df49) feat: dropping a IIIF manifest .json opens the import wizard
-- [`663af3a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/663af3a4ad099e933fe99f866d69a26999269d3e) feat: IIIF branding, topbar buttons, clickable recap links, focus-mode size
-- [`4f8a530`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/4f8a5300bee83a01346f8d55de7a654694417a15) docs: catch CHANGELOG up with the wizard polish, license/institution, review
-- [`ebb8b6a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/ebb8b6a7aa42b6ff53d24fcb725421249191231a) feat: Institution field for {{Artwork}} (chooser in detail panel + column)
-- [`9c9593b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9c9593b38176372bc8999e4d579a1652b5d9d9be) Fix: PD-Art default license as a real catalog option + Artwork template + Reset-to-default
-- [`83a8a99`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/83a8a994b92a92b535d087293d22111067e38833) docs: make OI-26's four failure-handling sub-gaps explicit
-- [`7a24624`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7a24624232430ea7a2479cd3559ee285f7ddfd16) Restore __inputs/conversation.html (unintentionally deleted)
-- [`34832a4`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/34832a4ea8d66e2a558d1abd24b4f342237fdd0d) docs: multi-agent code review findings (OI-25…OI-61)
-- [`f27ac70`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f27ac701d61380b676d2a32d778f8a63a0985f4c) feat: category creation requires explicit approval in the confirm step
-- [`530e5f1`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/530e5f1a03cd1e8fdc2b0dc3b606a66fc8424480) Fix: create the per-manuscript category at publish time, not at import
-- [`cd0ca9d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cd0ca9d1c749cbb68344b226eb1fc88b2b81556a) docs: OI-18 fixed upstream — KW 130 E 1 now has a summary
-- [`e90886a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e90886afcdb1e557254b56a87361e799d83552ff) Fix: show the manifest summary in the manuscript passport
-- [`3ccc334`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3ccc334c4241d304165934381d0d428ad6b12e0e) Fix: 10 category suggestions, tighter dropdown rows
-- [`7524bab`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7524baba898872f09e82d335d3861c5580bc43d4) feat: checking-state gray-out + clickable URLs in the passport
-- [`31f8a5d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/31f8a5def24885a4a0798f965bd38276c38ff296) feat: category autosuggest as a Commons-style dropdown combobox
-- [`dee741a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/dee741a610f8703637310ef9927073a8d607c4bd) feat: category-exists confirmation is green and bold
-- [`8638837`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/86388372945fad39f59b0f5cd369f1be9500591e) feat: live category check + Commons-style autosuggest in the wizard
-- [`2d38196`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2d381964f55cb65edf7f238b27ec83bc19d81002) feat: hover zoom on gallery tiles
-- [`bcf2a7c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bcf2a7c0fc89c73e4ec79aa7c93853420e8b34b3) feat: full-detail tooltips on the canvas gallery tiles
-- [`0ff7d4e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/0ff7d4ead89c40bb22ffe5625fba6a5cf642adab) docs: owner-only OAuth consumers cannot serve the PKCE login flow
-- [`c1ed110`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c1ed110595f4a6c67b8688ed0c9bf501f52200ab) Fix: IIIF previews survive reloads (persist iiifThumbUrl in the draft)
-- [`29c21eb`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/29c21eb951389b742d446ab80317434b6c418738) Fix: stash counter + Clear entire stash sit next to the section title
-- [`6c6f2f0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6c6f2f095160e52b3869eb3a58b5f88a58d3bba4) Fix: Clear entire stash button sits right of the stash counter
-- [`18bd291`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/18bd291b7c3be375c3cd63936ce1466ec558da72) docs: NoScript/content-blocker failure mode documented
-- [`72bbbc5`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/72bbbc516d9f2ed3bf0eaa319fcc6afa329aae04) feat: confirm step lists every target filename in a scrollable box
-- [`dbcc356`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/dbcc356d25baa7c622bb524d839ef4445d565998) feat: Wikidata candidate in the wizard links to the item
-- [`7cb7708`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7cb77088d9f0e50483e64fe891973de20e554adc) Fix: align the two empty-hero buttons
-- [`56f5245`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/56f52453804d23672947ed10e5ded4c9e24a4361) feat: Import IIIF manifest button on the empty-stash hero
-- [`d8a5935`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d8a5935a0fd1581a34de3d3955c728888c1a6817) feat: Clear-stash modal leads with Special:UploadStash
-- [`78b3af6`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/78b3af6ca163160bd0d6cbe54d150fd0d59f64f4) feat: Clear stash action in the stash section header
-- [`112e9c8`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/112e9c8b3ac87162ebcadeae52320b5f86563190) feat: default IIIF import license is now {{PD-Art|PD-old-100-expired}}
-- [`30d941d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/30d941d909fdbe9403640a30a29d1baedd0ae030) feat: show per-error breakdown in the IIIF import report
-- [`6ef29d0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6ef29d0ac5da93a418d4e45f63b7cd78f861c113) feat: Import IIIF manifest wizard + import pipeline (Phases 2+4)
-- [`191c718`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/191c7183d1fa267be44864bf79378385a6871982) docs: open-issues register (__inputs/open-issues.md)
-- [`b30895f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b30895fc7dd3e2c6648841e255f5a6e06067eb9a) feat: IIIF-to-workbench metadata mapper + Wikidata lookup (Phase 3)
-- [`b6eee0e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b6eee0e34511746bb10e3515592291207295313a) docs: KB IIIF canonical base is now iiif.bibliotheken.nl
-- [`1709b26`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/1709b2627f7746a95a70f2418c97f960fd4c3d53) docs: record Phase 0.3 mining outcomes in the design doc
-- [`167a253`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/167a2537c0d7e90f0a5c4c91905393a0526e994d) Merge branch 'feat/iiif-parser'
-- [`9325ed7`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9325ed79bc9154be4a554f640221e8cbf4c0efc1) docs: move repo to KBNLwikimedia org + Commons best-practice research
-- [`37b389c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/37b389ceb22d1094bd23871410a60d0ab03bac10) feat: IIIF Presentation 3.0 manifest parser (Phase 1)
+- `2026-07-10 00:53` [`7759d0d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7759d0d406049a9fe4749efda1371bd4b34ff97e) chore: release v0.40.0 — the IIIF-ingestor milestone
+- `2026-07-10 00:43` [`7bc1373`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7bc13736fc5d120d9e8ddf0d07ad3b060fd30396) Fix: don't repeat the category name next to the button (single variant)
+- `2026-07-10 00:41` [`f11ea6f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f11ea6f08ec63443edc41b1689976f81376be03c) feat: discoverable + fuller explanations for all source badges
+- `2026-07-10 00:38` [`6ec93c9`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6ec93c94f40950829305640d106a3c8f21aa9273) feat: name the found category in the panel head + explain source badges
+- `2026-07-10 00:35` [`f12c1ff`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f12c1ffbf63fda7cfe24522452949527f576b3ef) feat: clearer existing-category UX — no contradiction, real button
+- `2026-07-10 00:28` [`bfb5239`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bfb5239fca91f8e631ecfab56a0a262dc15d2a69) docs: close OI-68 (existing-category discovery shipped)
+- `2026-07-10 00:17` [`d9a221f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d9a221ff7a7f8b879af0947d1847fa69355ba31b) feat: source the Commons gallery from P935 (dedicated property)
+- `2026-07-10 00:14` [`74c7f84`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/74c7f84d37986fe4d939465c0142421f292411fa) feat: link the Wikidata item's Commons category too (not just the gallery)
+- `2026-07-09 20:52` [`a312feb`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a312feb7e7c17f06d009feeda314e5ca91c05a5d) Fix: TDZ crash — move variant-discovery effect below `mapping`
+- `2026-07-09 13:12` [`105e210`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/105e2108da251b86f56898dbde74ebcc2246c6cc) docs: changelog OI-68 B/C (existing-category discovery)
+- `2026-07-09 13:11` [`b75820b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b75820bd5c9700b362c899c42a3100e35f5962d6) feat: discover existing category variants — naming + verified fuzzy search (OI-68 B/C)
+- `2026-07-09 13:01` [`a2ea785`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a2ea785ed23de5442431c345bf84d810f3f676c5) feat: resolve merged/redirected Wikidata Q-ids to the canonical item
+- `2026-07-09 12:57` [`7a1101e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7a1101e4858585f4917fd2465e1583bb14091b83) Fix: Wikidata lookup failure is retry-able, not a false "no item found"
+- `2026-07-09 12:42` [`cfa0fe9`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cfa0fe96fe4a170ee85b05253f81e49c2b964a6c) docs: changelog OI-68 Phase A
+- `2026-07-09 12:40` [`7377fb7`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7377fb79bf0412b8b836702ee57d818045400966) feat: offer the manuscript's existing Commons category from Wikidata (OI-68 A)
+- `2026-07-09 12:32` [`98c877c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/98c877cfd9fc0ee3f6ac7028df18cafd9fb8fa44) docs: OI-68 — decide single category per manuscript (never multiple)
+- `2026-07-09 12:21` [`08c871f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/08c871fbcc37f1f0dafdfe24c28eacc4f4e8fac6) docs: OI-68 — find existing Commons category-variant discovery (issue #68)
+- `2026-07-09 12:05` [`d08361d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d08361dbac35f0622eaa144277123fba52a02799) feat: label "Suggested category for this manuscript"
+- `2026-07-09 12:04` [`0045125`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/0045125703de9407964e727751d75e00885985df) feat: "View manifest (JSON)" inspector in the review step
+- `2026-07-09 11:57` [`ea70179`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/ea70179095b1909a6a8485432bc47b4d7edfda91) feat: lightbox closes only via the × button (not a backdrop click)
+- `2026-07-09 11:53` [`fdf870b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/fdf870b960820f7ab04207c2f0b3aeddf5c3af01) feat: loading spinner in the lightbox while an image loads
+- `2026-07-09 11:45` [`e9029ed`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e9029edbeeba7dc4609e81bf7e44ca33aacbc220) perf: preload lightbox neighbours so ‹ / › feels instant
+- `2026-07-09 11:38` [`9c13478`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9c1347861baa08b9e9af863872bc0e622aff69ae) feat: carousel page numbers + lightbox; smaller nav buttons
+- `2026-07-09 11:24` [`70d5bcb`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/70d5bcb1684d129676b7d6fcb568595d2ca12f5f) feat: review-step thumbnail carousel over all canvases
+- `2026-07-09 11:19` [`bc79be0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bc79be083f413fbb902dced39603ea82cee2b7ed) Fix: hide the report box when there's nothing (visible) to report
+- `2026-07-09 11:17` [`f8de365`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f8de36597ca0ed242343981344fc883a78f7784d) feat: group the Wikidata block in a legended section like Categories
+- `2026-07-09 10:32` [`c61457a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c61457ae4a97b5103540971916117d2c5da1b2c0) feat: parent-category autosuggest + Set/Reset default; move P6243/P180 note
+- `2026-07-09 10:24` [`a8f115f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a8f115fa593605426336f2e082c409f7dfd6e570) feat: dedicated Categories section with an editable, resettable parent
+- `2026-07-09 10:12` [`7fa3e47`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7fa3e47973b33018f73ec030cb31a988661e4303) feat: surface the parent category in the review step (+ link it)
+- `2026-07-09 02:05` [`818d014`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/818d0147ccbb9ac5a259a279c63ddefc3b718bd0) docs: close OI-01 + OI-02 (Phase 5.2 Artwork wiring, commit 635658a)
+- `2026-07-09 02:02` [`635658a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/635658aba9d3763f46b5445fecd8989b4726fbdc) Fix: wire {{Artwork}} medium/dimensions/accession/date (OI-01, OI-02)
+- `2026-07-09 01:27` [`4bdafc0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/4bdafc09aff7bf9ac2ad2631dcadf52dbe7d3d1f) feat: link the "category already exists" hint to the Commons category
+- `2026-07-09 01:23` [`6e07746`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6e077462b2657e72316bf2944fb9fe42b60872a9) feat: four preview thumbs in the review step (first page + three random)
+- `2026-07-09 01:21` [`11e0638`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/11e0638dbd34f1c60f1dda6aadd23692d1f4b921) feat: three preview thumbs in the review step (first page + two random)
+- `2026-07-09 01:19` [`74a8662`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/74a866239e80ffd8d8d98d65d9b3d731032dfafa) Fix: state the 25 MP note once — counts move to the select step
+- `2026-07-09 00:59` [`61d9b7f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/61d9b7fbf587c6cccdd11cee8c655acc71f6ca4e) docs: move fully-fixed items to the Closed table (own convention)
+- `2026-07-09 00:46` [`05cccee`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/05cccee79e8b6d83a692cfc66f68516e27f3417e) docs: OI-67 — KB-catalogue (GGC) enrichment design, recorded as issue #67
+- `2026-07-09 00:32` [`ff22889`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/ff22889d73e98988614de5a9e380215e7ca80dc0) Merge: placeholder-field review + first-page preview thumbnail (OI-66)
+- `2026-07-09 00:17` [`36a7486`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/36a7486c9571e8d0e5fc48857844d13c7f36c4ba) feat: drop the review thumbnail caption (raw canvas label read poorly)
+- `2026-07-09 00:04` [`842d7d1`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/842d7d10d6df2bbf253e2f7a56437331a549364f) docs: changelog placeholder-field review + preview thumb
+- `2026-07-09 00:02` [`2e779de`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2e779de2d31d8bae3e7feee75372d0a261edd846) feat: review placeholder metadata fields instead of silently dropping them
+- `2026-07-08 19:50` [`9cd9849`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9cd9849d04fd52676cafe6dde07faab938c470ee) docs: changelog OI-26 import-path retry/backoff
+- `2026-07-08 18:42` [`1ffe04a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/1ffe04ae50c39ff332635d364d17885407655657) Fix: retry/backoff/maxlag/badtoken for the IIIF import pipeline (OI-26)
+- `2026-07-08 18:22` [`2259c4b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2259c4b4af9286d7de9b0d76787523c07ac4076e) Fix: OI-65 — always warn on leave instead of a silent Back trap
+- `2026-07-08 18:00` [`2ca0e01`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2ca0e0147a4c4e370e6c6037fafc74a2c5280b2b) docs: changelog OI-65 (Back-button OAuth trap)
+- `2026-07-08 18:00` [`8fcfc73`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8fcfc7381d6b115481a98b4c6a6a334f2d1482c2) Fix: trap Back at the app root so it can't land on the OAuth screen (OI-65)
+- `2026-07-08 17:20` [`06f1a6d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/06f1a6d9754d027f299f9bcdd832c9b46a34d57e) docs: migrate open-issues backlog to GitHub Issues + annotate
+- `2026-07-08 17:03` [`e006019`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e0060194ccf2dad39a5e20759da4f3af9d358349) docs: close OI-27 + OI-30, log OI-25 production confirmation
+- `2026-07-08 17:01` [`49d794d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/49d794dd06841f7f9cd026bbafa2fff050c4191e) Fix: guard the Q-id auto-lookup against stale results (OI-30)
+- `2026-07-08 17:01` [`14085e3`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/14085e311207f75df71d641f230c26abc5e46680) Fix: neutralize wiki metacharacters in manifest-derived text (OI-27)
+- `2026-07-08 16:32` [`3cd6df9`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3cd6df91568ad6afd0eda3bd01d7e4437e6b2965) docs: close OI-34 + OI-35 (parser correctness, commit 97cd20a)
+- `2026-07-08 16:30` [`97cd20a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/97cd20a68ad2722ac634b323a5a0d45ee95b05ac) Fix: unwrap Choice image bodies + collision-safe filenames (OI-34, OI-35)
+- `2026-07-08 16:09` [`fc2f335`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/fc2f33594d8a7b986d769dd0824b7d8a09cc7c77) docs: link commit hashes in open-issues to GitHub
+- `2026-07-08 16:08` [`054d39b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/054d39b3372a2542fea21b81579287e95089ac0a) docs: close OI-38 (Metadata.json dedup + 2 MB guard, commit d785948)
+- `2026-07-08 16:07` [`d785948`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d785948d3cf32e5d94f4b9b7f28eadd752926f3e) Fix: dedupe batch drafts via shared records + 2 MB store guard (OI-38)
+- `2026-07-08 15:54` [`55cd754`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/55cd75490d51e3375f28a30805823dd84d2ecb7c) docs: close OI-25 + changelog the IIIF-only entry and import-write fix
+- `2026-07-08 15:52` [`c455893`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c4558935720b4ec551c56bc17536dad9e614b420) Fix: coalesce IIIF import draft writes into ~1 edit per 25 canvases (OI-25)
+- `2026-07-08 15:52` [`9cba9d6`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9cba9d6bc1ac8047f684e7eaa188ade5b7eea11f) feat: IIIF-only entry — drop "Browse files", make Import the primary action
+- `2026-07-08 15:06` [`21f5920`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/21f59201d4c1f4c56a0d5301885c2bce9e3279c6) chore: rename repo slug to iiif-manifest-upload-workbench
+- `2026-07-08 14:46` [`5273d45`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/5273d450630352336a5a9f6f659ce205716255cb) feat: About links as a sentence (docs + uploaded files) + record Commons pages
+- `2026-07-08 14:43` [`5921173`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/59211734a8776e5edd60cf6ae78ab3ef842e36d8) feat: wire the Commons homepage + project pages (now created)
+- `2026-07-08 14:35` [`cc1c3f3`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cc1c3f3f648398c743f102cb9eefed9d92840e1e) feat: About "Files uploaded" link points to the project category
+- `2026-07-08 14:24` [`6b4f747`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6b4f747e443c0b991b8100ffc316222fe5ebf909) docs: bring CLAUDE.md, design doc, open-issues, CHANGELOG up to date
+- `2026-07-08 13:55` [`7f60350`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7f6035029313dcafbafafcf751e57300c8bdc279) feat: IIIF app icon in every modal header + drop upstream link from About
+- `2026-07-08 13:37` [`74b8459`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/74b8459d6eecba9afb063547849db1c3fb453aa4) feat: rename the tracking category to "Uploaded with IIIF Manifest Upload Workbench"
+- `2026-07-08 13:35` [`789693e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/789693e8adaf51fee32563780d9d9ea8e910858d) feat: rewrite the About modal for the fork (GitHub links, no GitLab)
+- `2026-07-08 13:15` [`569ba1f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/569ba1ff37bc73771ad5d559193110897fa456af) feat: link the {{Artwork}} template in the confirm recap
+- `2026-07-08 13:09` [`39c9305`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/39c930599d3cc0501fc7263a345d6634eea0acef) feat: link the Wikidata property IDs in the manuscript-item label
+- `2026-07-08 13:05` [`c3add98`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c3add989b7d8f6e6aa786a608d5aa3dbdc909602) feat: empty-hero drop hint lists accepted formats
+- `2026-07-08 12:58` [`edbd193`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/edbd1932e1c5b50129a0b230af70fac0d474a5be) docs: mark OI-40 + OI-51 fixed (commit 5ffe043)
+- `2026-07-08 12:57` [`5ffe043`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/5ffe04340e9295b0b99128467d631e37e2d05898) Fix: snappier + non-hanging category check (OI-40, OI-51)
+- `2026-07-08 12:52` [`1ea507e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/1ea507e1635a6e77ee07e16dbcd402882bbe3063) Fix: stack tile dimensions + full-res link vertically
+- `2026-07-08 12:50` [`aafe673`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/aafe6732e606da81c6384872f57358e9ea88458e) feat: fuller &gt;25 MP explanation in the manifest validation report
+- `2026-07-08 12:48` [`e1e1d95`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e1e1d95ef5451f030903a196f984bed887cb243b) feat: move the &gt;25 MP note above the selection controls, full width
+- `2026-07-08 12:46` [`853f2ea`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/853f2ea1e91b0ef6d69ba7fe93db74d132d358bc) Fix: add a concrete example to the &gt;25 MP hint
+- `2026-07-08 12:45` [`a4e6621`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a4e6621551226150e1dec27ed2ce6418e57dad48) Fix: clearer &gt;25 MP explanation — cap is the IIIF server, not Commons
+- `2026-07-08 12:42` [`8162a46`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8162a46f451e66f3fb3c52c8768e6b67b6672bac) Fix: rename the "25 MP" tag to "&gt;25 MP"
+- `2026-07-08 12:39` [`f2ab84c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f2ab84c0178202eb088712dc3f5e68f5f3d2ec05) feat: per-tile native dimensions + full-res link in the canvas gallery
+- `2026-07-08 12:33` [`3965268`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3965268d75339eff58193f81aa113688ef004d34) Fix: clearer confirm-step subtitle wording
+- `2026-07-08 12:31` [`adb4e36`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/adb4e360727a8b2306c262e9a5a46bf7ae99fbdc) Fix: "25 MP" badge was clipped by the label truncation — now a thumb overlay
+- `2026-07-08 12:29` [`08973ff`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/08973ff0a7aba71e8f9aec0f4916c5a8f6d9c784) Fix: denser canvas gallery (~5 columns in a narrow modal)
+- `2026-07-08 12:23` [`98075ab`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/98075ab9a59dc3e350d8341daf3db8220ade0135) feat: wider import wizard, Invert selection, roomier confirm step
+- `2026-07-08 12:17` [`bb3235f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bb3235f9dc5f17b3cbb2d570688e8768b49a07eb) docs: OI-63 — implement chunked uploading (investigated, queued)
+- `2026-07-08 12:14` [`a091d73`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/a091d73a7831c19dbf299aa87c009d0f3b97fca2) feat: category-missing notice is bold and red
+- `2026-07-08 12:08` [`997b89b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/997b89bb17105e81b5416737d5852d9b4f8d04f1) Fix: friendlier wording for the downscale notice
+- `2026-07-08 12:02` [`8283b6a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/8283b6a8a33ca77c1ad5469e3eab3afb288034b4) feat: move user-store to User:&lt;u&gt;/IIIFManifestUploadWorkbench/ (auto-migrate)
+- `2026-07-08 11:55` [`3707aab`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3707aabac3244292dede1f9f40a61237a887234d) feat: repoint edit-summary attribution + Feedback button to GitHub
+- `2026-07-08 11:51` [`491b4ee`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/491b4ee4a6d714cfd18e904a50a75fc1a6099166) docs: OI-62 — Institution field/column for {{Artwork}} (queued)
+- `2026-07-08 11:50` [`489128d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/489128d0a67aad945765ffa32613a501c3e82aa2) feat: update login screen branding + links to the fork
+- `2026-07-08 11:47` [`839fde8`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/839fde88cedb23cafaa8932fc7c53230c695df49) feat: dropping a IIIF manifest .json opens the import wizard
+- `2026-07-08 11:44` [`663af3a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/663af3a4ad099e933fe99f866d69a26999269d3e) feat: IIIF branding, topbar buttons, clickable recap links, focus-mode size
+- `2026-07-08 00:27` [`4f8a530`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/4f8a5300bee83a01346f8d55de7a654694417a15) docs: catch CHANGELOG up with the wizard polish, license/institution, review
+- `2026-07-08 00:25` [`ebb8b6a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/ebb8b6a7aa42b6ff53d24fcb725421249191231a) feat: Institution field for {{Artwork}} (chooser in detail panel + column)
+- `2026-07-08 00:10` [`9c9593b`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9c9593b38176372bc8999e4d579a1652b5d9d9be) Fix: PD-Art default license as a real catalog option + Artwork template + Reset-to-default
+- `2026-07-07 23:40` [`83a8a99`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/83a8a994b92a92b535d087293d22111067e38833) docs: make OI-26's four failure-handling sub-gaps explicit
+- `2026-07-07 23:36` [`7a24624`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7a24624232430ea7a2479cd3559ee285f7ddfd16) Restore __inputs/conversation.html (unintentionally deleted)
+- `2026-07-07 23:34` [`34832a4`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/34832a4ea8d66e2a558d1abd24b4f342237fdd0d) docs: multi-agent code review findings (OI-25…OI-61)
+- `2026-07-07 23:13` [`f27ac70`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/f27ac701d61380b676d2a32d778f8a63a0985f4c) feat: category creation requires explicit approval in the confirm step
+- `2026-07-07 23:10` [`530e5f1`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/530e5f1a03cd1e8fdc2b0dc3b606a66fc8424480) Fix: create the per-manuscript category at publish time, not at import
+- `2026-07-07 23:02` [`cd0ca9d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/cd0ca9d1c749cbb68344b226eb1fc88b2b81556a) docs: OI-18 fixed upstream — KW 130 E 1 now has a summary
+- `2026-07-07 22:59` [`e90886a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/e90886afcdb1e557254b56a87361e799d83552ff) Fix: show the manifest summary in the manuscript passport
+- `2026-07-07 22:55` [`3ccc334`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/3ccc334c4241d304165934381d0d428ad6b12e0e) Fix: 10 category suggestions, tighter dropdown rows
+- `2026-07-07 22:51` [`7524bab`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7524baba898872f09e82d335d3861c5580bc43d4) feat: checking-state gray-out + clickable URLs in the passport
+- `2026-07-07 22:49` [`31f8a5d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/31f8a5def24885a4a0798f965bd38276c38ff296) feat: category autosuggest as a Commons-style dropdown combobox
+- `2026-07-07 22:45` [`dee741a`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/dee741a610f8703637310ef9927073a8d607c4bd) feat: category-exists confirmation is green and bold
+- `2026-07-07 22:43` [`8638837`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/86388372945fad39f59b0f5cd369f1be9500591e) feat: live category check + Commons-style autosuggest in the wizard
+- `2026-07-07 22:39` [`2d38196`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/2d381964f55cb65edf7f238b27ec83bc19d81002) feat: hover zoom on gallery tiles
+- `2026-07-07 22:35` [`bcf2a7c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/bcf2a7c0fc89c73e4ec79aa7c93853420e8b34b3) feat: full-detail tooltips on the canvas gallery tiles
+- `2026-07-07 22:22` [`0ff7d4e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/0ff7d4ead89c40bb22ffe5625fba6a5cf642adab) docs: owner-only OAuth consumers cannot serve the PKCE login flow
+- `2026-07-07 22:14` [`c1ed110`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/c1ed110595f4a6c67b8688ed0c9bf501f52200ab) Fix: IIIF previews survive reloads (persist iiifThumbUrl in the draft)
+- `2026-07-07 22:01` [`29c21eb`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/29c21eb951389b742d446ab80317434b6c418738) Fix: stash counter + Clear entire stash sit next to the section title
+- `2026-07-07 21:59` [`6c6f2f0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6c6f2f095160e52b3869eb3a58b5f88a58d3bba4) Fix: Clear entire stash button sits right of the stash counter
+- `2026-07-07 21:53` [`18bd291`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/18bd291b7c3be375c3cd63936ce1466ec558da72) docs: NoScript/content-blocker failure mode documented
+- `2026-07-07 21:49` [`72bbbc5`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/72bbbc516d9f2ed3bf0eaa319fcc6afa329aae04) feat: confirm step lists every target filename in a scrollable box
+- `2026-07-07 21:46` [`dbcc356`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/dbcc356d25baa7c622bb524d839ef4445d565998) feat: Wikidata candidate in the wizard links to the item
+- `2026-07-07 21:45` [`7cb7708`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/7cb77088d9f0e50483e64fe891973de20e554adc) Fix: align the two empty-hero buttons
+- `2026-07-07 21:40` [`56f5245`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/56f52453804d23672947ed10e5ded4c9e24a4361) feat: Import IIIF manifest button on the empty-stash hero
+- `2026-07-07 18:35` [`d8a5935`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/d8a5935a0fd1581a34de3d3955c728888c1a6817) feat: Clear-stash modal leads with Special:UploadStash
+- `2026-07-07 18:33` [`78b3af6`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/78b3af6ca163160bd0d6cbe54d150fd0d59f64f4) feat: Clear stash action in the stash section header
+- `2026-07-07 18:23` [`112e9c8`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/112e9c8b3ac87162ebcadeae52320b5f86563190) feat: default IIIF import license is now {{PD-Art|PD-old-100-expired}}
+- `2026-07-07 17:54` [`30d941d`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/30d941d909fdbe9403640a30a29d1baedd0ae030) feat: show per-error breakdown in the IIIF import report
+- `2026-07-07 17:24` [`6ef29d0`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/6ef29d0ac5da93a418d4e45f63b7cd78f861c113) feat: Import IIIF manifest wizard + import pipeline (Phases 2+4)
+- `2026-07-07 17:06` [`191c718`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/191c7183d1fa267be44864bf79378385a6871982) docs: open-issues register (__inputs/open-issues.md)
+- `2026-07-07 16:59` [`b30895f`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b30895fc7dd3e2c6648841e255f5a6e06067eb9a) feat: IIIF-to-workbench metadata mapper + Wikidata lookup (Phase 3)
+- `2026-07-07 16:41` [`b6eee0e`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/b6eee0e34511746bb10e3515592291207295313a) docs: KB IIIF canonical base is now iiif.bibliotheken.nl
+- `2026-07-07 16:26` [`1709b26`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/1709b2627f7746a95a70f2418c97f960fd4c3d53) docs: record Phase 0.3 mining outcomes in the design doc
+- `2026-07-07 16:24` [`167a253`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/167a2537c0d7e90f0a5c4c91905393a0526e994d) Merge branch 'feat/iiif-parser'
+- `2026-07-07 16:23` [`9325ed7`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/9325ed79bc9154be4a554f640221e8cbf4c0efc1) docs: move repo to KBNLwikimedia org + Commons best-practice research
+- `2026-07-07 16:17` [`37b389c`](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/commit/37b389ceb22d1094bd23871410a60d0ab03bac10) feat: IIIF Presentation 3.0 manifest parser (Phase 1)
 
 </details>
 
