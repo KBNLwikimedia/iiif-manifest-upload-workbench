@@ -4650,17 +4650,6 @@ body.col-resizing * { cursor: col-resize !important; }
 .modal__head > div { flex: 1; min-width: 0; }
 .modal__title { font-size: 17px; font-weight: 600; margin: 0; }
 .modal__sub { margin: 4px 0 0; font-size: 13px; color: var(--color-subtle); line-height: 1.4; }
-/* Small "Step N of 2" pill for coupled two-step dialogs (CC0 → waiver). */
-.modal__stepbadge {
-  display: inline-block;
-  margin-right: 8px;
-  padding: 1px 8px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--color-progressive, #36c);
-  background: var(--background-color-progressive-subtle, #eaf3ff);
-}
 /* Second header line in the IIIF wizard: step-specific info under the
    constant manuscript-identity line. */
 /* Prominent manuscript-identity line (Short title — signature) shown on

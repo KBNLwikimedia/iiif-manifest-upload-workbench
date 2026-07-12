@@ -35,10 +35,9 @@ export function WaiverModal({ onAcknowledge, onBack }) {
         <header className="modal__head">
           <div>
             <h2 className="modal__title" id="waiver-modal-title">
-              Finish your upload within 48 hours
+              Step 2/2 - Finish your upload within 48 hours
             </h2>
             <p className="modal__sub">
-              <span className="modal__stepbadge">Step 2 of 2</span>
               One thing to acknowledge about how imported images are staged on Commons.
             </p>
           </div>

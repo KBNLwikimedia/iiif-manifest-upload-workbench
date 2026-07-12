@@ -12,8 +12,6 @@
 
 import React from 'react';
 
-const Icon = window.Icon;
-
 // Always show (once per session): the CC0 consent is no longer persisted, so
 // the user re-agrees each new session. DEMO_MODE is filtered out by App.
 export function shouldShowCc0Modal() {
@@ -52,21 +50,12 @@ export function Cc0Modal({ username, onAcknowledge, onDismiss }) {
         <header className="modal__head">
           <div>
             <h2 className="modal__title" id="cc0-modal-title">
-              Heads up: your workbench data is public
+              Step 1/2 - Heads up: your workbench data is public
             </h2>
             <p className="modal__sub">
-              <span className="modal__stepbadge">Step 1 of 2</span>
               Quick notice about how your drafts and preferences are stored.
             </p>
           </div>
-          <button
-            className="btn btn--quiet btn--icon-only"
-            onClick={onDismiss}
-            aria-label="Close — you'll see this again next session"
-            title="Close — you'll see this again next session"
-          >
-            {Icon ? <Icon name="close" size={16} /> : '×'}
-          </button>
         </header>
 
         <div className="modal__body cc0-modal__body">
