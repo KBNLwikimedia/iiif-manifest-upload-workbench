@@ -203,7 +203,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // modal reopens where the user last worked; fall back to KB.
   const [recentTab, setRecentTab] = React.useState(() => {
     const last = getRecentManifests()[0];
-    return last ? (providerForUrl(last.url) || 'other') : 'kb';
+    return last ? (providerForUrl(recentKey(last)) || 'other') : 'kb';
   });
   // Provider profile (OI-78 scaffolding). Only KB is selectable for now; the
   // eCodices card is shown disabled. Doesn't gate loading yet.
@@ -518,7 +518,8 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     setRecent(getRecentManifests());
     // Keep the active tab on the collection just loaded, so going Back (and
     // the next modal open) shows the list the user is actually working from.
-    setRecentTab(providerForUrl(u) || 'other');
+    // Classify by the canonical identity, not the (possibly mirror) reload url.
+    setRecentTab(providerForUrl(recentKey({ id: idUrl, url: u })) || 'other');
   };
 
   const loadUrl = async (overrideUrl) => {
@@ -1168,7 +1169,9 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                 const isFlagged = (r) => (r.dupNames || 0) > 0 || (r.dupImages || 0) > 0;
                 const groups = { kb: [], ecodices: [], other: [], needswork: [] };
                 for (const r of recent) {
-                  groups[providerForUrl(r.url) || 'other'].push(r);
+                  // Classify by the canonical identity (manifest id when present),
+                  // so a KB manuscript loaded via a mirror URL still lands in KB.
+                  groups[providerForUrl(recentKey(r)) || 'other'].push(r);
                   // OI-85: the "Needs work" tab collects flagged manifests across
                   // every provider, so erroneous ones are findable in one place.
                   if (isFlagged(r)) groups.needswork.push(r);
@@ -1230,7 +1233,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                           className="iiif-recent__item"
                           onClick={() => loadUrl(r.url)}
                           disabled={busy}
-                          title={r.url}
+                          title={recentKey(r)}
                         >
                           {r.thumb && (
                             <img
@@ -1247,7 +1250,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                               {r.signature && <span className="iiif-recent__sig">{r.signature}</span>}
                               {r.signature && r.title && ' — '}
                               {r.title}
-                              {!r.signature && !r.title && r.url}
+                              {!r.signature && !r.title && recentKey(r)}
                               {/* OI-85: red ⚠ behind the name flags an erroneous
                                   manifest in every tab. */}
                               {isFlagged(r) && (
@@ -1259,7 +1262,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                             </span>
                             {activeTab === 'needswork' && isFlagged(r)
                               ? <span className="iiif-recent__flags">{dupSummaryText(r)}</span>
-                              : (r.signature || r.title) && <span className="iiif-recent__url">{r.url}</span>}
+                              : (r.signature || r.title) && <span className="iiif-recent__url">{recentKey(r)}</span>}
                           </span>
                         </button>
                         <button
