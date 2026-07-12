@@ -958,30 +958,34 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
         }}
         onMouseLeave={clearHoverPreview}
       >
-        <span className="iiif-canvas__num" aria-hidden="true">{c.index + 1}</span>
-        <input
-          type="checkbox"
-          className="iiif-canvas__check"
-          checked={selected.has(c.index)}
-          onChange={() => toggleOne(c.index)}
-        />
-        <img src={c.thumbUrl} alt={c.label || `canvas ${c.index + 1}`} loading="lazy" />
-        <span className="iiif-canvas__badges">
-          {c.downscaled && (
-            <em className="iiif-canvas__badge" title="This image is larger than 25 megapixels, so it arrives slightly smaller (still high-res).">&gt;25 MP</em>
-          )}
-          {collisions.dupLabelIdx.has(c.index) && (
-            <em
-              className="iiif-canvas__badge iiif-canvas__badge--dup-name"
-              title={`Same label as image${(collisions.labelPartners.get(c.index) || []).length === 1 ? '' : 's'} ${(collisions.labelPartners.get(c.index) || []).join(', ')} — they would collide into one Commons filename. Rename in the next step.`}
-            >dup. name = {(collisions.labelPartners.get(c.index) || []).join(', ')}</em>
-          )}
-          {collisions.dupImageIdx.has(c.index) && (
-            <em
-              className="iiif-canvas__badge iiif-canvas__badge--dup-image"
-              title={`The exact same picture as image${(collisions.imagePartners.get(c.index) || []).length === 1 ? '' : 's'} ${(collisions.imagePartners.get(c.index) || []).join(', ')} (identical SHA-1).`}
-            >dup. image = {(collisions.imagePartners.get(c.index) || []).join(', ')}</em>
-          )}
+        {/* Media area — mirrors the stash Card's .card__media: a fixed-aspect
+            thumbnail that the overlays (number, checkbox, badges) sit on. */}
+        <span className="iiif-canvas__media">
+          <span className="iiif-canvas__num" aria-hidden="true">{c.index + 1}</span>
+          <input
+            type="checkbox"
+            className="iiif-canvas__check"
+            checked={selected.has(c.index)}
+            onChange={() => toggleOne(c.index)}
+          />
+          <img src={c.thumbUrl} alt={c.label || `canvas ${c.index + 1}`} loading="lazy" />
+          <span className="iiif-canvas__badges">
+            {c.downscaled && (
+              <em className="iiif-canvas__badge" title="This image is larger than 25 megapixels, so it arrives slightly smaller (still high-res).">&gt;25 MP</em>
+            )}
+            {collisions.dupLabelIdx.has(c.index) && (
+              <em
+                className="iiif-canvas__badge iiif-canvas__badge--dup-name"
+                title={`Same label as image${(collisions.labelPartners.get(c.index) || []).length === 1 ? '' : 's'} ${(collisions.labelPartners.get(c.index) || []).join(', ')} — they would collide into one Commons filename. Rename in the next step.`}
+              >dup. name = {(collisions.labelPartners.get(c.index) || []).join(', ')}</em>
+            )}
+            {collisions.dupImageIdx.has(c.index) && (
+              <em
+                className="iiif-canvas__badge iiif-canvas__badge--dup-image"
+                title={`The exact same picture as image${(collisions.imagePartners.get(c.index) || []).length === 1 ? '' : 's'} ${(collisions.imagePartners.get(c.index) || []).join(', ')} (identical SHA-1).`}
+              >dup. image = {(collisions.imagePartners.get(c.index) || []).join(', ')}</em>
+            )}
+          </span>
         </span>
         <span className="iiif-canvas__label">
           {c.label || `#${c.index + 1}`}

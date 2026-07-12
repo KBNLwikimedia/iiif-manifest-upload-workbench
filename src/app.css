@@ -9321,11 +9321,20 @@ body.col-resizing * { cursor: col-resize !important; }
   display: flex;
   flex-direction: column;
   border: 2px solid var(--border-color-base);
-  border-radius: 6px;
+  border-radius: var(--border-radius-large);
   overflow: hidden;
   cursor: pointer;
   position: relative;
   opacity: 0.55;
+}
+/* Media area — mirrors .card__media: a fixed 3/4 (portrait) thumbnail box the
+   overlays sit on, so the whole manuscript page shows (was a short 110px band)
+   and the tile reads like a stash/history card. */
+.iiif-canvas__media {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--background-color-neutral);
 }
 
 .iiif-canvas--on {
@@ -9361,7 +9370,8 @@ body.col-resizing * { cursor: col-resize !important; }
 .iiif-canvas__check {
   position: absolute;
   left: 50%;
-  top: 86px;
+  top: auto;
+  bottom: 8px;                 /* near the bottom of the 3/4 media (was top:86px for the old 110px band) */
   transform: translateX(-50%);
   z-index: 1;
   width: 18px;
@@ -9375,14 +9385,18 @@ body.col-resizing * { cursor: col-resize !important; }
 
 .iiif-canvas img {
   width: 100%;
-  height: 110px;
+  height: 100%;
   object-fit: cover;
+  display: block;
   background: var(--background-color-neutral-subtle, #f0f0f0);
 }
 
 .iiif-canvas__label {
-  font-size: 11px;
-  padding: 4px 6px;
+  /* Match .card__title: semibold, emphasized, single-line ellipsis. */
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semi-bold);
+  color: var(--color-emphasized);
+  padding: var(--spacing-50) var(--spacing-75) 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -9789,8 +9803,8 @@ body.col-resizing * { cursor: col-resize !important; }
   flex-direction: column;
   align-items: flex-start;
   gap: 1px;
-  padding: 0 6px 5px;
-  font-size: 10px;
+  padding: 0 var(--spacing-75) var(--spacing-50);
+  font-size: var(--font-size-x-small);
   color: var(--color-subtle);
 }
 
