@@ -971,16 +971,34 @@ export function getRecentManifests() {
   return Array.isArray(arr) ? arr.filter((r) => r && r.url) : [];
 }
 
-export function addRecentManifest({ url, signature, title, thumb, dupNames, dupImages } = {}) {
+// OI-88: an entry's stable identity is the manifest's self-declared `id`
+// (host-independent, and identical whether the manifest was loaded by typed
+// URL or dropped as a file) when it's an http(s) URL, else the reload URL.
+// Trailing slashes are ignored so `…/kw-1` and `…/kw-1/` are one manifest.
+// Dedup, issue records and the needs-work flag all key on this — not on the
+// raw reload URL, which varies between load routes for the same manuscript.
+function normId(id) {
+  const s = String(id || '').trim().replace(/\/+$/, '');
+  return /^https?:\/\//i.test(s) ? s : '';
+}
+export function recentKey(entry) {
+  return normId(entry?.id) || String(entry?.url || '').trim();
+}
+
+export function addRecentManifest({ url, id, signature, title, thumb, dupNames, dupImages } = {}) {
   const u = String(url || '').trim();
   if (!u) return;
+  const key = normId(id) || u; // canonical identity for dedup
   const all = getRecentManifests();
   // Carry forward any GitHub issues already recorded against this manifest —
-  // re-loading a manifest must not wipe its "reported" links (OI-85 needs-work).
-  const existing = all.find((r) => r.url === u);
-  const prev = all.filter((r) => r.url !== u);
+  // re-loading it (from either route) must not wipe its "reported" links. Match
+  // both the new identity AND the raw reload url, so a legacy entry (written
+  // before OI-88, keyed only by url) is superseded instead of duplicated.
+  const existing = all.find((r) => recentKey(r) === key || r.url === u);
+  const prev = all.filter((r) => recentKey(r) !== key && r.url !== u);
   const entry = {
-    url: u,
+    id: normId(id) || null,   // canonical identity (host-independent)
+    url: u,                   // reload alias (typed URL, else the manifest id)
     signature: String(signature || '').trim() || null,
     title: String(title || '').trim() || null,
     // First-canvas thumbnail URL (purpose-built /full/400,/ size) for the list.
@@ -999,13 +1017,14 @@ export function addRecentManifest({ url, signature, title, thumb, dupNames, dupI
 
 // Record a GitHub issue (that reports this manifest's duplicates) against the
 // recent-manifest entry, so its number shows in the "Needs work" tab. Deduped
-// by issue number. Returns the updated issues array (or [] if url unknown).
-export function recordManifestIssue(url, { number, url: issueUrl } = {}) {
-  const u = String(url || '').trim();
+// by issue number. `key` is the entry's canonical identity (recentKey). Returns
+// the updated issues array (or [] if the key matches no entry).
+export function recordManifestIssue(key, { number, url: issueUrl } = {}) {
+  const k = String(key || '').trim();
   const num = Number(number) || null;
-  if (!u || !num) return [];
+  if (!k || !num) return [];
   const all = getRecentManifests();
-  const idx = all.findIndex((r) => r.url === u);
+  const idx = all.findIndex((r) => recentKey(r) === k);
   if (idx < 0) return [];
   const entry = all[idx];
   const issues = Array.isArray(entry.issues) ? entry.issues.slice() : [];
@@ -1023,13 +1042,13 @@ export function recordManifestIssue(url, { number, url: issueUrl } = {}) {
 }
 
 // Remove a wrongly-recorded issue from a manifest (pasted/looked-up the wrong
-// number). Returns the remaining issues array.
-export function removeManifestIssue(url, number) {
-  const u = String(url || '').trim();
+// number). `key` is the entry's canonical identity. Returns remaining issues.
+export function removeManifestIssue(key, number) {
+  const k = String(key || '').trim();
   const num = Number(number) || null;
-  if (!u || !num) return [];
+  if (!k || !num) return [];
   const all = getRecentManifests();
-  const idx = all.findIndex((r) => r.url === u);
+  const idx = all.findIndex((r) => recentKey(r) === k);
   if (idx < 0) return [];
   const entry = all[idx];
   const issues = (Array.isArray(entry.issues) ? entry.issues : []).filter((i) => i.number !== num);
@@ -1039,10 +1058,12 @@ export function removeManifestIssue(url, number) {
   return issues;
 }
 
-export function removeRecentManifest(url) {
-  const u = String(url || '').trim();
-  if (!u) return;
-  setPref('recentManifests', getRecentManifests().filter((r) => r.url !== u));
+// Accepts the entry's canonical identity OR its raw reload URL (the list × still
+// passes r.url), so either matches the intended row.
+export function removeRecentManifest(keyOrUrl) {
+  const k = String(keyOrUrl || '').trim();
+  if (!k) return;
+  setPref('recentManifests', getRecentManifests().filter((r) => recentKey(r) !== k && r.url !== k));
 }
 
 export function clearRecentManifests() {

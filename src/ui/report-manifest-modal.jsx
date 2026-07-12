@@ -82,7 +82,7 @@ function buildReportBody({ manuscript, sourceUrl, dup, canvases, note }) {
   return lines.join('\n');
 }
 
-export default function ReportManifestModal({ onClose, manifest, manuscript, sourceUrl, recordedIssues = [], allRecordedIssueNumbers = [], onRecordIssue, onRemoveIssue }) {
+export default function ReportManifestModal({ onClose, manifest, manuscript, sourceUrl, recordedIssues = [], allRecordedIssueNumbers = [], canRecord = true, onRecordIssue, onRemoveIssue }) {
   const canvases = manifest?.canvases || [];
   const dup = useMemo(() => findManifestDuplicates(canvases), [canvases]);
   const ms = manuscript || {};
@@ -316,11 +316,20 @@ export default function ReportManifestModal({ onClose, manifest, manuscript, sou
             </div>
           </section>
 
-          {/* Step 2: record the created issue number. */}
+          {/* Step 2: record the created issue number. Only possible when the
+              manifest is in the recent list (OI-88) — a dropped file with no
+              reusable URL has nowhere to save the number, so the whole record
+              step is replaced by a note. */}
           <section className="feedback-modal__section report-modal__record">
             <label htmlFor="report-issue" className="feedback-modal__label">
               2. Created the issue? Let the tool find it — or paste in the number
             </label>
+            {!canRecord ? (
+              <p className="report-modal__norecord">
+                This manifest was opened from a dropped file with no reusable URL, so it isn’t in your recent list and an issue number can’t be saved here. The GitHub issue itself is unaffected — reload the manifest by URL if you want it tracked under <strong>Needs work</strong>.
+              </p>
+            ) : (
+            <>
             <div className="report-modal__record-row">
               <input
                 id="report-issue"
@@ -374,6 +383,8 @@ export default function ReportManifestModal({ onClose, manifest, manuscript, sou
                 ))}
                 <span className="report-modal__saved-note">— shown under <strong>Needs work</strong>. Wrong one? Remove it (×) and look up again.</span>
               </div>
+            )}
+            </>
             )}
           </section>
         </div>

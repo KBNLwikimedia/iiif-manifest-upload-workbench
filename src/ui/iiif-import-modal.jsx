@@ -25,7 +25,7 @@ import { runIiifImport } from '../api/iiif-pipeline.js';
 import { categoryExists, searchCategories, findManuscriptCategoryVariants, checkFilenamesExist } from '../api/commons.js';
 import { KB_PARENT_CATEGORY, KB_LICENSE_WIKITEXT } from '../api/iiif-map.js';
 import { DEMO_MODE } from '../config.js';
-import { getRecentManifests, addRecentManifest, removeRecentManifest, clearRecentManifests, recordManifestIssue, removeManifestIssue } from '../api/user-store.js';
+import { getRecentManifests, addRecentManifest, removeRecentManifest, clearRecentManifests, recordManifestIssue, removeManifestIssue, recentKey } from '../api/user-store.js';
 import { PROVIDERS, DEFAULT_PROVIDER_ID, providerForUrl } from '../providers.js';
 import ReportManifestModal from './report-manifest-modal.jsx';
 
@@ -208,11 +208,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // Provider profile (OI-78 scaffolding). Only KB is selectable for now; the
   // eCodices card is shown disabled. Doesn't gate loading yet.
   const [providerId, setProviderId] = React.useState(DEFAULT_PROVIDER_ID);
-  // The URL that keys the CURRENTLY-LOADED manifest in the recent list (set by
-  // recordRecent on successful parse; null when the manifest isn't recorded).
-  // The report flow keys issue records on this — never on the live `url`
-  // input, which the user can retype without loading (stale-URL bug).
-  const [loadedRecentUrl, setLoadedRecentUrl] = React.useState(null);
+  // Canonical identity (recentKey) of the CURRENTLY-LOADED manifest — set by
+  // recordRecent on successful parse, null when the manifest isn't recordable
+  // (dropped file with no http id). The report flow keys issue records on this
+  // (OI-88), never on the live `url` input (which the user can retype without
+  // loading) nor a raw reload URL (which differs by load route).
+  const [loadedRecentKey, setLoadedRecentKey] = React.useState(null);
 
   // Characters just rejected (stripped) from a review-step text field, so the
   // red note can name them. Cleared on the next keystroke that adds none.
@@ -499,19 +500,21 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // Stores the derived signature + title; persisted to Preferences.json.
   const recordRecent = (result, urlOverride) => {
     if (!result?.manifest) return;
-    const idUrl = /^https?:\/\//i.test(String(result.manifest.id || '')) ? String(result.manifest.id).trim() : '';
+    const rawId = String(result.manifest.id || '').trim();
+    const idUrl = /^https?:\/\//i.test(rawId) ? rawId : '';
     const u = String(urlOverride || '').trim() || idUrl;
-    // Remember which URL keys THIS manifest in the recent list (or that it
-    // isn't recorded at all) — the report flow must not re-derive it from the
-    // live `url` input, which the user can retype without loading.
-    setLoadedRecentUrl(u || null);
+    // Capture the canonical identity (OI-88: manifest id when http, else the
+    // reload url) so the report flow keys issues on the manifest that's open,
+    // regardless of how it was loaded. Null → not recordable (dropped file
+    // with no reusable URL); the report modal disables "Save issue #".
+    setLoadedRecentKey(recentKey({ id: idUrl, url: u }) || null);
     if (!u) return;
     const { manuscript } = mapManifest(result.manifest);
     const thumb = result.manifest.canvases?.[0]?.thumbUrl || null;
     // OI-85: persist the duplicate-collision counts so the recent list can flag
     // this manifest as "needs work" without re-parsing it.
     const dup = findManifestDuplicates(result.manifest.canvases || []);
-    addRecentManifest({ url: u, signature: manuscript.signature, title: manuscript.title, thumb, dupNames: dup.dupNames, dupImages: dup.dupImages });
+    addRecentManifest({ url: u, id: result.manifest.id, signature: manuscript.signature, title: manuscript.title, thumb, dupNames: dup.dupNames, dupImages: dup.dupImages });
     setRecent(getRecentManifests());
     // Keep the active tab on the collection just loaded, so going Back (and
     // the next modal open) shows the list the user is actually working from.
@@ -856,22 +859,22 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   const hasReport = reportErrors.length + reportWarnings.length + reportInfos.length > 0;
   const manifest = parsed?.manifest;
 
-  // OI-85 report flow: the URL that keys this manifest in the recent list is
-  // captured by recordRecent at load time (loadedRecentUrl) — NOT re-derived
-  // from the `url` input, which can be retyped without loading, nor from a
-  // stale value after a file drop. Null → manifest isn't in the recent list,
-  // so issue recording is a no-op.
-  const activeManifestUrl = loadedRecentUrl;
-  const activeRecentEntry = recent.find((r) => r.url === activeManifestUrl) || null;
+  // OI-85/OI-88 report flow: issue records key on the loaded manifest's
+  // canonical identity (captured by recordRecent), so they land on the right
+  // recent-list entry regardless of load route. Null identity → not recordable.
+  const activeManifestKey = loadedRecentKey;
+  const activeRecentEntry = activeManifestKey
+    ? (recent.find((r) => recentKey(r) === activeManifestKey) || null)
+    : null;
   const hasDuplicates = collisions.dupLabelIdx.size > 0 || collisions.dupImageIdx.size > 0;
   const handleRecordIssue = (number, issueUrl) => {
-    if (!activeManifestUrl) return;
-    recordManifestIssue(activeManifestUrl, { number, url: issueUrl });
+    if (!activeManifestKey) return;
+    recordManifestIssue(activeManifestKey, { number, url: issueUrl });
     setRecent(getRecentManifests());
   };
   const handleRemoveIssue = (number) => {
-    if (!activeManifestUrl) return;
-    removeManifestIssue(activeManifestUrl, number);
+    if (!activeManifestKey) return;
+    removeManifestIssue(activeManifestKey, number);
     setRecent(getRecentManifests());
   };
 
@@ -2257,9 +2260,10 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
             onClose={() => setShowReport(false)}
             manifest={manifest}
             manuscript={mapping?.manuscript}
-            sourceUrl={activeManifestUrl || manifest.sourceUrl || manifest.id}
+            sourceUrl={manifest.sourceUrl || manifest.id || activeManifestKey}
             recordedIssues={activeRecentEntry?.issues || []}
             allRecordedIssueNumbers={recent.flatMap((r) => (r.issues || []).map((i) => i.number))}
+            canRecord={!!activeManifestKey}
             onRecordIssue={handleRecordIssue}
             onRemoveIssue={handleRemoveIssue}
           />
