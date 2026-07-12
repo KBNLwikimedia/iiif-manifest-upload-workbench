@@ -4610,6 +4610,22 @@ body.col-resizing * { cursor: col-resize !important; }
 .modal__sub { margin: 4px 0 0; font-size: 13px; color: var(--color-subtle); line-height: 1.4; }
 /* Second header line in the IIIF wizard: step-specific info under the
    constant manuscript-identity line. */
+/* Prominent manuscript-identity line (Short title — signature) shown on
+   every step past input; bigger/darker than .modal__sub so the reader always
+   sees which manuscript they are working on. */
+.iiif-modal__identity {
+  margin: 5px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-emphasized, #202122);
+}
+.iiif-modal__idcount {
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--color-subtle);
+  white-space: nowrap;
+}
 .iiif-modal__substep { margin-top: 2px; font-size: 12.5px; }
 /* The confirm step gets a blank line between identity and the
    download/transfer sentences (maintainer request 2026-07-10). */

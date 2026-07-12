@@ -949,10 +949,27 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
             {/* The manuscript identity line stays put on every step past
                 input, so the header reads consistently through the wizard;
                 step-specific info goes on a second line. */}
-            <p className="modal__sub">
-              {step === 'input' && 'Paste a IIIF Presentation 3.0 manifest URL, or pick a downloaded manifest .json file. Only Presentation 3.0 is supported for now — 2.x support will be added in the future.'}
-              {step !== 'input' && (manifest ? `${manifest.label || 'Untitled manifest'} — ${manifest.canvasCount} images in this manifest` : 'The manifest could not be used.')}
-            </p>
+            {step === 'input' && (
+              <p className="modal__sub">Paste a IIIF Presentation 3.0 manifest URL, or pick a downloaded manifest .json file. Only Presentation 3.0 is supported for now — 2.x support will be added in the future.</p>
+            )}
+            {/* Steps past input show the manuscript identity prominently:
+                Short title + signature, bigger and darker than the old grey
+                sub-line, with the image count demoted to a muted suffix
+                (maintainer request 2026-07-12). */}
+            {step !== 'input' && (manifest ? (() => {
+              const short = (title || mapping?.manuscript?.title || '').trim();
+              const sig = (mapping?.manuscript?.signature || '').trim();
+              const parts = [short, sig].filter(Boolean);
+              const identity = parts.length ? parts.join(' — ') : (manifest.label || 'Untitled manifest');
+              return (
+                <p className="iiif-modal__identity" title={identity}>
+                  {identity}
+                  <span className="iiif-modal__idcount"> · {manifest.canvasCount} images in this manifest</span>
+                </p>
+              );
+            })() : (
+              <p className="modal__sub">The manifest could not be used.</p>
+            ))}
             {/* The selection count lives in the select-step toolbar (next to
                 Select all/none), not here — the header stays identity-only. */}
             {step !== 'input' && step !== 'review' && step !== 'select' && manifest && (
