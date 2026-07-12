@@ -1842,7 +1842,7 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                       </span>
                     )}
                   </span>
-                  <button type="button" className="btn btn--quiet iiif-report-bar__btn" onClick={() => setShowReport(true)}>
+                  <button type="button" className="btn iiif-report-bar__btn" onClick={() => setShowReport(true)}>
                     ⚠️ Report duplicates on GitHub
                   </button>
                 </div>

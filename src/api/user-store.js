@@ -1002,7 +1002,11 @@ export function recordManifestIssue(url, { number, url: issueUrl } = {}) {
   const entry = all[idx];
   const issues = Array.isArray(entry.issues) ? entry.issues.slice() : [];
   if (!issues.some((i) => i.number === num)) {
-    issues.push({ number: num, url: String(issueUrl || '').trim() || `https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/issues/${num}` });
+    // Only trust a real http(s) URL; a bare "123" (number pasted or auto-found)
+    // must become the canonical issue link, not stored verbatim.
+    const raw = String(issueUrl || '').trim();
+    const link = /^https?:\/\//i.test(raw) ? raw : `https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/issues/${num}`;
+    issues.push({ number: num, url: link });
   }
   const next = all.slice();
   next[idx] = { ...entry, issues };

@@ -146,6 +146,42 @@ export default function ReportManifestModal({ onClose, manifest, manuscript, sou
     setIssueInput('');
   };
 
+  // "Find my issue": query GitHub's public search API (no auth, CORS-enabled)
+  // for the newest issue with the manifest-needs-checking label whose title
+  // mentions this manuscript's signature (unique shelfmark) — falling back to
+  // the title. It's a *suggestion* the user confirms with Save, not a silent
+  // auto-fill: title-matching can't guarantee the right issue if two were
+  // reported close together.
+  const searchKey = (ms.signature || ms.title || '').trim();
+  const [finding, setFinding] = useState(false);
+  const [findMsg, setFindMsg] = useState(null); // { kind, text, url?, number? }
+  const findMyIssue = async () => {
+    if (!searchKey) { setFindMsg({ kind: 'error', text: 'This manifest has no signature or title to search by — paste the number manually.' }); return; }
+    setFinding(true);
+    setFindMsg(null);
+    try {
+      const q = `repo:KBNLwikimedia/iiif-manifest-upload-workbench is:issue label:${REPORT_LABEL} in:title "${searchKey}"`;
+      const url = `https://api.github.com/search/issues?q=${encodeURIComponent(q)}&sort=created&order=desc&per_page=5`;
+      const res = await fetch(url, { headers: { Accept: 'application/vnd.github+json' } });
+      if (res.status === 403) { setFindMsg({ kind: 'error', text: 'GitHub search rate limit reached (a few searches per minute). Wait a moment and retry, or paste the number manually.' }); return; }
+      if (!res.ok) { setFindMsg({ kind: 'error', text: `GitHub search failed (HTTP ${res.status}) — paste the number manually.` }); return; }
+      const data = await res.json();
+      const items = data.items || [];
+      if (!items.length) {
+        setFindMsg({ kind: 'none', text: `No “${REPORT_LABEL}” issue mentioning “${searchKey}” found yet. If you just submitted it, wait a few seconds and retry, or paste the number manually.` });
+        return;
+      }
+      const top = items[0];
+      setIssueInput(String(top.number));
+      setFindMsg({ kind: 'found', text: `#${top.number}: ${top.title}`, url: top.html_url, number: top.number, multiple: items.length > 1 });
+    } catch (e) {
+      console.warn('Find-my-issue search failed:', e);
+      setFindMsg({ kind: 'error', text: 'Could not reach GitHub — paste the number manually.' });
+    } finally {
+      setFinding(false);
+    }
+  };
+
   const nDup = dup.dupNames + dup.dupImages;
 
   return (
@@ -215,7 +251,7 @@ export default function ReportManifestModal({ onClose, manifest, manuscript, sou
 
           <section className="feedback-modal__section report-modal__record">
             <label htmlFor="report-issue" className="feedback-modal__label">
-              Created the issue? Paste its number or URL
+              Created the issue? Paste its number or URL — or let the tool find it
             </label>
             <div className="report-modal__record-row">
               <input
@@ -227,8 +263,26 @@ export default function ReportManifestModal({ onClose, manifest, manuscript, sou
                 onKeyDown={(e) => { if (e.key === 'Enter') saveIssue(); }}
                 placeholder="e.g. 42, #42, or https://github.com/…/issues/42"
               />
-              <button className="btn" onClick={saveIssue} disabled={!parseIssueNumber(issueInput)}>Save issue #</button>
+              <button
+                className="btn"
+                onClick={findMyIssue}
+                disabled={finding || !searchKey}
+                title={`Search GitHub for the ${REPORT_LABEL} issue mentioning “${searchKey || 'this manifest'}”`}
+              >
+                {finding ? 'Searching…' : 'Find my issue'}
+              </button>
+              <button className="btn btn--progressive" onClick={saveIssue} disabled={!parseIssueNumber(issueInput)}>Save issue #</button>
             </div>
+            {findMsg && (
+              <p className={'report-modal__find report-modal__find--' + findMsg.kind}>
+                {findMsg.kind === 'found' ? (
+                  <>
+                    Found <a href={findMsg.url} target="_blank" rel="noopener noreferrer">{findMsg.text}</a> — check it's the right one, then <strong>Save issue #</strong>.
+                    {findMsg.multiple && ' (More than one matched; this is the most recent.)'}
+                  </>
+                ) : findMsg.text}
+              </p>
+            )}
             {saved.length > 0 && (
               <p className="report-modal__saved">
                 Reported as {saved.map((n, i) => (
