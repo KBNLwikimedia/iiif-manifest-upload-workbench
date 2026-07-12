@@ -19,7 +19,7 @@ export const OAUTH_PROFILE_URL = 'https://meta.wikimedia.org/w/rest.php/oauth2/r
 export const REDIRECT_URI = window.location.origin + '/';
 
 export const STASH_EXPIRY_HOURS = 48;
-export const APP_USER_AGENT = 'IIIFManifestUploadWorkbench/0.41 (https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench)';
+export const APP_USER_AGENT = 'IIIFManifestUploadWorkbench/0.42 (https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench)';
 
 // Edit-summary attribution suffix (T425978).
 //
