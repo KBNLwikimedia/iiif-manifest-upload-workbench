@@ -1194,7 +1194,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                     <button
                       type="button"
                       className="iiif-linkbtn iiif-recent__clear"
-                      onClick={() => { clearRecentManifests(); setRecent([]); }}
+                      onClick={() => {
+                        if (window.confirm(`Remove all ${recent.length} manifest${recent.length === 1 ? '' : 's'} from your recent list? This can't be undone.`)) {
+                          clearRecentManifests();
+                          setRecent([]);
+                        }
+                      }}
                       title="Remove every manifest from this list"
                     >Clear all</button>
                   </div>
@@ -1260,7 +1265,13 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                         <button
                           type="button"
                           className="iiif-recent__remove"
-                          onClick={() => { removeRecentManifest(r.url); setRecent(getRecentManifests()); }}
+                          onClick={() => {
+                            const name = [r.signature, r.title].filter(Boolean).join(' — ') || r.url;
+                            if (window.confirm(`Remove "${name}" from your recent list?`)) {
+                              removeRecentManifest(r.url);
+                              setRecent(getRecentManifests());
+                            }
+                          }}
                           aria-label={`Remove ${r.signature || r.title || r.url} from recent manifests`}
                           title="Remove from this list"
                         >×</button>
