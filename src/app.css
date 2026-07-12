@@ -4,7 +4,10 @@
 html, body { margin: 0; padding: 0; }
 body {
   font-family: var(--font-family-system-sans);
-  font-size: var(--font-size-medium);
+  /* Codex body target is 14px, not 16px — Vector reads denser on purpose.
+     DESIGN.md is emphatic about this; explicit scale steps use --font-size-*
+     rem tokens, which stay anchored to the 16px root. (audit finding 01) */
+  font-size: var(--font-size-small);
   line-height: var(--line-height-medium);
   color: var(--color-base);
   background: var(--background-color-neutral-subtle);
@@ -16,13 +19,18 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  /* Codex layout: content column capped at 1200px, centred, with a 24px
+     minimum gutter (DESIGN.md "Layout Principles"). Full-width bars (topbar,
+     toolbar) keep their background/border edge-to-edge but align their content
+     to this column via padding-inline — no inner wrapper needed. */
+  --page-gutter: max(var(--spacing-150), calc((100% - 1200px) / 2));
 }
 
 .topbar {
   display: flex;
   align-items: center;
   gap: var(--spacing-100);
-  padding: var(--spacing-50) var(--spacing-150);
+  padding: var(--spacing-50) var(--page-gutter);
   background: var(--background-color-base);
   border-bottom: 1px solid var(--border-color-muted);
   position: sticky;
@@ -123,7 +131,7 @@ body {
   display: flex;
   align-items: center;
   gap: var(--spacing-75);
-  padding: var(--spacing-75) var(--spacing-150);
+  padding: var(--spacing-75) var(--page-gutter);
   background: var(--background-color-base);
   border-bottom: 1px solid var(--border-color-muted);
   flex-wrap: wrap;
@@ -257,9 +265,10 @@ body {
 .seg__btn:hover:not(:disabled) { background: var(--background-color-interactive-subtle--hover); color: var(--color-base); }
 .seg__btn:disabled { color: var(--color-disabled); cursor: not-allowed; }
 .seg__btn[aria-pressed="true"] {
-  background: var(--background-color-progressive-subtle);
+  /* Codex tabs underline the active item — no pill fill. (audit finding 05) */
   color: var(--color-progressive);
   font-weight: var(--font-weight-semi-bold);
+  box-shadow: inset 0 -2px 0 0 var(--color-progressive);
 }
 
 /* Select / dropdown */
@@ -282,11 +291,12 @@ body {
   display: grid;
   grid-template-columns: 1fr 380px;
   min-height: 0;
+  padding-inline: var(--page-gutter); /* Codex 1200px content column */
 }
 .content--no-side { grid-template-columns: 1fr; }
 .content__main {
   overflow: auto;
-  padding: var(--spacing-150);
+  padding: var(--spacing-150) 0; /* horizontal inset now comes from the page gutter */
 }
 .content__side {
   border-left: 1px solid var(--border-color-muted);
@@ -592,8 +602,11 @@ body {
 }
 .section-head__title svg { color: var(--color-subtle); }
 .section-head__title--limbo {
+  /* Keep the subtle colour demotion for the limbo state, but hold the lead
+     heading at semi-bold so it still out-weighs the history sub-head — a real
+     hierarchy step instead of two 400-weight titles. (audit finding 07) */
   color: var(--color-subtle);
-  font-weight: var(--font-weight-normal);
+  font-weight: var(--font-weight-semi-bold);
 }
 /* Demoted secondary heading (e.g. Upload history). Sits visually below
    the active stash title so the workspace dominates. (T426377) */
@@ -3095,8 +3108,9 @@ body.mod-select .tbl__row--selected { background: var(--background-color-progres
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  /* Codex small-control floor is 24px. (audit finding 09) */
+  width: 24px;
+  height: 24px;
   border-radius: var(--border-radius-base);
   background: transparent;
   border: 1px solid transparent;
@@ -4546,8 +4560,10 @@ body.col-resizing * { cursor: col-resize !important; }
   width: 100%;
   max-width: 540px;
   background: var(--background-color-base);
-  border-radius: 8px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.32);
+  /* Codex depth: 2px radius + the heaviest Codex drop-shadow token, not the
+     rounder/heavier custom values. (audit finding 04) */
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--box-shadow-drop-xx-large);
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 64px);
@@ -4559,7 +4575,7 @@ body.col-resizing * { cursor: col-resize !important; }
   gap: 12px;
   padding: 14px 18px 12px 34px; /* room for the grip on the left */
   border-bottom: 1px solid var(--border-color-base);
-  border-radius: 8px 8px 0 0;
+  border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
   /* OI-83: a recognizable title-bar that reads as draggable — subtle tinted
      background, a grip glyph on the left, and a move cursor. Grab it to move
      the modal aside. Interactive controls (×, buttons, inputs) keep their own
@@ -4648,7 +4664,7 @@ body.col-resizing * { cursor: col-resize !important; }
   background: var(--background-color-neutral, #eaecf0);
 }
 .modal__head > div { flex: 1; min-width: 0; }
-.modal__title { font-size: 17px; font-weight: 600; margin: 0; }
+.modal__title { font-size: var(--font-size-large); font-weight: 600; margin: 0; }
 .modal__sub { margin: 4px 0 0; font-size: 13px; color: var(--color-subtle); line-height: 1.4; }
 /* Second header line in the IIIF wizard: step-specific info under the
    constant manuscript-identity line. */
@@ -4663,12 +4679,12 @@ body.col-resizing * { cursor: col-resize !important; }
   color: var(--color-emphasized, #202122);
 }
 .iiif-modal__idcount {
-  font-size: 12.5px;
+  font-size: var(--font-size-x-small);
   font-weight: 400;
   color: var(--color-subtle);
   white-space: nowrap;
 }
-.iiif-modal__substep { margin-top: 2px; font-size: 12.5px; }
+.iiif-modal__substep { margin-top: 2px; font-size: var(--font-size-x-small); }
 /* The confirm step gets a blank line between identity and the
    download/transfer sentences (maintainer request 2026-07-10). */
 .iiif-modal__substep--confirm { margin-top: 12px; }
@@ -4833,8 +4849,10 @@ body.col-resizing * { cursor: col-resize !important; }
   outline: none;
 }
 .field__input:focus {
-  border-color: var(--color-progressive);
-  box-shadow: 0 0 0 2px var(--background-color-progressive-subtle);
+  /* Match the canonical Codex inset focus ring used elsewhere, not an outset
+     glow — keeps one focus treatment app-wide. (audit finding 03) */
+  border-color: var(--border-color-progressive);
+  box-shadow: inset 0 0 0 1px var(--border-color-progressive);
 }
 
 
@@ -7770,7 +7788,8 @@ body.col-resizing * { cursor: col-resize !important; }
 .version-chip--static {
   cursor: default;
   margin-left: -2px;
-  font-size: 13.5px;
+  /* Snap off-ladder 13.5px to the 14px token. (audit finding 11) */
+  font-size: var(--font-size-small);
   /* drop it so its baseline sits toward the bottom of the title text */
   align-self: flex-end;
   padding-bottom: 4px;
@@ -8125,64 +8144,21 @@ body.col-resizing * { cursor: col-resize !important; }
    show it). z-index sits between the topbar (var(--z-index-sticky)=100) and
    the modal backdrop (z-index 150) so the modal cleanly covers the FAB once
    open. */
-.feedback-fab {
-  position: fixed;
-  left: 50%;
-  top: 8px;
-  transform: translateX(-50%);
-  z-index: 110;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border: 1px solid var(--border-color-base);
-  border-radius: 999px;
-  background: var(--color-progressive);
-  color: #fff;
-  font-size: var(--font-size-small);
-  font-weight: var(--font-weight-semi-bold);
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(20, 30, 50, 0.22);
-  transition: transform 0.14s ease-out, box-shadow 0.12s ease-out, background 0.12s ease-out;
-}
-.feedback-fab:hover {
-  transform: translateX(-50%) translateY(1px);
-  box-shadow: 0 6px 18px rgba(20, 30, 50, 0.28);
-}
-.feedback-fab:focus-visible {
-  outline: 2px solid var(--color-base, #1d2939);
-  outline-offset: 2px;
-}
-.feedback-fab__beta {
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--color-progressive);
-  font-size: 10px;
-  font-weight: var(--font-weight-semi-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  padding: 2px 6px;
-  border-radius: 999px;
-  margin-left: 4px;
-}
-/* Narrow viewports: drop the text label, keep the icon + Beta pill so the
-   button still signals beta-feedback without eating horizontal space. */
+/* Feedback: a quiet inline button in the topbar (was a floating blue FAB).
+   Styling comes from .btn.btn--quiet; only the little Beta chip needs spacing. */
+.topbar__feedback-beta { margin-left: 2px; }
+/* Narrow viewports: drop the text label, keep the icon + Beta chip. */
 @media (max-width: 640px) {
-  .feedback-fab {
-    padding: 8px 10px;
-  }
-  .feedback-fab__label {
-    display: none;
-  }
-  .feedback-fab__beta {
-    margin-left: 2px;
-  }
+  .topbar__feedback-label { display: none; }
 }
 
 /* ===== Feedback modal (T426454) =====
    Sibling of .error-report-modal — same shape, encouraging tone. */
 .feedback-modal { max-width: 680px; }
 .feedback-modal__beta {
-  font-size: 10px;
+  /* Codex InfoChip floor 12px system-sans. (audit finding 08) */
+  font-family: var(--font-family-system-sans);
+  font-size: var(--font-size-x-small);
   font-weight: var(--font-weight-semi-bold);
   text-transform: uppercase;
   letter-spacing: 0.4px;
@@ -9861,4 +9837,31 @@ body.col-resizing * { cursor: col-resize !important; }
     scrollbar-width: auto;
     scrollbar-color: #9aa0a6 var(--background-color-neutral-subtle, #f0f1f3);
   }
+}
+
+/* =====================================================================
+   Codex conformance catch-all (audit 2026-07-12, findings 03 + 06)
+   Bare form controls that carry no app class (e.g. a plain <input> inside a
+   modal) otherwise fall back to the UA font stack, a 4px-ish radius, and the
+   browser default focus outline. Normalise them to the system-sans stack, the
+   2px Codex radius, and the progressive inset focus ring. Zero-specificity
+   :where() means every explicit .field__input / .search__input rule — including
+   error states — still wins; this only reaches the unclassed stragglers.
+   ===================================================================== */
+:where(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+  textarea,
+  select
+) {
+  font-family: var(--font-family-system-sans);
+  border-radius: var(--border-radius-base);
+}
+:where(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+  textarea,
+  select
+):focus-visible {
+  outline: none;
+  border-color: var(--border-color-progressive);
+  box-shadow: inset 0 0 0 1px #fff, 0 0 0 2px var(--color-progressive);
 }

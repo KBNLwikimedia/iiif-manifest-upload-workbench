@@ -11,6 +11,7 @@ import PilingMode from './ui/piling-mode.jsx';
 import { Cc0Modal, shouldShowCc0Modal } from './ui/cc0-modal.jsx';
 import { WaiverModal, shouldShowWaiverModal } from './ui/waiver-modal.jsx';
 import { IiifImportModal } from './ui/iiif-import-modal.jsx';
+import FeedbackButton from './ui/feedback-button.jsx';
 import { DEMO_MODE } from './config.js';
 import {
   setDraft,
@@ -1660,6 +1661,7 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
           </div>
         </div>
         <div className="topbar__spacer" />
+        <FeedbackButton />
         <button
           type="button"
           className="btn btn--quiet"

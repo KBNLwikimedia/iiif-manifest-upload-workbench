@@ -50,7 +50,6 @@ import {
 } from './api/user-store.js';
 import { installLiveAutocomplete, seedFromHistory } from './api/autocomplete.js';
 import ErrorReportModal from './ui/error-report-modal.jsx';
-import FeedbackButton from './ui/feedback-button.jsx';
 
 // Once the design's vocabulary.js has set up window.KNOWN_*, install our
 // bridge so cell editors get live wiki results in addition to the mock
@@ -365,19 +364,14 @@ class ErrorBoundary extends React.Component {
 function Root() {
   const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
   const setTweak = (k, v) => setTweaks((prev) => ({ ...prev, [k]: v }));
-  // FeedbackButton sits outside ErrorBoundary so it remains visible (and
-  // its own modal still works) even if a render error inside the app
-  // tree triggers <BootErrorPanel>. The boot-error panel already has its
-  // own "Report this error" button (T426408), so the user has two
-  // overlapping channels in the error case — that's intentional, both
-  // are useful.
+  // Feedback now lives as a quiet button in the app topbar (Codex chrome — no
+  // floating FAB). The other surfaces keep their own feedback path: the
+  // boot-error panel has "Report this error" (T426408), and the login screen
+  // links to GitHub issues — so removing the root-level FAB loses nothing.
   return (
-    <>
-      <ErrorBoundary>
-        <AuthGate tweaks={tweaks} setTweak={setTweak} />
-      </ErrorBoundary>
-      <FeedbackButton />
-    </>
+    <ErrorBoundary>
+      <AuthGate tweaks={tweaks} setTweak={setTweak} />
+    </ErrorBoundary>
   );
 }
 
