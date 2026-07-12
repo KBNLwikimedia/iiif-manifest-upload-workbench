@@ -249,9 +249,29 @@ export default function ReportManifestModal({ onClose, manifest, manuscript, sou
             />
           </section>
 
+          {/* Step 1: create the issue on GitHub. Kept above the record step so
+              the flow reads top-to-bottom — first open/submit, then record. */}
+          <section className="feedback-modal__section report-modal__create">
+            <span className="feedback-modal__label">1. Open the pre-filled issue on GitHub and submit it</span>
+            <div className="report-modal__create-row">
+              <button className="btn btn--progressive" onClick={openGithub} disabled={nDup === 0} title="Opens a pre-filled new issue on GitHub. Requires a GitHub account.">
+                <Icon name="external" size={14} /> Open GitHub issue
+              </button>
+              <button className="btn" onClick={copyToClipboard} disabled={nDup === 0} title="Copy the report text to your clipboard">
+                <Icon name="copy" size={14} /> Copy text
+              </button>
+              <span className="modal__hint report-modal__create-hint">
+                {copyState === 'copied' && <><Icon name="ok" size={12} /> Copied to clipboard.</>}
+                {copyState === 'failed' && <span style={{ color: 'var(--color-destructive)' }}>Copy failed — select and copy manually.</span>}
+                {copyState === 'idle' && (opened ? 'Opened in a new tab — submit it there, then record its number below.' : 'Nothing is sent until you click a button.')}
+              </span>
+            </div>
+          </section>
+
+          {/* Step 2: record the created issue number. */}
           <section className="feedback-modal__section report-modal__record">
             <label htmlFor="report-issue" className="feedback-modal__label">
-              Created the issue? Paste its number or URL — or let the tool find it
+              2. Created the issue? Paste its number or URL — or let the tool find it
             </label>
             <div className="report-modal__record-row">
               <input
@@ -297,19 +317,6 @@ export default function ReportManifestModal({ onClose, manifest, manuscript, sou
         </div>
 
         <footer className="modal__foot feedback-modal__foot">
-          <span className="modal__hint">
-            {copyState === 'copied' && <><Icon name="ok" size={12} /> Copied to clipboard.</>}
-            {copyState === 'failed' && <span style={{ color: 'var(--color-destructive)' }}>Copy failed — select and copy manually.</span>}
-            {copyState === 'idle' && (opened ? 'Submitted the issue? Paste its number above.' : 'No data is sent anywhere until you click a button.')}
-          </span>
-          <div className="feedback-modal__actions">
-            <button className="btn" onClick={copyToClipboard} disabled={nDup === 0} title="Copy the report text to your clipboard">
-              <Icon name="copy" size={14} /> Copy text
-            </button>
-            <button className="btn btn--progressive" onClick={openGithub} disabled={nDup === 0} title="Opens a pre-filled new issue on GitHub. Requires a GitHub account.">
-              <Icon name="external" size={14} /> Open GitHub issue
-            </button>
-          </div>
           <button className="btn feedback-modal__cancel" onClick={onClose}>Cancel</button>
         </footer>
       </div>
