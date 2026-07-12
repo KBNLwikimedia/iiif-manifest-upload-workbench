@@ -2,42 +2,22 @@
 // drafts/preferences to a public Commons user-subpage and gets explicit
 // consent that this metadata is treated as CC0 by intent of the maintainer.
 //
-// Trigger logic (decided by App, not this component):
-//   - cc0Acknowledgment is null/missing            → show on every fresh load
-//   - cc0Acknowledgment.suppressFurther === true   → never show
-//   - cc0Acknowledgment exists but suppressFurther
-//     is false                                     → show on every fresh load
-//   - DEMO_MODE                                    → never show (no wiki writes)
+// Step 1 of the coupled CC0 → waiver onboarding. The user must agree every
+// fresh session: there is no "don't remind me again" option and nothing is
+// persisted (maintainer decision 2026-07-12). DEMO_MODE skips it (no wiki
+// writes). A single "I agree" button proceeds to step 2 (the waiver).
 //
-// Buttons:
-//   - "I agree — remind me next session"  → records ack with suppressFurther: false
-//   - "I agree — don't remind me again"   → records ack with suppressFurther: true
-//
-// Esc / backdrop click is treated as NO acknowledgment (the modal will
-// reappear on the next session). Explicit choice is required to suppress.
-//
-// Persistence: a single key on Preferences.json:
-//   cc0Acknowledgment: { acknowledgedAt: <ISO>, suppressFurther: <bool>, version: 1 }
-// The `version` field exists so a future copy/scope change can re-prompt by
-// bumping the version number — see App's render guard.
+// Esc / backdrop click is treated as NO acknowledgment (App re-chains to the
+// waiver either way, and the modal shows again next session regardless).
 
 import React from 'react';
 
 const Icon = window.Icon;
 
-// Public-facing version of the acknowledgment text. Bump this if the modal's
-// scope or claims change in a way that warrants re-asking previously-suppressed
-// users. App's render guard checks `version === CC0_ACK_VERSION`.
-// v2 (2026-07-10): rebranded to IIIF Manifest Upload Workbench + corrected the
-// user-subpage path (the store moved to /IIIFManifestUploadWorkbench/). Bumping
-// re-prompts users who suppressed the v1 (upstream-branded) notice once.
-export const CC0_ACK_VERSION = 2;
-
-// Helper used by App so the version number lives in one place.
-export function shouldShowCc0Modal(ack) {
-  if (!ack) return true;
-  if (ack.version !== CC0_ACK_VERSION) return true; // scope/copy changed
-  return !ack.suppressFurther;
+// Always show (once per session): the CC0 consent is no longer persisted, so
+// the user re-agrees each new session. DEMO_MODE is filtered out by App.
+export function shouldShowCc0Modal() {
+  return true;
 }
 
 export function Cc0Modal({ username, onAcknowledge, onDismiss }) {
@@ -130,22 +110,15 @@ export function Cc0Modal({ username, onAcknowledge, onDismiss }) {
 
         <footer className="modal__foot cc0-modal__foot">
           <span className="modal__hint">
-            Esc closes without recording your choice — you'll see this again next session.
+            You'll be asked to agree again each session.
           </span>
           <div className="cc0-modal__buttons">
             <button
               type="button"
               className="btn btn--progressive"
-              onClick={() => onAcknowledge({ suppressFurther: true })}
+              onClick={() => onAcknowledge()}
             >
-              I agree — don't remind me again
-            </button>
-            <button
-              type="button"
-              className="btn"
-              onClick={() => onAcknowledge({ suppressFurther: false })}
-            >
-              I agree — remind me next session
+              I agree — continue
             </button>
           </div>
         </footer>

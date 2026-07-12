@@ -8,7 +8,7 @@ import { BulkPublishModal } from './ui/bulk-publish-modal.jsx';
 import { WikitextPreviewModal } from './ui/wikitext-preview-modal.jsx';
 import InfoModal from './ui/info-modal.jsx';
 import PilingMode from './ui/piling-mode.jsx';
-import { Cc0Modal, CC0_ACK_VERSION, shouldShowCc0Modal } from './ui/cc0-modal.jsx';
+import { Cc0Modal, shouldShowCc0Modal } from './ui/cc0-modal.jsx';
 import { WaiverModal, WAIVER_VERSION, shouldShowWaiverModal } from './ui/waiver-modal.jsx';
 import { IiifImportModal } from './ui/iiif-import-modal.jsx';
 import { DEMO_MODE } from './config.js';
@@ -1404,18 +1404,11 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
   // ack should NOT close the dialog and re-show in the same session.
   // Initial value is read once from the (already-loaded) Preferences.json.
   // DEMO_MODE skips the modal entirely — there's no wiki write to consent to.
-  const [cc0ModalOpen, setCc0ModalOpen] = useState(() => {
-    if (DEMO_MODE) return false;
-    return shouldShowCc0Modal(getPref('cc0Acknowledgment'));
-  });
-  // 48-hour waiver — shown AFTER the CC0 modal. If CC0 is up, the waiver waits
-  // and is opened when CC0 closes (see closeCc0); if CC0 is already suppressed,
-  // the waiver may show on its own at first paint.
-  const [waiverModalOpen, setWaiverModalOpen] = useState(() => {
-    if (DEMO_MODE) return false;
-    const cc0WillShow = shouldShowCc0Modal(getPref('cc0Acknowledgment'));
-    return !cc0WillShow && shouldShowWaiverModal(getPref('iiifWaiver'));
-  });
+  // CC0 consent (step 1) shows every session — no longer persisted.
+  const [cc0ModalOpen, setCc0ModalOpen] = useState(() => !DEMO_MODE && shouldShowCc0Modal());
+  // 48-hour waiver (step 2) — shown AFTER the CC0 modal. Since CC0 always shows
+  // (non-demo), the waiver waits and is opened when CC0 closes (see closeCc0).
+  const [waiverModalOpen, setWaiverModalOpen] = useState(false);
   // Close the CC0 modal, then chain the waiver if it still needs showing.
   const closeCc0 = () => {
     setCc0ModalOpen(false);
@@ -2459,14 +2452,7 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
       {cc0ModalOpen && (
         <Cc0Modal
           username={user?.username}
-          onAcknowledge={({ suppressFurther }) => {
-            setPref('cc0Acknowledgment', {
-              acknowledgedAt: new Date().toISOString(),
-              suppressFurther: !!suppressFurther,
-              version: CC0_ACK_VERSION,
-            });
-            closeCc0();
-          }}
+          onAcknowledge={closeCc0}
           onDismiss={closeCc0}
         />
       )}
