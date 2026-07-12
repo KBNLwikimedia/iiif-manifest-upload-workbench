@@ -236,8 +236,16 @@ async function loadOne(storeKey) {
     delete parsed.history.sha1Index;
     needsMigrationSave = true;
   }
+  // Obsolete Preferences keys — the CC0 and 48-hour waiver consents are no
+  // longer persisted (asked every session instead), so strip any leftover
+  // records on load; they leave the wiki page on the next save.
+  if (storeKey === 'preferences') {
+    for (const k of ['cc0Acknowledgment', 'iiifWaiver']) {
+      if (k in parsed) { delete parsed[k]; needsMigrationSave = true; }
+    }
+  }
   STORES[storeKey].state = { ...STORES[storeKey].state, ...parsed };
-  if (needsMigrationSave) scheduleSave('metadata');
+  if (needsMigrationSave) scheduleSave(storeKey);
 
   if (migrated) {
     console.info(`Migrating ${storeKey}: ${pageTitle(storeKey, true)} -> ${pageTitle(storeKey)}`);

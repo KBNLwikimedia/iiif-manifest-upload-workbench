@@ -12,6 +12,7 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Changed
 
+- **Obsolete consent keys are cleaned out of `Preferences.json`** — now that neither the CC0 nor the 48-hour waiver is persisted, any leftover `cc0Acknowledgment` / `iiifWaiver` records are stripped on load and the wiki page is rewritten without them on the next save (one-shot migration, same mechanism as the old `sha1Index` cleanup). No dedicated extra write.
 - **CC0 consent is asked every session and no longer stored** — the "I agree — don't remind me again" option is gone; the CC0 notice (step 1 of the onboarding) now shows on every fresh session with a single "I agree — continue" button, and nothing is written to `Preferences.json` for it (the `cc0Acknowledgment` key is no longer read or written).
 - **Modal headers are selectable again** — you can now select/copy header text (e.g. the manuscript title + signature) even though the header is a drag handle: the drag module skips a drag when the press lands on header text, so pressing the title selects it while pressing the header padding / grip / thumbnail still moves the modal.
 - **Wizard header flags a manifest that needs work** — on every step past input, a red **⚠ needs work** badge appears in the header when the loaded manifest has duplicate filenames and/or duplicate images.
