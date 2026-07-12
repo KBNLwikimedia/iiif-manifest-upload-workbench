@@ -8,6 +8,7 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Fixed
 
+- **Reported-issue numbers could be recorded against the wrong manifest** — the report flow keyed issue records on the live Manifest-URL *input*, which goes stale: typing a different URL without loading it, or dropping a `.json` file after a URL load, made "Save issue #" attach the number to the wrong recent-list entry. The key is now captured at load time from what the recent list actually stored (`loadedRecentUrl`), so issues always land on the manifest that is open. (Found in the 2026-07-12 deep code review; remaining identity edge cases → #88.)
 - **Commons filenames are capped by *bytes*, not characters (OI-29 #29)** — a Commons file-page title (the part after `File:`) maxes out at **255 bytes** (verified against the live API: a 256-byte title is fine, 261 is rejected as "too long"). The import now budgets the derived name — `Short title - signature - image-label` + `" (N)"` dedupe suffix + `.jpg` — by UTF-8 byte length and truncates on a whole-code-point boundary, so a title full of accented/multi-byte characters can no longer produce an over-limit name or a split surrogate. `makeFinalFilename` enforces the 255-byte ceiling at publish too (backstop for hand-edited titles). New `truncateBytes()` helper.
 
 ### Changed
@@ -27,6 +28,7 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ### Added
 
+- **Unit-test harness + `npm test`** — new `scripts/test-iiif-units.mjs` covers the round's pure helpers (`truncateBytes` code-point-boundary byte capping, `titleFromSummaryFallback` provenance, `findManifestDuplicates` collision grouping) plus a corpus invariant that every derived filename across all 25 sample manifests stays ≤ 255 UTF-8 bytes. `npm test` now runs all three Node harnesses (parser, map, units).
 - **48-hour upload waiver modal** — the CC0 notice and this waiver are a coupled **two-step** onboarding flow ("Step 1 of 2" → "Step 2 of 2"): after the CC0 step, the waiver asks the user to acknowledge that imported images are staged in a temporary Commons upload area that is **cleared after 48 hours**, so the import→publish flow must be finished within that window. Both steps are shown **every session** with a single **"OK, I understand"** button and nothing persisted; the waiver additionally has a **‹ Back** button that returns to the CC0 step.
 - **Flag and report manifests that need checking (OI-85)** — manifests with duplicate filenames and/or duplicate images (the existing within-manifest label / SHA-1 collision detection) are now surfaced and reportable across the wizard:
   - **Step 1 (Import):** a new **⚠ Needs work** tab (shown only when there are flagged manifests) lists every erroneous manifest across all providers, with its duplicate counts and any recorded GitHub issue links. A small red **⚠** also appears behind the name of a flagged manifest in the KB / eCodices NL / Other tabs. The flag (affected-image counts) is persisted per manifest in `Preferences.json`, so it survives without re-parsing.

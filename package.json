@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "check:undefs": "node scripts/check-undefined-refs.mjs",
+    "test": "node scripts/test-iiif-parser.mjs && node scripts/test-iiif-map.mjs && node scripts/test-iiif-units.mjs",
     "build": "npm run check:undefs && vite build",
     "build:nocheck": "vite build",
     "preview": "vite preview"

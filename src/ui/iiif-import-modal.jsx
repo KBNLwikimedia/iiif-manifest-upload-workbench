@@ -208,6 +208,11 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   // Provider profile (OI-78 scaffolding). Only KB is selectable for now; the
   // eCodices card is shown disabled. Doesn't gate loading yet.
   const [providerId, setProviderId] = React.useState(DEFAULT_PROVIDER_ID);
+  // The URL that keys the CURRENTLY-LOADED manifest in the recent list (set by
+  // recordRecent on successful parse; null when the manifest isn't recorded).
+  // The report flow keys issue records on this — never on the live `url`
+  // input, which the user can retype without loading (stale-URL bug).
+  const [loadedRecentUrl, setLoadedRecentUrl] = React.useState(null);
 
   // Characters just rejected (stripped) from a review-step text field, so the
   // red note can name them. Cleared on the next keystroke that adds none.
@@ -496,6 +501,10 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     if (!result?.manifest) return;
     const idUrl = /^https?:\/\//i.test(String(result.manifest.id || '')) ? String(result.manifest.id).trim() : '';
     const u = String(urlOverride || '').trim() || idUrl;
+    // Remember which URL keys THIS manifest in the recent list (or that it
+    // isn't recorded at all) — the report flow must not re-derive it from the
+    // live `url` input, which the user can retype without loading.
+    setLoadedRecentUrl(u || null);
     if (!u) return;
     const { manuscript } = mapManifest(result.manifest);
     const thumb = result.manifest.canvases?.[0]?.thumbUrl || null;
@@ -847,14 +856,12 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   const hasReport = reportErrors.length + reportWarnings.length + reportInfos.length > 0;
   const manifest = parsed?.manifest;
 
-  // OI-85 report flow: the reusable URL that keys this manifest in the recent
-  // list (typed URL, else the manifest's own http `id` — mirrors recordRecent),
-  // any GitHub issues already recorded against it, and the record handler the
-  // report modal calls when the user pastes a submitted issue number.
-  const activeManifestUrl = React.useMemo(() => {
-    const idUrl = /^https?:\/\//i.test(String(manifest?.id || '')) ? String(manifest.id).trim() : '';
-    return url.trim() || idUrl;
-  }, [url, manifest]);
+  // OI-85 report flow: the URL that keys this manifest in the recent list is
+  // captured by recordRecent at load time (loadedRecentUrl) — NOT re-derived
+  // from the `url` input, which can be retyped without loading, nor from a
+  // stale value after a file drop. Null → manifest isn't in the recent list,
+  // so issue recording is a no-op.
+  const activeManifestUrl = loadedRecentUrl;
   const activeRecentEntry = recent.find((r) => r.url === activeManifestUrl) || null;
   const hasDuplicates = collisions.dupLabelIdx.size > 0 || collisions.dupImageIdx.size > 0;
   const handleRecordIssue = (number, issueUrl) => {

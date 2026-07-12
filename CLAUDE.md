@@ -64,7 +64,9 @@ npm run build      # outputs dist/
 npm run preview
 ```
 
-No test runner. Verification is by build (`npm run build`) + manual exercise in DevTools.
+`npm test` runs the three Node harnesses (`scripts/test-iiif-parser.mjs`, `test-iiif-map.mjs`, `test-iiif-units.mjs` — the last covers `truncateBytes`, `titleFromSummaryFallback`, `findManifestDuplicates` + a corpus ≤255-byte filename invariant). No browser-test runner: UI verification is by build (`npm run build`) + manual exercise in DevTools.
+
+**Dev-console probing gotcha (2026-07-12):** after editing a module during a dev session, Vite rewrites the app's imports of it to `?t=<hmr-timestamp>` — a DevTools `import('/src/api/user-store.js')` then gets a **second, separate module instance** with its own state, so probes read empty stores while the app works fine. Reload the page and import the component graph *without* a cache-buster, or verify through the rendered DOM instead of module state.
 
 `npm run build` runs `scripts/check-undefined-refs.mjs` first — a small AST scanner that flags any reference to an identifier not bound in scope, not in the allowlist of `window.X = X` exports (`scripts/window-globals.json`), and not a standard JS / browser / Vite-define global. Catches the cross-branch orphan-ref bug class that crashed upstream v0.10.0 → v0.23.1 on first render (see "Lessons learned"). Add new entries to `scripts/window-globals.json` whenever a new `window.X = X` (or `globalThis.X = X`) export is added in `src/`; the scanner refuses to run if the JSON and the actual exports diverge.
 
