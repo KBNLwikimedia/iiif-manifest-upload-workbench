@@ -8516,9 +8516,20 @@ body.col-resizing * { cursor: col-resize !important; }
 }
 .iiif-recent__tabcount { color: var(--color-placeholder); font-weight: 400; }
 .iiif-recent__tab--active .iiif-recent__tabcount { color: inherit; }
+/* OI-85 "Needs work" tab: warning-tinted so erroneous manifests stand out. */
+.iiif-recent__tab--warn { color: var(--color-destructive, #b32424); }
+.iiif-recent__tab--warn:hover { color: var(--color-destructive, #b32424); }
+.iiif-recent__tab--warn.iiif-recent__tab--active { border-bottom-color: var(--color-destructive, #b32424); }
 .iiif-recent__empty { font-size: 12px; color: var(--color-subtle); margin: 8px 2px; }
 .iiif-recent__list { list-style: none; margin: 0; padding: 0; }
-.iiif-recent__row { display: flex; align-items: stretch; gap: 2px; margin: 2px 0; }
+.iiif-recent__row { display: flex; flex-wrap: wrap; align-items: stretch; gap: 2px; margin: 2px 0; }
+/* OI-85: red ⚠ behind a flagged manifest's name (all tabs). */
+.iiif-recent__warn { color: var(--color-destructive, #b32424); margin-left: 6px; font-size: 12px; cursor: help; }
+/* Duplicate summary line shown under the name in the Needs-work tab. */
+.iiif-recent__flags { font-size: 11px; color: var(--color-destructive, #b32424); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Recorded issue links, dropped to their own line via full-width flex basis. */
+.iiif-recent__issues { flex-basis: 100%; font-size: 11px; color: var(--color-subtle); padding: 0 2px 4px 51px; }
+.iiif-recent__issues a { color: var(--color-progressive, #36c); }
 .iiif-recent__item {
   display: flex;
   align-items: center;
@@ -8599,6 +8610,39 @@ body.col-resizing * { cursor: col-resize !important; }
   text-align: right;
 }
 .iiif-warnings-restore .iiif-linkbtn { font-size: 12px; }
+
+/* OI-85: "Report duplicates" bar on the select step. */
+.iiif-report-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color-base, #c8ccd1);
+  border-radius: 6px;
+  background: var(--background-color-neutral-subtle, #f6f7f9);
+}
+.iiif-report-bar__text { flex: 1; min-width: 240px; font-size: 12.5px; color: var(--color-subtle); }
+.iiif-report-bar__done { color: var(--color-base); }
+.iiif-report-bar__done a { color: var(--color-progressive, #36c); }
+.iiif-report-bar__btn { flex: 0 0 auto; white-space: nowrap; }
+
+/* OI-85: report-manifest modal (reuses .feedback-modal shell). */
+.report-modal__summary { margin: 4px 0 0; padding-left: 18px; font-size: 13px; }
+.report-modal__summary li { margin: 2px 0; }
+.report-modal__record { border-top: 1px solid var(--border-color-base, #eaecf0); padding-top: 12px; }
+.report-modal__record-row { display: flex; gap: 8px; align-items: center; }
+.report-modal__issue-input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 9px;
+  border: 1px solid var(--border-color-base, #c8ccd1);
+  border-radius: 5px;
+  font-size: 13px;
+}
+.report-modal__saved { margin: 8px 0 0; font-size: 12.5px; color: var(--color-base); }
+.report-modal__saved a { color: var(--color-progressive, #36c); }
 
 .iiif-report__line {
   margin: 4px 0;

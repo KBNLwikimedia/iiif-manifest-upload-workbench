@@ -18,15 +18,16 @@
 // table with everything prefilled.
 
 import React from 'react';
-import { fetchManifest, parseManifestFile } from '../api/iiif.js';
+import { fetchManifest, parseManifestFile, findManifestDuplicates } from '../api/iiif.js';
 import { mapManifest } from '../api/iiif-map.js';
 import { findManuscriptItems, resolveQid } from '../api/wikidata.js';
 import { runIiifImport } from '../api/iiif-pipeline.js';
 import { categoryExists, searchCategories, findManuscriptCategoryVariants, checkFilenamesExist } from '../api/commons.js';
 import { KB_PARENT_CATEGORY, KB_LICENSE_WIKITEXT } from '../api/iiif-map.js';
 import { DEMO_MODE } from '../config.js';
-import { getRecentManifests, addRecentManifest, removeRecentManifest, clearRecentManifests } from '../api/user-store.js';
+import { getRecentManifests, addRecentManifest, removeRecentManifest, clearRecentManifests, recordManifestIssue } from '../api/user-store.js';
 import { PROVIDERS, DEFAULT_PROVIDER_ID, providerForUrl } from '../providers.js';
+import ReportManifestModal from './report-manifest-modal.jsx';
 
 const Icon = window.Icon;
 
@@ -192,6 +193,8 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   const [error, setError] = React.useState(null);
   // True while a file is dragged over the input step (drop-to-import).
   const [dragOver, setDragOver] = React.useState(false);
+  // OI-85: the "Report duplicates" modal (select step) is open.
+  const [showReport, setShowReport] = React.useState(false);
   // Recently loaded manifest URLs (persisted in Preferences.json), for
   // one-click reloading.
   const [recent, setRecent] = React.useState(getRecentManifests);
@@ -496,7 +499,10 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     if (!u) return;
     const { manuscript } = mapManifest(result.manifest);
     const thumb = result.manifest.canvases?.[0]?.thumbUrl || null;
-    addRecentManifest({ url: u, signature: manuscript.signature, title: manuscript.title, thumb });
+    // OI-85: persist the duplicate-collision counts so the recent list can flag
+    // this manifest as "needs work" without re-parsing it.
+    const dup = findManifestDuplicates(result.manifest.canvases || []);
+    addRecentManifest({ url: u, signature: manuscript.signature, title: manuscript.title, thumb, dupNames: dup.dupNames, dupImages: dup.dupImages });
     setRecent(getRecentManifests());
     // Keep the active tab on the collection just loaded, so going Back (and
     // the next modal open) shows the list the user is actually working from.
@@ -745,41 +751,26 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
     // NB: `const manifest = parsed?.manifest` is declared further down — using
     // it here would throw a TDZ ReferenceError during render (the exact bug
     // class CLAUDE.md's mount-test lesson exists for). Read from `parsed`.
-    const canvases = parsed?.manifest?.canvases || [];
-    const byLabel = new Map();
-    const byImage = new Map();
-    for (const c of canvases) {
-      const lab = (c.label || '').trim();
-      if (lab) { if (!byLabel.has(lab)) byLabel.set(lab, []); byLabel.get(lab).push(c.index); }
-      const img = c.fullResUrl || c.serviceId || '';
-      if (img) { if (!byImage.has(img)) byImage.set(img, []); byImage.get(img).push(c.index); }
-    }
-    // Besides the flat index sets, keep per-canvas "partners": the 1-based
-    // numbers of the OTHER images in the same collision group, so a tile's
-    // badge can say which images it collides with.
+    // Grouping is shared with the persisted flag + report body via
+    // findManifestDuplicates; here we add the flat index sets + per-canvas
+    // "partners" (1-based numbers of the OTHER images in the same group) that
+    // the tile badges need.
+    const { labelGroups, imageGroups } = findManifestDuplicates(parsed?.manifest?.canvases || []);
     const dupLabelIdx = new Set();
-    const labelGroups = [];
     const labelPartners = new Map();
-    for (const [label, idxs] of byLabel) {
-      if (idxs.length > 1) {
-        idxs.forEach((i) => {
-          dupLabelIdx.add(i);
-          labelPartners.set(i, idxs.filter((j) => j !== i).map((j) => j + 1));
-        });
-        labelGroups.push({ label, indices: [...idxs], positions: idxs.map((i) => i + 1) });
-      }
+    for (const g of labelGroups) {
+      g.indices.forEach((i) => {
+        dupLabelIdx.add(i);
+        labelPartners.set(i, g.indices.filter((j) => j !== i).map((j) => j + 1));
+      });
     }
     const dupImageIdx = new Set();
-    const imageGroups = [];
     const imagePartners = new Map();
-    for (const [, idxs] of byImage) {
-      if (idxs.length > 1) {
-        idxs.forEach((i) => {
-          dupImageIdx.add(i);
-          imagePartners.set(i, idxs.filter((j) => j !== i).map((j) => j + 1));
-        });
-        imageGroups.push({ indices: [...idxs], positions: idxs.map((i) => i + 1) });
-      }
+    for (const g of imageGroups) {
+      g.indices.forEach((i) => {
+        dupImageIdx.add(i);
+        imagePartners.set(i, g.indices.filter((j) => j !== i).map((j) => j + 1));
+      });
     }
     return { dupLabelIdx, labelGroups, labelPartners, dupImageIdx, imageGroups, imagePartners };
   }, [parsed]);
@@ -855,6 +846,22 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
   const reportInfos = report.filter((e) => e.level === 'info' && e.code !== 'downscaled-canvases');
   const hasReport = reportErrors.length + reportWarnings.length + reportInfos.length > 0;
   const manifest = parsed?.manifest;
+
+  // OI-85 report flow: the reusable URL that keys this manifest in the recent
+  // list (typed URL, else the manifest's own http `id` — mirrors recordRecent),
+  // any GitHub issues already recorded against it, and the record handler the
+  // report modal calls when the user pastes a submitted issue number.
+  const activeManifestUrl = React.useMemo(() => {
+    const idUrl = /^https?:\/\//i.test(String(manifest?.id || '')) ? String(manifest.id).trim() : '';
+    return url.trim() || idUrl;
+  }, [url, manifest]);
+  const activeRecentEntry = recent.find((r) => r.url === activeManifestUrl) || null;
+  const hasDuplicates = collisions.dupLabelIdx.size > 0 || collisions.dupImageIdx.size > 0;
+  const handleRecordIssue = (number, issueUrl) => {
+    if (!activeManifestUrl) return;
+    recordManifestIssue(activeManifestUrl, { number, url: issueUrl });
+    setRecent(getRecentManifests());
+  };
 
   // Input validation for the review-step free-text fields (OI-85 hardening):
   // block Commons-forbidden / injection characters in the title + categories,
@@ -1135,15 +1142,28 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               {recent.length > 0 && (() => {
                 // Group the recent list by provider (KB / eCodices NL / Other)
                 // so each collection gets its own tab.
-                const groups = { kb: [], ecodices: [], other: [] };
-                for (const r of recent) (groups[providerForUrl(r.url) || 'other']).push(r);
+                const isFlagged = (r) => (r.dupNames || 0) > 0 || (r.dupImages || 0) > 0;
+                const groups = { kb: [], ecodices: [], other: [], needswork: [] };
+                for (const r of recent) {
+                  groups[providerForUrl(r.url) || 'other'].push(r);
+                  // OI-85: the "Needs work" tab collects flagged manifests across
+                  // every provider, so erroneous ones are findable in one place.
+                  if (isFlagged(r)) groups.needswork.push(r);
+                }
                 const TABS = [
                   { id: 'kb', label: 'KB' },
                   { id: 'ecodices', label: 'eCodices NL' },
                   { id: 'other', label: 'Other' },
+                  { id: 'needswork', label: '⚠ Needs work' },
                 ];
-                const activeTab = groups[recentTab] ? recentTab : 'kb';
+                const activeTab = (groups[recentTab] && (recentTab !== 'needswork' || groups.needswork.length > 0)) ? recentTab : 'kb';
                 const shown = groups[activeTab] || [];
+                const dupSummaryText = (r) => {
+                  const parts = [];
+                  if (r.dupNames > 0) parts.push(`${r.dupNames} duplicate filename${r.dupNames === 1 ? '' : 's'}`);
+                  if (r.dupImages > 0) parts.push(`${r.dupImages} duplicate image${r.dupImages === 1 ? '' : 's'}`);
+                  return parts.join(' · ');
+                };
                 return (
                 <div className="iiif-recent">
                   <div className="iiif-recent__head">
@@ -1156,13 +1176,15 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                     >Clear all</button>
                   </div>
                   <div className="iiif-recent__tabs" role="tablist">
-                    {TABS.map((t) => (
+                    {TABS.filter((t) => t.id !== 'needswork' || groups.needswork.length > 0).map((t) => (
                       <button
                         key={t.id}
                         type="button"
                         role="tab"
                         aria-selected={activeTab === t.id}
-                        className={'iiif-recent__tab' + (activeTab === t.id ? ' iiif-recent__tab--active' : '')}
+                        className={'iiif-recent__tab'
+                          + (activeTab === t.id ? ' iiif-recent__tab--active' : '')
+                          + (t.id === 'needswork' ? ' iiif-recent__tab--warn' : '')}
                         onClick={() => setRecentTab(t.id)}
                       >
                         {t.label} <span className="iiif-recent__tabcount">({groups[t.id].length})</span>
@@ -1198,8 +1220,18 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                               {r.signature && r.title && ' — '}
                               {r.title}
                               {!r.signature && !r.title && r.url}
+                              {/* OI-85: red ⚠ behind the name flags an erroneous
+                                  manifest in every tab. */}
+                              {isFlagged(r) && (
+                                <span
+                                  className="iiif-recent__warn"
+                                  title={`Needs checking — ${dupSummaryText(r)}. See the “⚠ Needs work” tab.`}
+                                >⚠</span>
+                              )}
                             </span>
-                            {(r.signature || r.title) && <span className="iiif-recent__url">{r.url}</span>}
+                            {activeTab === 'needswork' && isFlagged(r)
+                              ? <span className="iiif-recent__flags">{dupSummaryText(r)}</span>
+                              : (r.signature || r.title) && <span className="iiif-recent__url">{r.url}</span>}
                           </span>
                         </button>
                         <button
@@ -1209,6 +1241,19 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                           aria-label={`Remove ${r.signature || r.title || r.url} from recent manifests`}
                           title="Remove from this list"
                         >×</button>
+                        {/* Recorded GitHub issues (only in the Needs-work tab) —
+                            outside the load button so the links are clickable;
+                            wraps to its own line via flex-basis:100%. */}
+                        {activeTab === 'needswork' && r.issues?.length > 0 && (
+                          <span className="iiif-recent__issues">
+                            Reported: {r.issues.map((iss, i) => (
+                              <React.Fragment key={iss.number}>
+                                {i > 0 && ', '}
+                                <a href={iss.url} target="_blank" rel="noopener noreferrer">#{iss.number}</a>
+                              </React.Fragment>
+                            ))}
+                          </span>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -1779,6 +1824,29 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
                   </button>
                 </p>
               )}
+              {/* OI-85: report the duplicates to the manifest maintainers as a
+                  GitHub issue (labelled manifest-needs-checking). Shown only
+                  when this manifest actually has collisions. */}
+              {hasDuplicates && (
+                <div className="iiif-report-bar">
+                  <span className="iiif-report-bar__text">
+                    These duplicates are a defect in the source manifest. You can report them to the maintainers so they can fix the manifest.
+                    {activeRecentEntry?.issues?.length > 0 && (
+                      <span className="iiif-report-bar__done">
+                        {' '}Reported as {activeRecentEntry.issues.map((iss, i) => (
+                          <React.Fragment key={iss.number}>
+                            {i > 0 && ', '}
+                            <a href={iss.url} target="_blank" rel="noopener noreferrer">#{iss.number}</a>
+                          </React.Fragment>
+                        ))}.
+                      </span>
+                    )}
+                  </span>
+                  <button type="button" className="btn btn--quiet iiif-report-bar__btn" onClick={() => setShowReport(true)}>
+                    ⚠️ Report duplicates on GitHub
+                  </button>
+                </div>
+              )}
               <div className="iiif-select-bar">
                 <button className="btn btn--quiet" onClick={() => toggleAll(true)}>Select all</button>
                 <button className="btn btn--quiet" onClick={() => toggleAll(false)}>Select none</button>
@@ -2162,6 +2230,17 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               <pre className="iiif-jsonview__body">{JSON.stringify(parsed.raw, null, 2)}</pre>
             </div>
           </div>
+        )}
+
+        {showReport && manifest && (
+          <ReportManifestModal
+            onClose={() => setShowReport(false)}
+            manifest={manifest}
+            manuscript={mapping?.manuscript}
+            sourceUrl={activeManifestUrl || manifest.sourceUrl || manifest.id}
+            recordedIssues={activeRecentEntry?.issues || []}
+            onRecordIssue={handleRecordIssue}
+          />
         )}
       </div>
     </div>

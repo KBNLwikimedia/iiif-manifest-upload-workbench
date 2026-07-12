@@ -963,19 +963,51 @@ export function getRecentManifests() {
   return Array.isArray(arr) ? arr.filter((r) => r && r.url) : [];
 }
 
-export function addRecentManifest({ url, signature, title, thumb } = {}) {
+export function addRecentManifest({ url, signature, title, thumb, dupNames, dupImages } = {}) {
   const u = String(url || '').trim();
   if (!u) return;
-  const prev = getRecentManifests().filter((r) => r.url !== u);
+  const all = getRecentManifests();
+  // Carry forward any GitHub issues already recorded against this manifest —
+  // re-loading a manifest must not wipe its "reported" links (OI-85 needs-work).
+  const existing = all.find((r) => r.url === u);
+  const prev = all.filter((r) => r.url !== u);
   const entry = {
     url: u,
     signature: String(signature || '').trim() || null,
     title: String(title || '').trim() || null,
     // First-canvas thumbnail URL (purpose-built /full/400,/ size) for the list.
     thumb: String(thumb || '').trim() || null,
+    // OI-85 "needs work" flag: affected-image counts for the two within-manifest
+    // collision classes (0/absent = clean). Persisted so the recent list can
+    // flag erroneous manifests without re-parsing.
+    dupNames: Number(dupNames) || 0,
+    dupImages: Number(dupImages) || 0,
+    // Recorded GitHub issues reporting this manifest's problems: [{number,url}].
+    issues: Array.isArray(existing?.issues) ? existing.issues : [],
   };
   const next = [entry, ...prev].slice(0, RECENT_MANIFESTS_SOFT_CAP);
   setPref('recentManifests', next);
+}
+
+// Record a GitHub issue (that reports this manifest's duplicates) against the
+// recent-manifest entry, so its number shows in the "Needs work" tab. Deduped
+// by issue number. Returns the updated issues array (or [] if url unknown).
+export function recordManifestIssue(url, { number, url: issueUrl } = {}) {
+  const u = String(url || '').trim();
+  const num = Number(number) || null;
+  if (!u || !num) return [];
+  const all = getRecentManifests();
+  const idx = all.findIndex((r) => r.url === u);
+  if (idx < 0) return [];
+  const entry = all[idx];
+  const issues = Array.isArray(entry.issues) ? entry.issues.slice() : [];
+  if (!issues.some((i) => i.number === num)) {
+    issues.push({ number: num, url: String(issueUrl || '').trim() || `https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/issues/${num}` });
+  }
+  const next = all.slice();
+  next[idx] = { ...entry, issues };
+  setPref('recentManifests', next);
+  return issues;
 }
 
 export function removeRecentManifest(url) {

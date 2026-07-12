@@ -369,6 +369,39 @@ export async function fetchManifest(url) {
   return parseManifest(json, { sourceUrl: url });
 }
 
+// OI-85 shared detector: find the two within-manifest collision classes from a
+// parsed canvas list — no downloads needed. Single source of truth for the
+// select-step warnings, the persisted recent-manifest "needs work" flag, and
+// the GitHub report body.
+//   - duplicate canvas LABELS → they derive the same Commons filename.
+//   - duplicate IMAGES → two canvases point at the exact same image URL, so
+//     their bytes (and SHA-1) are identical (URL-equality is a zero-cost proxy).
+// Groups carry 1-based `positions` (canvas index + 1) for user-facing display.
+export function findManifestDuplicates(canvases) {
+  const list = Array.isArray(canvases) ? canvases : [];
+  const byLabel = new Map();
+  const byImage = new Map();
+  for (const c of list) {
+    const lab = (c.label || '').trim();
+    if (lab) { if (!byLabel.has(lab)) byLabel.set(lab, []); byLabel.get(lab).push(c.index); }
+    const img = c.fullResUrl || c.serviceId || '';
+    if (img) { if (!byImage.has(img)) byImage.set(img, []); byImage.get(img).push(c.index); }
+  }
+  const labelGroups = [];
+  for (const [label, indices] of byLabel) {
+    if (indices.length > 1) labelGroups.push({ label, indices: [...indices], positions: indices.map((i) => i + 1) });
+  }
+  const imageGroups = [];
+  for (const [image, indices] of byImage) {
+    if (indices.length > 1) imageGroups.push({ image, indices: [...indices], positions: indices.map((i) => i + 1) });
+  }
+  // Affected-canvas counts (not group counts) — matches the select-step
+  // warnings' "N images" wording.
+  const dupNames = labelGroups.reduce((s, g) => s + g.indices.length, 0);
+  const dupImages = imageGroups.reduce((s, g) => s + g.indices.length, 0);
+  return { labelGroups, imageGroups, dupNames, dupImages };
+}
+
 // Parse a user-dropped/selected .json File (the offline entry path of Q1).
 export async function parseManifestFile(file) {
   const text = await file.text();
