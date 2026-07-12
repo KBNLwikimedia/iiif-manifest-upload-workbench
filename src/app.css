@@ -4779,15 +4779,6 @@ body.col-resizing * { cursor: col-resize !important; }
   border-radius: 6px;
   color: var(--color-base);
 }
-.waiver-modal__dontshow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--color-subtle);
-  cursor: pointer;
-  margin-top: 2px;
-}
 .waiver-modal__foot { flex-direction: column; align-items: stretch; gap: 10px; }
 /* Two-step footer: Back on the left, "OK, I understand" on the right. */
 .waiver-modal__buttons { display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap; }

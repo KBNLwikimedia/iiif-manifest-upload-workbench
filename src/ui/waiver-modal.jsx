@@ -1,33 +1,21 @@
-// 48-hour waiver modal — shown after the CC0 notice. The user acknowledges
-// that imported images sit in a temporary upload area on Commons that is
-// cleared after 48 hours, so the import→publish flow has to be finished within
-// that window.
+// 48-hour waiver modal — step 2 of the CC0 → waiver onboarding, shown after the
+// CC0 notice. The user acknowledges that imported images sit in a temporary
+// upload area on Commons that is cleared after 48 hours, so the import→publish
+// flow has to be finished within that window.
 //
-// One button ("OK, I understand") plus a "Don't show this again" checkbox
-// (unchecked by default). The checkbox is the ONLY thing that suppresses the
-// modal: acknowledging with it unchecked records suppressFurther=false, so the
-// modal reappears next session; ticking it records suppressFurther=true and it
-// never shows again.
-//
-// Persistence: one key on Preferences.json:
-//   iiifWaiver: { acknowledgedAt: <ISO>, suppressFurther: <bool>, version: 1 }
+// Like the CC0 step, this is asked every fresh session: a single "OK, I
+// understand" button, no "don't show again" option, nothing persisted
+// (maintainer decision 2026-07-12).
 
 import React from 'react';
 
-// Bump to re-prompt everyone after a material change to the 48-hour policy/copy.
-export const WAIVER_VERSION = 1;
-
-// Show unless the user acknowledged with "Don't show this again" ticked. A
-// missing record or a version mismatch always re-prompts.
-export function shouldShowWaiverModal(waiver) {
-  if (!waiver) return true;
-  if (waiver.version !== WAIVER_VERSION) return true;
-  return !waiver.suppressFurther;
+// Always show (once per session): the acknowledgment is not persisted, so the
+// user re-agrees each new session. DEMO_MODE is filtered out by App.
+export function shouldShowWaiverModal() {
+  return true;
 }
 
 export function WaiverModal({ onAcknowledge, onBack }) {
-  const [suppress, setSuppress] = React.useState(false);
-
   // Lock body scroll while open. Esc does NOT close — this is a required
   // acknowledgment; the user must pick a button.
   React.useEffect(() => {
@@ -75,14 +63,6 @@ export function WaiverModal({ onAcknowledge, onBack }) {
             ⚠️ Any imported images you have not published within 48 hours are removed and are
             then <strong>your own responsibility</strong> to re-import.
           </p>
-          <label className="waiver-modal__dontshow">
-            <input
-              type="checkbox"
-              checked={suppress}
-              onChange={(e) => setSuppress(e.target.checked)}
-            />
-            Don&apos;t show this again
-          </label>
         </div>
 
         <footer className="modal__foot waiver-modal__foot">
@@ -95,7 +75,7 @@ export function WaiverModal({ onAcknowledge, onBack }) {
             <button
               type="button"
               className="btn btn--progressive"
-              onClick={() => onAcknowledge({ suppressFurther: suppress })}
+              onClick={() => onAcknowledge()}
             >
               OK, I understand
             </button>

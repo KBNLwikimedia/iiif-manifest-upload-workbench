@@ -118,7 +118,7 @@ export function Cc0Modal({ username, onAcknowledge, onDismiss }) {
               className="btn btn--progressive"
               onClick={() => onAcknowledge()}
             >
-              I agree — continue
+              OK, I understand
             </button>
           </div>
         </footer>

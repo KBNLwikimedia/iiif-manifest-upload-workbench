@@ -9,7 +9,7 @@ import { WikitextPreviewModal } from './ui/wikitext-preview-modal.jsx';
 import InfoModal from './ui/info-modal.jsx';
 import PilingMode from './ui/piling-mode.jsx';
 import { Cc0Modal, shouldShowCc0Modal } from './ui/cc0-modal.jsx';
-import { WaiverModal, WAIVER_VERSION, shouldShowWaiverModal } from './ui/waiver-modal.jsx';
+import { WaiverModal, shouldShowWaiverModal } from './ui/waiver-modal.jsx';
 import { IiifImportModal } from './ui/iiif-import-modal.jsx';
 import { DEMO_MODE } from './config.js';
 import {
@@ -1409,10 +1409,10 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
   // 48-hour waiver (step 2) — shown AFTER the CC0 modal. Since CC0 always shows
   // (non-demo), the waiver waits and is opened when CC0 closes (see closeCc0).
   const [waiverModalOpen, setWaiverModalOpen] = useState(false);
-  // Close the CC0 modal, then chain the waiver if it still needs showing.
+  // Close the CC0 modal, then chain the waiver (step 2).
   const closeCc0 = () => {
     setCc0ModalOpen(false);
-    if (!DEMO_MODE && shouldShowWaiverModal(getPref('iiifWaiver'))) setWaiverModalOpen(true);
+    if (!DEMO_MODE && shouldShowWaiverModal()) setWaiverModalOpen(true);
   };
   // Wikitext preview modal: { item } or null. Read-only inspection of the
   // assembled wikitext for any single row.
@@ -2461,14 +2461,7 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
           upload area is cleared after 48h. Shown after the CC0 modal. */}
       {waiverModalOpen && (
         <WaiverModal
-          onAcknowledge={({ suppressFurther }) => {
-            setPref('iiifWaiver', {
-              acknowledgedAt: new Date().toISOString(),
-              suppressFurther: !!suppressFurther,
-              version: WAIVER_VERSION,
-            });
-            setWaiverModalOpen(false);
-          }}
+          onAcknowledge={() => setWaiverModalOpen(false)}
           onBack={() => { setWaiverModalOpen(false); setCc0ModalOpen(true); }}
         />
       )}
