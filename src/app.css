@@ -184,12 +184,16 @@ body {
   transition: background .1s, border-color .1s, color .1s;
   white-space: nowrap;
 }
-.btn:hover {
+.btn:hover:not(:disabled) {
   background: var(--background-color-interactive-subtle--hover);
   border-color: var(--border-color-interactive--hover);
   color: var(--color-base--hover);
 }
-.btn:active { background: var(--background-color-interactive); }
+.btn:active:not(:disabled) { background: var(--background-color-interactive); }
+/* A disabled button must read as disabled — dim it and drop the pointer +
+   hover feedback (there was no base :disabled rule, so disabled primary
+   buttons looked fully active). */
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn--quiet { border-color: transparent; background: transparent; }
 .btn--quiet:hover { background: var(--background-color-interactive-subtle--hover); border-color: transparent; }
 .btn--icon-only { padding: 0; width: 32px; justify-content: center; }
@@ -198,7 +202,7 @@ body {
   border-color: var(--background-color-progressive);
   color: var(--color-inverted-fixed);
 }
-.btn--progressive:hover {
+.btn--progressive:hover:not(:disabled) {
   background: var(--background-color-progressive--hover);
   border-color: var(--background-color-progressive--hover);
   color: var(--color-inverted-fixed);
