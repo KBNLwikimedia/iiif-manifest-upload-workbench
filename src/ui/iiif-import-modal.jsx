@@ -178,9 +178,9 @@ function CategoryCombobox({ id, value, onChange, inputClassName }) {
 
 const STEP_TITLES = {
   input: 'Import IIIF manifest',
-  review: 'Check the manifest',
-  select: 'Select images for importing into Wikimedia Commons',
-  confirm: 'Ready to import',
+  review: 'Step 1 - Check the manifest',
+  select: 'Step 2 - Select images for importing into Wikimedia Commons',
+  confirm: 'Step 3 - Ready to import',
   running: 'Importing…',
   done: 'Import finished',
 };
