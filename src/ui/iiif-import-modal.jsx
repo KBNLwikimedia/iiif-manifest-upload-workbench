@@ -1758,12 +1758,15 @@ export function IiifImportModal({ onClose, onAddItems, onUpdateItem, onReplaceIt
               {hoverPreview && (
                 <div className="iiif-hover-preview" style={{ left: hoverPreview.left, top: hoverPreview.top }} aria-hidden="true">
                   {/* Caption above the image (maintainer request 2026-07-12):
-                      filename first, then the manuscript short title. */}
+                      filename first, then the manuscript identity as
+                      "Short title — signature" (matches the wizard header). */}
                   <div className="iiif-hover-preview__cap">
                     <span className="iiif-hover-preview__label">{hoverPreview.canvas.label || `#${hoverPreview.canvas.index + 1}`}</span>
                     {(() => {
                       const st = (title || mapping?.manuscript?.title || '').trim();
-                      return st ? <span className="iiif-hover-preview__title">{st}</span> : null;
+                      const sig = (mapping?.manuscript?.signature || '').trim();
+                      const idline = st && sig ? `${st} — ${sig}` : (st || sig);
+                      return idline ? <span className="iiif-hover-preview__title">{idline}</span> : null;
                     })()}
                   </div>
                   <img
