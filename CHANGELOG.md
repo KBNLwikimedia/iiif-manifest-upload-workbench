@@ -6,6 +6,10 @@ All notable changes. Format follows [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Fixed
+
+- **KB/eCodices provider tiles compacted on the import-wizard Collection picker** — the stacked-vertical tile (logo above name, ~92px min-height) took too much vertical space for a simple collection selector. Switched to a horizontal row layout (logo · name · badge right-aligned), cutting the tile height to ~42px.
+
 ## [0.42.0] — 2026-07-12
 
 - **Release notes**: [v0.42.0](https://github.com/KBNLwikimedia/iiif-manifest-upload-workbench/releases/tag/v0.42.0)
