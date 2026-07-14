@@ -1,9 +1,9 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://presentation-api.dlc.services/32/KW-130-E-1",
+  "id": "https://iiif.bibliotheken.nl/KW-130-E-1",
   "type": "Manifest",
   "label": {"en":["KW 130 E 1"]},
-  "summary": {"en":["Regel van St. Augustinus van Hippo (354-430) met commentaar van / Hugo van St. Victor (ca. 1096-1141)"]},
+  "summary": {"en":[""]},
   "metadata": [
     {
       "label": {"nl":["Signatuur"]},

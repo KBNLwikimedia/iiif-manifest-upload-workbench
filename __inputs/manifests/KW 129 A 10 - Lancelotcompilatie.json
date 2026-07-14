@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://presentation-api.dlc.services/32/kw-129-a-10",
+  "id": "https://iiif.bibliotheken.nl/kw-129-a-10",
   "type": "Manifest",
   "label": {"nl":["KW 129 A 10"]},
   "summary": {"nl":["KW 129 A 10 (Lancelotcompilatie)"]},

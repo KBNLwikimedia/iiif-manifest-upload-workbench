@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://presentation-api.dlc.services/32/kw-1900-a-016",
+  "id": "https://iiif.bibliotheken.nl/kw-1900-a-016",
   "type": "Manifest",
   "label": {"en":["KW 1900 A 016 (Wapenboek Nassau Vianden)"]},
   "summary": {

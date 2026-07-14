@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://presentation-api.dlc.services/32/kw-79-k-10",
+  "id": "https://iiif.bibliotheken.nl/kw-79-k-10",
   "type": "Manifest",
   "label": {"en":["KW 79 K 10 (Gruuthusehandschrift)"]},
   "summary": {"en":[""]},

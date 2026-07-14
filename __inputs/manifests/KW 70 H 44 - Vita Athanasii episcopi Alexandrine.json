@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://presentation-api.dlc.services/32/KW-70-H-44",
+  "id": "https://iiif.bibliotheken.nl/KW-70-H-44",
   "type": "Manifest",
   "label": {"en":["KW 70 H 44"]},
   "summary": {"en":["Vita Athanasii episcopi Alexandrine"]},

@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://presentation-api.dlc.services/32/kw-128-e-3",
+  "id": "https://iiif.bibliotheken.nl/kw-128-e-3",
   "type": "Manifest",
   "label": {"nl":["KW 128 E 3 (Rijmkroniek van Holland)"]},
   "summary": {
@@ -77,7 +77,7 @@
       "label": {"nl":["Datalicentie"]},
       "value": {
         "nl": [
-          "http://creativecommons.org/publicdomain/zero/1.0/"
+          "https://creativecommons.org/publicdomain/zero/1.0/deed.nl"
         ]
       }
     }

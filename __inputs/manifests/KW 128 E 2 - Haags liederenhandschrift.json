@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://presentation-api.dlc.services/32/kw-128-e-2",
+  "id": "https://iiif.bibliotheken.nl/kw-128-e-2",
   "type": "Manifest",
   "label": {"nl":["KW 128 E 2 (Haags liederenhandschrift)"]},
   "summary": {

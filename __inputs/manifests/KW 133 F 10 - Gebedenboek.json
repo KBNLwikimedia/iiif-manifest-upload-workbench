@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://presentation-api.dlc.services/32/KW-133-F-10",
+  "id": "https://iiif.bibliotheken.nl/KW-133-F-10",
   "type": "Manifest",
   "label": {"en":["KW 133 F 10"]},
   "summary": {"en":["Gebedenboek"]},

@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://presentation-api.dlc.services/32/kw-ka-16",
+  "id": "https://iiif.bibliotheken.nl/kw-ka-16",
   "type": "Manifest",
   "label": {"nl":["KW KA 16 (Der Naturen Bloeme)"]},
   "summary": {

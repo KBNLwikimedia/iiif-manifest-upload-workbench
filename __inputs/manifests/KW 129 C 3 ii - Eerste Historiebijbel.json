@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://presentation-api.dlc.services/32/kw-129-c-3-ii",
+  "id": "https://iiif.bibliotheken.nl/kw-129-c-3-ii",
   "type": "Manifest",
   "label": {"en":["KW 129 C 3 (ii)"]},
   "summary": {

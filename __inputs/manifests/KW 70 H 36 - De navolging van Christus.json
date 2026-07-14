@@ -1,6 +1,6 @@
 {
   "@context": "http://iiif.io/api/presentation/3/context.json",
-  "id": "https://presentation-api.dlc.services/32/kw-70-h-36",
+  "id": "https://iiif.bibliotheken.nl/kw-70-h-36",
   "type": "Manifest",
   "label": {"en":["KW 70 H 36"]},
   "summary": {
