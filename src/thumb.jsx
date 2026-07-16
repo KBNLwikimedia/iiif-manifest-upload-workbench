@@ -7,7 +7,6 @@ function Thumb({ item, ratio, large }) {
   const w = item.width || 4;
   const h = item.height || 3;
   const aspect = ratio || (w / h);
-  const isPortrait = aspect < 0.95;
   const isPano = aspect > 2.5;
   // Lightbox / detail-panel preview opts in to the large variant.
   // IIIF-imported stash rows carry a public manifest thumbnail

@@ -1,5 +1,3 @@
-import React from 'react';
-
 // Codex-style line icons (20×20). Single path or stroke. Inherit currentColor.
 const Icon = ({ name, size = 20 }) => {
   const path = ICONS[name];

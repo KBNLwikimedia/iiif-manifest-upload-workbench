@@ -15,7 +15,6 @@ import FeedbackButton from './ui/feedback-button.jsx';
 import { DEMO_MODE } from './config.js';
 import {
   setDraft,
-  deleteDraft,
   rekeyDraft,
   draftKey,
   pickDraftFields,
@@ -49,7 +48,6 @@ import {
   getCachedUniqueness,
   checkUniqueness,
   isSequencePlaceholderTitle,
-  extractSequenceBasename,
   buildSequencePlaceholderTitle,
 } from './api/title-validation.js';
 const { useState, useMemo, useEffect } = React;
@@ -383,7 +381,7 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
     const labelMap = new Map(DEFAULT_FIELD_ORDER.map((f) => [f.key, f.label]));
     return saved.map((f) => (labelMap.has(f.key) ? { ...f, label: labelMap.get(f.key) } : f));
   };
-  const [fieldOrder, setFieldOrder] = useState(() => {
+  const [fieldOrder] = useState(() => {
     if (Array.isArray(initialPrefs?.fieldOrder)) {
       const known = new Set(initialPrefs.fieldOrder.map((f) => f.key));
       return [
@@ -1425,7 +1423,7 @@ function App({ tweaks, setTweak, user, onLogout, initialItems, initialPrefs, loa
   // T426449 dropped the wikitext-template column type entirely; only the
   // Wikidata-property variant survives. Any stored `kind: 'template'`
   // entries are silently ignored at runtime (see getAllColumns()).
-  const [customProps, setCustomProps] = useState(() => {
+  const [, setCustomProps] = useState(() => {
     const cs = window.loadColumnState ? window.loadColumnState() : null;
     return cs?.customProps || [];
   });

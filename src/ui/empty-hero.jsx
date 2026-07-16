@@ -10,8 +10,6 @@
 // progressive-blue border + iconography as the dropzone-overlay so the
 // "drop here" language is consistent across empty-state and active-drag.
 
-import React from 'react';
-
 const Icon = window.Icon;
 
 // `onImportIiif` opens the "Import IIIF manifest" wizard (passed down from

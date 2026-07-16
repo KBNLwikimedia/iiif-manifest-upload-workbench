@@ -17,7 +17,7 @@ import { findOwnedSequenceFiles } from './api/sequence.js';
 // paste-mode, range/drag selection, keyboard nav, vocabulary-driven autocomplete,
 // depicts (P180), EXIF columns, lightbox, header default-values, and pill info popovers.
 
-const { useState: useStateT, useMemo: useMemoT, useRef: useRefT, useEffect: useEffectT, useCallback: useCallbackT } = React;
+const { useState: useStateT, useMemo: useMemoT, useRef: useRefT, useEffect: useEffectT } = React;
 
 // ===== Caption (SDC label) validation =====
 // Wikibase enforces a 250-char limit on labels and disallows newlines/vertical
@@ -582,7 +582,6 @@ function Table({
       return { ...s, visible: v.length ? v : s.visible };
     });
   };
-  const resetCols = () => setColState(s => ({ ...s, visible: DEFAULT_VISIBLE, widths: {} }));
   const addCustomProp = (p) => {
     setColState(s => {
       const exists = (s.customProps || []).some(x => x.pid === p.pid);
